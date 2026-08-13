@@ -2,29 +2,30 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, ShieldBan, ShieldCheck, Trash2, X } from "lucide-react";
+import { BadgeCheck, ShieldBan, ShieldCheck, Trash2, X, XCircle } from "lucide-react";
 import {
   adminDeleteTuition,
   adminSetAccountStatus,
   adminSetVerification,
 } from "@/features/admin/actions";
+import { type AccountStatus } from "@/types/index";
 import { Button } from "@/components/ui/button";
 
 export function AdminAccountStatusButton({
   userId,
-  suspended,
+  status,
 }: {
   userId: string;
-  suspended: boolean;
+  status: AccountStatus;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  function toggle() {
+  function set(next: "active" | "suspended" | "deleted") {
     setError(null);
     startTransition(async () => {
-      const result = await adminSetAccountStatus(userId, !suspended);
+      const result = await adminSetAccountStatus(userId, next);
       if (!result.ok) setError(result.error);
       else router.refresh();
     });
@@ -33,25 +34,51 @@ export function AdminAccountStatusButton({
   return (
     <span className="inline-flex items-center gap-1.5">
       {error && <span className="text-xs text-red-600">{error}</span>}
-      <Button
-        size="sm"
-        variant={suspended ? "outline" : "ghost"}
-        className={
-          suspended ? "border-emerald-300 text-emerald-700" : "text-red-600 hover:bg-red-50"
-        }
-        disabled={pending}
-        onClick={toggle}
-      >
-        {suspended ? (
-          <>
-            <ShieldCheck className="h-4 w-4" aria-hidden /> Re-activate
-          </>
-        ) : (
-          <>
+      {status === "active" && (
+        <>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-red-600 hover:bg-red-50"
+            disabled={pending}
+            onClick={() => set("suspended")}
+          >
             <ShieldBan className="h-4 w-4" aria-hidden /> Suspend
-          </>
-        )}
-      </Button>
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-red-700 hover:bg-red-50"
+            disabled={pending}
+            onClick={() => set("deleted")}
+          >
+            <XCircle className="h-4 w-4" aria-hidden /> Ban
+          </Button>
+        </>
+      )}
+      {(status === "suspended" || status === "pending") && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-emerald-300 text-emerald-700"
+          disabled={pending}
+          onClick={() => set("active")}
+        >
+          <ShieldCheck className="h-4 w-4" aria-hidden />
+          {status === "suspended" ? "Re-activate" : "Activate"}
+        </Button>
+      )}
+      {status === "deleted" && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-emerald-300 text-emerald-700"
+          disabled={pending}
+          onClick={() => set("active")}
+        >
+          <ShieldCheck className="h-4 w-4" aria-hidden /> Restore
+        </Button>
+      )}
     </span>
   );
 }

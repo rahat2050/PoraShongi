@@ -11,6 +11,8 @@ This folder contains the database schema for PoraShongi.
 - `migrations/20260813000003_trust.sql` — Phase 3 core platform & trust
   (verification tiers, sessions, messaging, reviews, reports, blocks, watch
   requests, notification preferences, matching, reputation).
+- `migrations/20260813000004_trust_extras.sql` — Phase 3 follow-up (budget
+  filter in teacher search; `match_tuitions_for_teacher` opportunities).
 
 ## How to apply
 

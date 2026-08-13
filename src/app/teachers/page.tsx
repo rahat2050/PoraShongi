@@ -36,6 +36,7 @@ export default async function TeachersPage({
   const gender = firstParam(sp.gender);
   const minRating = firstParam(sp.minRating);
   const day = firstParam(sp.day);
+  const maxSalary = firstParam(sp.maxSalary);
 
   const page = Math.max(1, Number(firstParam(sp.page) ?? "1") || 1);
 
@@ -47,6 +48,7 @@ export default async function TeachersPage({
     location: location || undefined,
     mode: mode || undefined,
     minExperience: experience ? Number(experience) : undefined,
+    maxSalary: maxSalary ? Number(maxSalary) : undefined,
     verified: verified === "1" ? true : undefined,
     sort: sort as "relevance" | "rating" | "experience" | "newest",
     gender: gender || undefined,
@@ -78,6 +80,7 @@ export default async function TeachersPage({
       gender,
       minRating,
       day,
+      maxSalary,
       page: p > 1 ? p : undefined,
     })}`;
 
@@ -102,6 +105,7 @@ export default async function TeachersPage({
           gender,
           minRating,
           day,
+          maxSalary,
         }}
       />
 

@@ -28,17 +28,17 @@ export async function adminSetVerification(
   return success();
 }
 
-/** Suspend or re-activate a user account (admin only). */
+/** Suspend, ban, or re-activate a user account (admin only). */
 export async function adminSetAccountStatus(
   userId: string,
-  suspend: boolean,
+  status: "active" | "suspended" | "deleted",
 ): Promise<ActionResult> {
   await requireRole(["admin"]);
   const supabase = await createClient();
 
   const { error } = await supabase
     .from("profiles")
-    .update({ account_status: suspend ? "suspended" : "active" })
+    .update({ account_status: status })
     .eq("id", userId);
 
   if (error) return failure(error.message);

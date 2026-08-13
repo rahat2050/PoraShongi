@@ -14,6 +14,7 @@ export interface TeacherSearchFilters {
   subject?: string;
   location?: string;
   minExperience?: number;
+  maxSalary?: number;
   mode?: string;
   verified?: boolean;
   sort?: "relevance" | "best_match" | "rating" | "experience" | "newest";
@@ -36,6 +37,7 @@ export async function searchTeachers(
     p_subject: filters.subject || null,
     p_location: filters.location || null,
     p_min_experience: filters.minExperience ?? null,
+    p_max_salary: filters.maxSalary ?? null,
     p_mode: filters.mode || null,
     p_verified: filters.verified ?? null,
     p_sort: filters.sort || "relevance",
@@ -136,4 +138,39 @@ export async function getTeacherOwnReviews(
   });
   if (error) return fail(error.message);
   return ok(asJson<OwnReview[]>(data));
+}
+
+/** An open tuition that matches a teacher's profile. */
+export type TuitionMatch = {
+  id: string;
+  title: string;
+  class_level: string;
+  subject: string;
+  location: string | null;
+  budget: number | null;
+  teaching_mode: string;
+  preferred_days: string[] | null;
+  preferred_time: string | null;
+  status: string;
+  created_at: string;
+  poster_name: string | null;
+  poster_display_name: string | null;
+  poster_role: string;
+  score: number;
+};
+
+/** Match opportunities — open tuitions matching a teacher's profile. */
+export async function matchTuitionsForTeacher(
+  teacherId: string,
+  limit = 10,
+): Promise<DataResult<{ total: number; results: TuitionMatch[] }>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const { data, error } = await db.rpc("match_tuitions_for_teacher", {
+    p_teacher_id: teacherId,
+    p_limit: limit,
+  });
+  if (error) return fail(error.message);
+  return ok(asJson<{ total: number; results: TuitionMatch[] }>(data));
 }

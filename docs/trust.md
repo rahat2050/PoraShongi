@@ -21,7 +21,13 @@ weighted, independent factors (max 100):
 
 A tuition's top matches are surfaced via `match_teachers_for_tuition()` with a
 `score` (rendered as "92% Match"), and teacher search can be sorted by
-**Best Match** when a tuition context is provided.
+**Best Match** when a tuition context is provided. Teachers see their own
+"match opportunities" via `match_tuitions_for_teacher()` (open tuitions
+matching their subjects/classes, scored and paginated).
+
+Teacher discovery also supports a **budget filter** (max expected salary),
+alongside class, subject, location, gender, mode, experience, rating,
+verification and availability.
 
 ## Schedule, reminders & attendance
 

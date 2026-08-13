@@ -353,6 +353,7 @@ export interface Database {
           p_subject?: string | null;
           p_location?: string | null;
           p_min_experience?: number | null;
+          p_max_salary?: number | null;
           p_mode?: string | null;
           p_verified?: boolean | null;
           p_sort?: string | null;
@@ -363,6 +364,10 @@ export interface Database {
           p_page?: number | null;
           p_page_size?: number | null;
         };
+        Returns: Json;
+      };
+      match_tuitions_for_teacher: {
+        Args: { p_teacher_id: string; p_limit?: number | null };
         Returns: Json;
       };
       get_public_teacher: {

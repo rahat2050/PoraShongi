@@ -22,6 +22,22 @@ const STATUS_BADGE: Record<Session["status"], { label: string; variant: "success
   rescheduled: { label: "Rescheduled", variant: "warning" },
 };
 
+/** Group sessions by calendar day (daily view; the full list is the weekly view). */
+function groupByDay(sessions: Session[]): { day: string; items: Session[] }[] {
+  const groups = new Map<string, Session[]>();
+  for (const session of sessions) {
+    const day = new Date(session.scheduled_at).toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+    const list = groups.get(day) ?? [];
+    list.push(session);
+    groups.set(day, list);
+  }
+  return Array.from(groups.entries()).map(([day, items]) => ({ day, items }));
+}
+
 export default async function SchedulePage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
@@ -54,6 +70,8 @@ export default async function SchedulePage() {
 
   const upcoming = sessions.filter((s) => s.status === "scheduled" || s.status === "rescheduled");
   const past = sessions.filter((s) => s.status === "completed" || s.status === "cancelled");
+  const upcomingDays = groupByDay(upcoming);
+  const pastDays = groupByDay(past);
 
   const teacherTuitions = isTeacher
     ? (await listTuitionsFor(profile.id)).data ?? []
@@ -77,38 +95,56 @@ export default async function SchedulePage() {
         {isTeacher && <SessionForm tuitions={scheduleable} />}
       </div>
 
-      <h2 className="mt-8 text-base font-semibold text-slate-900">Upcoming</h2>
-      <div className="mt-3 space-y-3">
-        {upcoming.length === 0 ? (
+      <h2 className="mt-8 text-base font-semibold text-slate-900">Upcoming classes</h2>
+      <div className="mt-3 space-y-6">
+        {upcomingDays.length === 0 ? (
           <Card>
             <CardContent className="p-5 text-sm text-slate-400">No upcoming classes.</CardContent>
           </Card>
         ) : (
-          upcoming.map((session) => (
-            <SessionRow
-              key={session.id}
-              session={session}
-              title={tuitionMap.get(session.tuition_id) ?? "Tuition"}
-              isTeacher={isTeacher}
-            />
+          upcomingDays.map((group) => (
+            <div key={group.day}>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {group.day}
+              </h3>
+              <div className="space-y-3">
+                {group.items.map((session) => (
+                  <SessionRow
+                    key={session.id}
+                    session={session}
+                    title={tuitionMap.get(session.tuition_id) ?? "Tuition"}
+                    isTeacher={isTeacher}
+                  />
+                ))}
+              </div>
+            </div>
           ))
         )}
       </div>
 
-      <h2 className="mt-8 text-base font-semibold text-slate-900">Past</h2>
-      <div className="mt-3 space-y-3">
-        {past.length === 0 ? (
+      <h2 className="mt-8 text-base font-semibold text-slate-900">Past classes</h2>
+      <div className="mt-3 space-y-6">
+        {pastDays.length === 0 ? (
           <Card>
             <CardContent className="p-5 text-sm text-slate-400">No past classes yet.</CardContent>
           </Card>
         ) : (
-          past.map((session) => (
-            <SessionRow
-              key={session.id}
-              session={session}
-              title={tuitionMap.get(session.tuition_id) ?? "Tuition"}
-              isTeacher={isTeacher}
-            />
+          pastDays.map((group) => (
+            <div key={group.day}>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {group.day}
+              </h3>
+              <div className="space-y-3">
+                {group.items.map((session) => (
+                  <SessionRow
+                    key={session.id}
+                    session={session}
+                    title={tuitionMap.get(session.tuition_id) ?? "Tuition"}
+                    isTeacher={isTeacher}
+                  />
+                ))}
+              </div>
+            </div>
           ))
         )}
       </div>

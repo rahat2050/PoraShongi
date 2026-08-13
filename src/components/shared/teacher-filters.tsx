@@ -26,6 +26,7 @@ export function TeacherFilters({
     gender?: string;
     minRating?: string;
     day?: string;
+    maxSalary?: string;
   };
 }) {
   return (
@@ -94,6 +95,15 @@ export function TeacherFilters({
             </option>
           ))}
         </Select>
+
+        <Input
+          name="maxSalary"
+          type="number"
+          min={0}
+          placeholder="Max fee (৳/month)"
+          defaultValue={current.maxSalary ?? ""}
+          aria-label="Maximum expected salary"
+        />
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">

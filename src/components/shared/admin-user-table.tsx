@@ -67,10 +67,7 @@ export function AdminUserTable({
                     <AdminVerifyButton teacherId={row.id} />
                   )}
                   {row.role !== "admin" && (
-                    <AdminAccountStatusButton
-                      userId={row.id}
-                      suspended={row.account_status === "suspended"}
-                    />
+                    <AdminAccountStatusButton userId={row.id} status={row.account_status} />
                   )}
                 </div>
               </td>

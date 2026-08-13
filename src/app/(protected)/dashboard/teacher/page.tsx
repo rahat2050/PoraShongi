@@ -10,7 +10,7 @@ import {
   listAcceptedTuitionIds,
   loadRequestDisplay,
 } from "@/lib/data/requests";
-import { getTeacherReputation, getTeacherOwnReviews } from "@/lib/data/teachers";
+import { getTeacherReputation, getTeacherOwnReviews, matchTuitionsForTeacher } from "@/lib/data/teachers";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +20,7 @@ import { ProfileCompletion } from "@/components/shared/profile-completion";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { RequestRow } from "@/components/shared/request-row";
 import { ReputationCard } from "@/components/shared/reputation-card";
+import { MatchBadge } from "@/components/shared/match-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/utils";
 
@@ -41,6 +42,8 @@ export default async function TeacherDashboardPage() {
       getTeacherReputation(profile.id),
       getTeacherOwnReviews(profile.id),
     ]);
+
+  const matchOpportunities = await matchTuitionsForTeacher(profile.id, 6);
 
   const tuitionList = tuitions.data ?? [];
   const requestList = receivedRequests.data ?? [];
@@ -165,6 +168,40 @@ export default async function TeacherDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {matchOpportunities.data && matchOpportunities.data.results.length > 0 && (
+        <Card className="mt-6">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold text-slate-900">
+                Match opportunities ({matchOpportunities.data.total})
+              </h2>
+              <Link href="/tuitions" className="text-sm font-medium text-brand-700 hover:underline">
+                Browse tuitions
+              </Link>
+            </div>
+            <div className="mt-3 divide-y divide-slate-100">
+              {matchOpportunities.data.results.map((m) => (
+                <div key={m.id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/tuitions/${m.id}`}
+                      className="block truncate text-sm font-medium text-slate-800 hover:text-brand-700"
+                    >
+                      {m.title}
+                    </Link>
+                    <p className="text-xs text-slate-400">
+                      {m.class_level} · {m.subject}
+                      {m.location ? ` · ${m.location}` : ""}
+                    </p>
+                  </div>
+                  <MatchBadge score={m.score} />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card id="reviews" className="mt-6 scroll-mt-20">
         <CardContent className="p-5">
