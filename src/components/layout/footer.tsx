@@ -4,9 +4,10 @@ import { siteConfig } from "@/config/site";
 
 const columns = [
   {
-    heading: "Product",
+    heading: "Marketplace",
     links: [
-      { href: "/#features", label: "Features" },
+      { href: "/teachers", label: "Find teachers" },
+      { href: "/tuitions", label: "Browse tuitions" },
       { href: "/#roles", label: "For students" },
       { href: "/#roles", label: "For teachers" },
       { href: "/#roles", label: "For guardians" },
@@ -72,7 +73,7 @@ export function Footer() {
             © {new Date().getFullYear()} {siteConfig.brandName} (
             {siteConfig.brandNameBangla}). All rights reserved.
           </p>
-          <p>Phase 1 · Foundation &amp; Architecture</p>
+          <p>Phase 2 · MVP Marketplace</p>
         </div>
       </div>
     </footer>

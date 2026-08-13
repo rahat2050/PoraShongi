@@ -55,3 +55,40 @@ export function formatDateTime(iso?: string | null): string {
     minute: "2-digit",
   });
 }
+
+/** Format a number as Bangladeshi Taka. */
+export function formatTaka(amount?: number | null): string {
+  if (amount === null || amount === undefined) return "Negotiable";
+  return `৳${amount.toLocaleString("en-BD")}`;
+}
+
+/** Build a query string from a params object, skipping empty values. */
+export function buildQueryString(
+  params: Record<string, string | number | boolean | null | undefined>,
+): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === null || value === undefined || value === "" || value === false) {
+      continue;
+    }
+    search.set(key, String(value));
+  }
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
+}
+
+/** Get the first value from a searchParam that may be a string or array. */
+export function firstParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/** Humanize a mode value. */
+export function modeLabel(mode?: string | null): string {
+  if (!mode) return "—";
+  if (mode === "offline") return "Offline";
+  if (mode === "online") return "Online";
+  if (mode === "both") return "Online & Offline";
+  return mode;
+}

@@ -20,28 +20,42 @@ src/
 │   ├── (auth)/                   # Auth pages (centered layout)
 │   │   ├── login/ register/ forgot-password/ reset-password/
 │   ├── (protected)/              # Route group guarded server-side
-│   │   ├── dashboard/ profile/ admin/
+│   │   ├── dashboard/            # Role-aware dashboards (+redirect)
+│   │   │   ├── student/ teacher/ guardian/
+│   │   │   ├── tuitions/ (list, new, [id])   # own tuition management
+│   │   │   ├── requests/ favorites/ notifications/
+│   │   ├── profile/              # Role-aware profile editor
+│   │   └── admin/                # Admin panel (users, teachers, …)
+│   ├── teachers/                 # PUBLIC teacher search + profile
+│   │   ├── page.tsx, [id]/page.tsx
+│   ├── tuitions/                 # PUBLIC tuition search + detail
+│   │   ├── page.tsx, [id]/page.tsx
 │   ├── auth/callback/route.ts    # Auth code exchange (email links)
 │   └── api/health/route.ts       # Health/diagnostics endpoint
 │
 ├── components/
 │   ├── ui/                       # Design-system primitives
 │   ├── layout/                   # Header, footer, logo, auth area
-│   └── shared/                   # Cross-cutting components
+│   └── shared/                   # Cards, filters, badges, request UI
 │
 ├── features/                     # Feature modules (domain logic + UI)
 │   ├── auth/                     # Sign-in/up, password reset forms
-│   └── profile/                  # Profile form
+│   ├── profile/                  # Base + role profile forms & actions
+│   ├── tuitions/                 # Tuition form, manage actions
+│   ├── requests/                 # Request actions (accept/reject/withdraw)
+│   ├── favorites/ notifications/ admin/   # Actions + UI
+│   └── types.ts                  # Shared ActionResult type
 │
 ├── lib/
 │   ├── supabase/                 # Supabase clients (browser/server/admin/proxy)
 │   ├── auth/                     # Server-side auth & roles
+│   ├── data/                     # Server-only data access layer (queries)
 │   ├── cloudinary.ts             # Image upload & optimization
 │   ├── env.ts                    # Client-safe env access
-│   └── utils.ts                  # cn(), formatters, redirect sanitizer
+│   └── utils.ts                  # cn(), formatters, query-string, redirect sanitizer
 │
 ├── types/                        # Domain types + Database type
-├── config/                       # Brand/site configuration
+├── config/                       # Brand/site config + option lists
 ├── validation/                   # Zod schemas
 └── proxy.ts                      # Next.js 16 proxy (was "middleware")
 ```
@@ -83,8 +97,18 @@ key never ships to the browser.
 Domain-specific code (auth forms, profile editing) lives in `src/features/`,
 keeping `components/` purely presentational and reusable.
 
+### 6. Server-only data layer (`lib/data/`)
+
+All reads go through `src/lib/data/*` modules (marked `server-only`), which
+wrap the Supabase client and return `DataResult<T>` instead of throwing.
+Search/directory reads use Postgres RPC functions (security-definer, explicit
+field lists) so cross-table filtering and pagination happen in the database
+without exposing sensitive columns. Writes go through server actions in
+`src/features/*/actions.ts`, which re-validate inputs with Zod and re-check
+authorization (`requireProfile` / `requireRole`).
+
 ## Future phases
 
-Later phases (teacher discovery, tuition posting, messaging, reviews,
-payments…) plug into this foundation without restructuring: new feature
-modules, new tables/migrations, and new routes under `(protected)`.
+Later phases (messaging, reviews, payments, premium, notifications at scale…)
+plug into this foundation without restructuring: new feature modules, new
+tables/migrations, and new routes under `(protected)`.

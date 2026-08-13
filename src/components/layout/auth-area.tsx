@@ -3,18 +3,25 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, LogOut, User as UserIcon } from "lucide-react";
+import {
+  Bell,
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  ScrollText,
+  User as UserIcon,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar } from "@/components/ui/avatar";
+import { NotificationBell } from "@/components/shared/notification-bell";
 import {
   DropdownMenu,
   DropdownItem,
   DropdownSeparator,
 } from "@/components/ui/dropdown";
-import { getInitials } from "@/lib/utils";
 
 interface AuthUser {
   id: string;
@@ -51,28 +58,17 @@ export function AuthArea() {
     };
   }, [configured]);
 
-  if (!configured) {
-    return (
-      <div className="flex items-center gap-2">
-        <Link href="/login" className={buttonStyles({ variant: "ghost", size: "sm" })}>
-          Sign in
-        </Link>
-        <Link
-          href="/register"
-          className={buttonStyles({ variant: "primary", size: "sm" })}
-        >
-          Get started
-        </Link>
-      </div>
-    );
-  }
-
   if (loading) {
     return <Skeleton className="h-9 w-28 rounded-full" />;
   }
 
   if (user) {
-    return <UserMenu user={user} />;
+    return (
+      <div className="flex items-center gap-1">
+        <NotificationBell />
+        <UserMenu user={user} />
+      </div>
+    );
   }
 
   return (
@@ -111,7 +107,7 @@ function UserMenu({ user }: { user: AuthUser }) {
         >
           <Avatar name={name} size="sm" />
           <span className="hidden max-w-[9rem] truncate text-sm font-medium text-slate-700 sm:block">
-            {getInitials(name) === "?" ? name : name}
+            {name}
           </span>
         </button>
       )}
@@ -119,9 +115,7 @@ function UserMenu({ user }: { user: AuthUser }) {
       {(close) => (
         <>
           <div className="px-3 py-2">
-            <p className="truncate text-sm font-semibold text-slate-800">
-              {name}
-            </p>
+            <p className="truncate text-sm font-semibold text-slate-800">{name}</p>
             {user.email && (
               <p className="truncate text-xs text-slate-500">{user.email}</p>
             )}
@@ -144,6 +138,33 @@ function UserMenu({ user }: { user: AuthUser }) {
             }}
           >
             Profile
+          </DropdownItem>
+          <DropdownItem
+            icon={<ScrollText className="h-4 w-4" />}
+            onSelect={() => {
+              close();
+              router.push("/dashboard/tuitions");
+            }}
+          >
+            My tuitions
+          </DropdownItem>
+          <DropdownItem
+            icon={<Heart className="h-4 w-4" />}
+            onSelect={() => {
+              close();
+              router.push("/dashboard/favorites");
+            }}
+          >
+            Saved teachers
+          </DropdownItem>
+          <DropdownItem
+            icon={<Bell className="h-4 w-4" />}
+            onSelect={() => {
+              close();
+              router.push("/dashboard/notifications");
+            }}
+          >
+            Notifications
           </DropdownItem>
           <DropdownSeparator />
           <DropdownItem

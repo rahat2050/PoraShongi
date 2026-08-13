@@ -5,8 +5,8 @@ import {
   BookOpen,
   GraduationCap,
   KeyRound,
-  LayoutDashboard,
   MapPin,
+  Search,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -28,7 +28,7 @@ const roles = [
     title: "For students",
     bangla: "শিক্ষার্থী",
     description:
-      "Find the right teacher for your subjects, level and learning pace.",
+      "Post your tuition requirement, find the right teacher and send a request.",
   },
   {
     key: "teacher",
@@ -36,7 +36,7 @@ const roles = [
     title: "For teachers",
     bangla: "শিক্ষক",
     description:
-      "Build a verified profile and get discovered by students and guardians.",
+      "Build a verified profile, get discovered and receive tuition requests.",
   },
   {
     key: "guardian",
@@ -44,34 +44,34 @@ const roles = [
     title: "For guardians",
     bangla: "অভিভাবক",
     description:
-      "Manage tuition and keep track of your children's learning journey.",
+      "Link your child's account and manage their tuition journey end-to-end.",
   },
 ];
 
-const foundation = [
+const features = [
+  {
+    icon: Search,
+    title: "Search & filter",
+    description:
+      "Find teachers and tuitions by class, subject, location, budget and mode — with pagination.",
+  },
   {
     icon: KeyRound,
-    title: "Secure authentication",
+    title: "Requests & replies",
     description:
-      "Registration, login, logout, session handling and password recovery built on Supabase Auth.",
+      "Send tuition requests to teachers, who accept or reject them. Duplicate requests are blocked.",
   },
   {
     icon: BadgeCheck,
-    title: "Role-based access",
+    title: "Verification & trust",
     description:
-      "Student, teacher, guardian and admin roles enforced on the server, never just the UI.",
+      "Verified, education and phone status help you choose with confidence.",
   },
   {
     icon: ShieldCheck,
-    title: "Row Level Security",
+    title: "Privacy by design",
     description:
-      "Every user sees only their own data. Admin operations stay protected.",
-  },
-  {
-    icon: LayoutDashboard,
-    title: "Profile foundation",
-    description:
-      "A clean, scalable profile architecture ready to power the full marketplace.",
+      "Row Level Security keeps every account's data private — no sensitive info is ever public.",
   },
 ];
 
@@ -82,7 +82,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white">
         <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 sm:py-28">
           <Badge variant="brand" className="mb-6">
-            Phase 1 · Foundation &amp; Architecture
+            Bangladesh&apos;s tuition marketplace
           </Badge>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
             {siteConfig.brandNameBangla}
@@ -94,14 +94,14 @@ export default function HomePage() {
             {siteConfig.description}
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/register" className={buttonStyles({ size: "lg" })}>
-              Get started <ArrowRight className="h-4 w-4" aria-hidden />
+            <Link href="/teachers" className={buttonStyles({ size: "lg" })}>
+              Find a teacher <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link
-              href="/login"
+              href="/register"
               className={buttonStyles({ variant: "outline", size: "lg" })}
             >
-              Sign in
+              Join free
             </Link>
           </div>
           <p className="mt-7 inline-flex items-center gap-2 text-sm text-slate-500">
@@ -144,20 +144,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Foundation */}
+      {/* Features */}
       <section id="features" className="scroll-mt-20 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              A solid foundation first
+              Everything you need to connect
             </h2>
             <p className="mt-3 text-slate-600">
-              Phase 1 lays the groundwork the whole marketplace will be built
-              on.
+              A simple, safe marketplace for tuition in Bangladesh.
             </p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            {foundation.map((item) => (
+            {features.map((item) => (
               <div
                 key={item.title}
                 className="flex gap-4 rounded-2xl border border-slate-200 bg-slate-50/50 p-6"
@@ -167,9 +166,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">{item.title}</h3>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {item.description}
-                  </p>
+                  <p className="mt-1 text-sm text-slate-600">{item.description}</p>
                 </div>
               </div>
             ))}

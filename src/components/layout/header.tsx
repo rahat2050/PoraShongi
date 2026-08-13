@@ -3,9 +3,10 @@ import { Logo } from "@/components/layout/logo";
 import { AuthArea } from "@/components/layout/auth-area";
 
 const navLinks = [
-  { href: "/#features", label: "Features" },
+  { href: "/teachers", label: "Find teachers" },
+  { href: "/tuitions", label: "Tuitions" },
   { href: "/#roles", label: "Who it's for" },
-  { href: "/#security", label: "Security" },
+  { href: "/#security", label: "Safety" },
 ];
 
 export function Header() {
