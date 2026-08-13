@@ -1,16 +1,24 @@
 import {
   type AccountStatus,
   type AppNotification,
+  type Block,
+  type Conversation,
   type Favorite,
   type GuardianProfile,
+  type Message,
+  type NotificationPreferences,
   type Profile,
+  type Report,
   type RequestStatus,
+  type Review,
+  type Session,
   type StudentProfile,
   type TeacherProfile,
   type Tuition,
   type TuitionRequest,
   type TuitionStatus,
   type VerificationStatus,
+  type WatchRequest,
 } from "@/types/index";
 import { type UserRole } from "@/lib/auth/roles";
 
@@ -36,6 +44,12 @@ export interface Database {
           location?: string | null;
           phone?: string | null;
           phone_verified?: boolean;
+          gender?: string | null;
+          is_minor?: boolean;
+          guardian_consent?: boolean;
+          education_verified?: boolean;
+          identity_verified?: boolean;
+          trusted_tutor?: boolean;
           account_status?: AccountStatus;
           verification_status?: VerificationStatus;
           created_at?: string;
@@ -85,6 +99,8 @@ export interface Database {
           expected_salary?: number | null;
           available_days?: string[] | null;
           available_time?: string | null;
+          rating_avg?: number;
+          review_count?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -130,9 +146,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<
-          Omit<Tuition, "id" | "poster_id" | "created_at"> & {
-            created_at?: string;
-          }
+          Omit<Tuition, "id" | "poster_id" | "created_at"> & { created_at?: string }
         >;
         Relationships: [];
       };
@@ -181,12 +195,157 @@ export interface Database {
         Update: Partial<Omit<AppNotification, "id" | "created_at"> & { created_at?: string }>;
         Relationships: [];
       };
+      sessions: {
+        Row: Session;
+        Insert: {
+          id?: string;
+          tuition_id: string;
+          teacher_id: string;
+          student_id?: string | null;
+          scheduled_at: string;
+          end_at?: string | null;
+          status?: Session["status"];
+          attendance?: Session["attendance"];
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<Session, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      conversations: {
+        Row: Conversation;
+        Insert: {
+          id?: string;
+          tuition_id?: string | null;
+          participant_a: string;
+          participant_b: string;
+          created_at?: string;
+          updated_at?: string;
+          last_message_at?: string | null;
+        };
+        Update: Partial<Omit<Conversation, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      messages: {
+        Row: Message;
+        Insert: {
+          id?: string;
+          conversation_id: string;
+          sender_id: string;
+          body: string;
+          status?: Message["status"];
+          created_at?: string;
+        };
+        Update: Partial<Omit<Message, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      reviews: {
+        Row: Review;
+        Insert: {
+          id?: string;
+          teacher_id: string;
+          reviewer_id: string;
+          tuition_id?: string | null;
+          rating: number;
+          body?: string | null;
+          verified?: boolean;
+          status?: Review["status"];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<Review, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      reports: {
+        Row: Report;
+        Insert: {
+          id?: string;
+          reporter_id: string;
+          target_type: Report["target_type"];
+          target_id: string;
+          category: Report["category"];
+          details?: string | null;
+          status?: Report["status"];
+          resolution?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          resolved_at?: string | null;
+        };
+        Update: Partial<Omit<Report, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      blocks: {
+        Row: Block;
+        Insert: {
+          id?: string;
+          blocker_id: string;
+          blocked_id: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<Block, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      watch_requests: {
+        Row: WatchRequest;
+        Insert: {
+          id?: string;
+          user_id: string;
+          tuition_id?: string | null;
+          class_level?: string | null;
+          subject?: string | null;
+          location?: string | null;
+          teaching_mode?: string | null;
+          budget?: number | null;
+          notified?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Omit<WatchRequest, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      notification_preferences: {
+        Row: NotificationPreferences;
+        Insert: {
+          user_id: string;
+          new_match?: boolean;
+          new_request?: boolean;
+          request_response?: boolean;
+          new_message?: boolean;
+          upcoming_class?: boolean;
+          schedule_change?: boolean;
+          review_received?: boolean;
+          verification_update?: boolean;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<NotificationPreferences, "user_id" | "updated_at"> & { updated_at?: string }>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
       is_admin: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
+      };
+      verification_tier: {
+        Args: { p_user_id: string };
+        Returns: string;
+      };
+      compute_teacher_match: {
+        Args: {
+          p_teacher_id: string;
+          p_class?: string | null;
+          p_subject?: string | null;
+          p_location?: string | null;
+          p_mode?: string | null;
+          p_budget?: number | null;
+          p_days?: string[] | null;
+        };
+        Returns: number;
+      };
+      match_teachers_for_tuition: {
+        Args: { p_tuition_id: string; p_limit?: number | null };
+        Returns: Json;
       };
       search_teachers: {
         Args: {
@@ -196,6 +355,11 @@ export interface Database {
           p_min_experience?: number | null;
           p_mode?: string | null;
           p_verified?: boolean | null;
+          p_sort?: string | null;
+          p_gender?: string | null;
+          p_min_rating?: number | null;
+          p_available_day?: string | null;
+          p_tuition_id?: string | null;
           p_page?: number | null;
           p_page_size?: number | null;
         };
@@ -207,6 +371,18 @@ export interface Database {
       };
       get_public_teachers: {
         Args: { p_ids: string[] };
+        Returns: Json;
+      };
+      get_teacher_reputation: {
+        Args: { p_teacher_id: string };
+        Returns: Json;
+      };
+      get_teacher_reviews: {
+        Args: { p_teacher_id: string; p_page?: number | null; p_page_size?: number | null };
+        Returns: Json;
+      };
+      get_teacher_own_reviews: {
+        Args: { p_teacher_id: string };
         Returns: Json;
       };
       search_tuitions: {

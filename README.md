@@ -6,8 +6,8 @@ A Bangladesh-focused **teacher–student tuition marketplace** and education
 ecosystem. PoraShongi connects students, guardians and qualified teachers —
 starting in Sunamganj / Sylhet, with a vision for all of Bangladesh.
 
-**Current status:** Phase 2 — MVP Marketplace ✅
-(Phase 1 — Foundation & Architecture: complete)
+**Current status:** Phase 3 — Core Platform & Trust ✅
+(Phase 1 Foundation & Phase 2 MVP: complete)
 
 ---
 
@@ -23,7 +23,9 @@ starting in Sunamganj / Sylhet, with a vision for all of Bangladesh.
 
 ---
 
-## What the MVP includes
+## What's included
+
+### Marketplace (Phase 2)
 
 - **Profiles** — student, teacher and guardian profiles (role-specific fields,
   profile completion %, avatar via Cloudinary).
@@ -43,6 +45,26 @@ starting in Sunamganj / Sylhet, with a vision for all of Bangladesh.
   verification status.
 - **Admin MVP** — users, teachers, students, guardians, tuitions, requests and
   verification management.
+
+### Core platform & trust (Phase 3)
+
+- **Smart matching** — deterministic, explainable scores ("92% Match").
+- **Advanced teacher discovery** — gender, rating, availability filters +
+  sorting (relevance, best match, rating, experience, newest).
+- **Schedule** — sessions with daily/weekly views; attendance
+  (present/absent/cancelled/rescheduled); in-app reminders.
+- **Lightweight messaging** — conversations, unread counts, read receipts,
+  blocking, reporting (strict RLS).
+- **Reviews & ratings** — verified reviews after accepted tuitions,
+  efficient rating counters, admin moderation.
+- **Verification tiers** — unverified → phone → education → identity →
+  trusted tutor (admin managed).
+- **Child safety** — minor privacy redaction, guardian consent, reporting,
+  blocking, safety guidelines.
+- **Reporting & moderation** — report any entity; admin investigate/resolve.
+- **Notification preferences** + no-match "notify me" alerts.
+- **Teacher reputation** — transparent indicators (rating, completion,
+  response & cancellation behavior).
 
 ---
 
@@ -70,6 +92,7 @@ project's SQL editor:
 
 1. `20260813000001_init.sql` — Phase 1 foundation
 2. `20260813000002_mvp.sql` — Phase 2 marketplace
+3. `20260813000003_trust.sql` — Phase 3 core platform & trust
 
 See `supabase/README.md` and `docs/supabase-setup.md`.
 
@@ -102,6 +125,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | [docs/branding.md](docs/branding.md)               | Brand, name, tagline, design system                |
 | [docs/architecture.md](docs/architecture.md)       | Folder structure & architectural decisions         |
 | [docs/mvp.md](docs/mvp.md)                         | Phase 2 data model & core flows                    |
+| [docs/trust.md](docs/trust.md)                     | Phase 3 matching, safety, messaging, reviews, moderation |
 | [docs/setup.md](docs/setup.md)                     | Full local setup walkthrough                       |
 | [docs/environment-variables.md](docs/environment-variables.md) | Every env var explained        |
 | [docs/supabase-setup.md](docs/supabase-setup.md)   | Project, migrations, auth & RLS setup              |

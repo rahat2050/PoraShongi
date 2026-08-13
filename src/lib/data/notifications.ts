@@ -1,6 +1,6 @@
 import "server-only";
 import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
-import { type AppNotification } from "@/types/index";
+import { type AppNotification, type NotificationPreferences } from "@/types/index";
 
 export async function listNotifications(
   userId: string,
@@ -30,4 +30,18 @@ export async function unreadNotificationCount(
     .eq("read", false);
   if (error) return fail(error.message);
   return ok(count ?? 0);
+}
+
+export async function getNotificationPreferences(
+  userId: string,
+): Promise<DataResult<NotificationPreferences | null>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db
+    .from("notification_preferences")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) return fail(error.message);
+  return ok((data as NotificationPreferences | null) ?? null);
 }

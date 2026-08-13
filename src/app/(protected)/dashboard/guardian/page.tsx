@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, ScrollText, Send, Users } from "lucide-react";
+import { CalendarDays, Plus, ScrollText, Send, ShieldCheck, Users } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import {
   getRoleProfileRow,
@@ -88,6 +88,20 @@ export default async function GuardianDashboardPage() {
             icon={<Users className="h-5 w-5" aria-hidden />}
             href="/profile"
             hrefLabel="Manage linked student"
+          />
+          <StatCard
+            label="Schedule"
+            value="→"
+            icon={<CalendarDays className="h-5 w-5" aria-hidden />}
+            href="/dashboard/schedule"
+            hrefLabel="Open schedule"
+          />
+          <StatCard
+            label="Safety"
+            value="→"
+            icon={<ShieldCheck className="h-5 w-5" aria-hidden />}
+            href="/safety"
+            hrefLabel="Safety guidelines"
           />
         </div>
       </div>

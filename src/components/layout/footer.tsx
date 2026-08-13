@@ -21,6 +21,14 @@ const columns = [
       { href: "/forgot-password", label: "Reset password" },
     ],
   },
+  {
+    heading: "Trust & safety",
+    links: [
+      { href: "/safety", label: "Safety guidelines" },
+      { href: "/safety", label: "Report a concern" },
+      { href: "/safety", label: "Child safety" },
+    ],
+  },
 ];
 
 export function Footer() {
@@ -73,7 +81,7 @@ export function Footer() {
             © {new Date().getFullYear()} {siteConfig.brandName} (
             {siteConfig.brandNameBangla}). All rights reserved.
           </p>
-          <p>Phase 2 · MVP Marketplace</p>
+          <p>Phase 3 · Core Platform &amp; Trust</p>
         </div>
       </div>
     </footer>

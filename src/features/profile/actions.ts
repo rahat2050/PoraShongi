@@ -17,6 +17,8 @@ export async function updateBaseProfile(input: {
   location?: string;
   phone?: string;
   avatarUrl?: string;
+  gender?: string;
+  isMinor?: boolean;
 }): Promise<ActionResult> {
   const profile = await requireProfile();
   const parsed = updateProfileSchema.safeParse(input);
@@ -33,6 +35,8 @@ export async function updateBaseProfile(input: {
       location: parsed.data.location || null,
       phone: parsed.data.phone || null,
       avatar_url: input.avatarUrl || null,
+      gender: parsed.data.gender || null,
+      is_minor: Boolean(parsed.data.isMinor),
     })
     .eq("id", profile.id);
 

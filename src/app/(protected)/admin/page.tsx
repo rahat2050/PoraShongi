@@ -4,9 +4,10 @@ import {
   GraduationCap,
   ScrollText,
   Send,
+  ShieldCheck,
   Users,
 } from "lucide-react";
-import { adminStats } from "@/lib/data/admin";
+import { adminStats, adminReportStats } from "@/lib/data/admin";
 import { StatCard } from "@/components/shared/stat-card";
 import { Alert } from "@/components/ui/alert";
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = { title: "Admin overview" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminOverviewPage() {
-  const result = await adminStats();
+  const [result, reportStats] = await Promise.all([adminStats(), adminReportStats()]);
   const stats = result.data;
 
   if (!stats) {
@@ -68,6 +69,12 @@ export default async function AdminOverviewPage() {
           value={stats.pendingVerifications}
           icon={<BadgeCheck className="h-5 w-5" aria-hidden />}
           href="/admin/verification"
+        />
+        <StatCard
+          label="Open reports"
+          value={reportStats.data?.open ?? 0}
+          icon={<ShieldCheck className="h-5 w-5" aria-hidden />}
+          href="/admin/reports"
         />
       </div>
     </div>

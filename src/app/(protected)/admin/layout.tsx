@@ -11,6 +11,8 @@ const navItems = [
   { href: "/admin/tuitions", label: "Tuitions" },
   { href: "/admin/requests", label: "Requests" },
   { href: "/admin/verification", label: "Verification" },
+  { href: "/admin/reviews", label: "Reviews" },
+  { href: "/admin/reports", label: "Reports" },
 ];
 
 export default async function AdminLayout({

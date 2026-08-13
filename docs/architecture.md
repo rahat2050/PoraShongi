@@ -97,6 +97,15 @@ key never ships to the browser.
 Domain-specific code (auth forms, profile editing) lives in `src/features/`,
 keeping `components/` purely presentational and reusable.
 
+### 5b. Phase 3 additions
+
+Phase 3 adds feature modules (`schedule`, `messages`, `reviews`, `reports`,
+`blocks`, `watch`) with server actions + client UI, new routes
+(`/messages`, `/messages/[id]`, `/dashboard/schedule`, `/safety`), and new
+data modules (`sessions`, `messages`, `reviews`, `blocks`, `watch`,
+`matching` via `teachers`). Matching, reputation and review reads run through
+Postgres RPCs so scoring/pagination stay in the database.
+
 ### 6. Server-only data layer (`lib/data/`)
 
 All reads go through `src/lib/data/*` modules (marked `server-only`), which

@@ -6,6 +6,11 @@ This folder contains the database schema for PoraShongi.
 
 - `migrations/20260813000001_init.sql` — Phase 1 schema (profiles,
   role-specific profiles, enums, triggers, helpers, Row Level Security).
+- `migrations/20260813000002_mvp.sql` — Phase 2 marketplace (tuitions,
+  requests, favorites, notifications, search RPCs).
+- `migrations/20260813000003_trust.sql` — Phase 3 core platform & trust
+  (verification tiers, sessions, messaging, reviews, reports, blocks, watch
+  requests, notification preferences, matching, reputation).
 
 ## How to apply
 

@@ -8,7 +8,7 @@ import {
 } from "@/lib/env";
 
 /** Route prefixes that require an authenticated user. */
-const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/admin"];
+const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/admin", "/messages"];
 
 /** Auth pages that a signed-in user should not revisit. */
 const AUTH_REDIRECT_PATHS = new Set(["/login", "/register", "/forgot-password"]);

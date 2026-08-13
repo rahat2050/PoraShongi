@@ -36,3 +36,36 @@ export async function markAllNotificationsRead(): Promise<ActionResult> {
   revalidatePath("/dashboard/notifications");
   return success();
 }
+
+export async function updateNotificationPreferences(input: {
+  new_match: boolean;
+  new_request: boolean;
+  request_response: boolean;
+  new_message: boolean;
+  upcoming_class: boolean;
+  schedule_change: boolean;
+  review_received: boolean;
+  verification_update: boolean;
+}): Promise<ActionResult> {
+  const profile = await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("notification_preferences")
+    .upsert({
+      user_id: profile.id,
+      new_match: input.new_match,
+      new_request: input.new_request,
+      request_response: input.request_response,
+      new_message: input.new_message,
+      upcoming_class: input.upcoming_class,
+      schedule_change: input.schedule_change,
+      review_received: input.review_received,
+      verification_update: input.verification_update,
+    });
+
+  if (error) return failure(error.message);
+
+  revalidatePath("/dashboard/notifications");
+  return success();
+}

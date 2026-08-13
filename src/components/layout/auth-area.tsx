@@ -8,6 +8,7 @@ import {
   Heart,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   ScrollText,
   User as UserIcon,
 } from "lucide-react";
@@ -65,6 +66,13 @@ export function AuthArea() {
   if (user) {
     return (
       <div className="flex items-center gap-1">
+        <Link
+          href="/messages"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100"
+          aria-label="Messages"
+        >
+          <MessageSquare className="h-5 w-5" aria-hidden />
+        </Link>
         <NotificationBell />
         <UserMenu user={user} />
       </div>
@@ -165,6 +173,15 @@ function UserMenu({ user }: { user: AuthUser }) {
             }}
           >
             Notifications
+          </DropdownItem>
+          <DropdownItem
+            icon={<MessageSquare className="h-4 w-4" />}
+            onSelect={() => {
+              close();
+              router.push("/messages");
+            }}
+          >
+            Messages
           </DropdownItem>
           <DropdownSeparator />
           <DropdownItem

@@ -1,7 +1,13 @@
 import "server-only";
 import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
 import { type UserRole } from "@/lib/auth/roles";
-import { type Profile, type Tuition, type TuitionRequest } from "@/types/index";
+import {
+  type Profile,
+  type Report,
+  type Review,
+  type Tuition,
+  type TuitionRequest,
+} from "@/types/index";
 
 export interface AdminStats {
   users: number;
@@ -136,4 +142,60 @@ export async function adminListPendingVerifications(
 
   if (error) return fail(error.message);
   return ok({ rows: (data ?? []) as Profile[], total: count ?? 0 });
+}
+
+export async function adminListReports(
+  page: number,
+  pageSize: number,
+  status?: Report["status"],
+): Promise<DataResult<Paged<Report>>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = db.from("reports").select("*", { count: "exact" });
+  if (status) query = query.eq("status", status);
+
+  const { data, count, error } = await query
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) return fail(error.message);
+  return ok({ rows: (data ?? []) as Report[], total: count ?? 0 });
+}
+
+export async function adminListReviews(
+  page: number,
+  pageSize: number,
+): Promise<DataResult<Paged<Review>>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, count, error } = await db
+    .from("reviews")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) return fail(error.message);
+  return ok({ rows: (data ?? []) as Review[], total: count ?? 0 });
+}
+
+export async function adminReportStats(): Promise<
+  DataResult<{ open: number; investigating: number }>
+> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const [open, investigating] = await Promise.all([
+    db.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
+    db.from("reports").select("id", { count: "exact", head: true }).eq("status", "investigating"),
+  ]);
+
+  return ok({ open: open.count ?? 0, investigating: investigating.count ?? 0 });
 }

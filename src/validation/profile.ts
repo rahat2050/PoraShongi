@@ -5,7 +5,7 @@ const optionalText = (max: number) =>
 
 const days = z.array(z.string()).optional();
 
-/** Base profile (name, avatar, location, phone). */
+/** Base profile (name, avatar, location, phone, safety fields). */
 export const updateProfileSchema = z.object({
   fullName: z
     .string()
@@ -15,6 +15,8 @@ export const updateProfileSchema = z.object({
   displayName: z.string().trim().max(80, "Display name is too long.").optional().or(z.literal("")),
   location: z.string().trim().max(160, "Location is too long.").optional().or(z.literal("")),
   phone: z.string().trim().max(30, "Phone number is too long.").optional().or(z.literal("")),
+  gender: z.string().optional().or(z.literal("")),
+  isMinor: z.boolean().optional(),
 });
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
