@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/env";
-import { getCurrentProfile } from "@/lib/auth/server-auth";
+import { getCurrentProfile, getCurrentUser } from "@/lib/auth/server-auth";
 import { SetupRequired } from "@/components/shared/setup-required";
 import { Alert } from "@/components/ui/alert";
 
@@ -16,12 +16,22 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // No Supabase env vars — nothing can work; show setup steps.
   if (!isSupabaseConfigured()) {
     return <SetupRequired />;
   }
 
+  // Not signed in — send to the login page.
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  // Signed in but no profile row — the database migrations haven't been
+  // applied (or the signup trigger didn't run). Show instructions instead of
+  // bouncing back to /login in a loop.
   const profile = await getCurrentProfile();
-  if (!profile) redirect("/login");
+  if (!profile) {
+    return <SetupRequired reason="profile" />;
+  }
 
   return (
     <div className="flex flex-1 flex-col">
