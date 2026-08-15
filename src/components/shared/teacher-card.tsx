@@ -64,6 +64,18 @@ export function TeacherCard({
           <InfoItem label="রেটিং" value={teacher.review_count ? `★ ${teacher.rating_avg}` : "নতুন"} />
         </dl>
 
+        {(teacher.experience_years != null && teacher.experience_years >= 5) ||
+        (teacher.rating_avg != null && teacher.rating_avg >= 4.5) ? (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {teacher.experience_years != null && teacher.experience_years >= 5 && (
+              <Badge variant="info">অভিজ্ঞ</Badge>
+            )}
+            {teacher.rating_avg != null && teacher.rating_avg >= 4.5 && teacher.review_count != null && teacher.review_count > 0 && (
+              <Badge variant="accent">Top Rated</Badge>
+            )}
+          </div>
+        ) : null}
+
         <div className="mt-4 border-t border-slate-100 pt-4">
           <Link href={`/teachers/${teacher.id}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">
             <BookOpen className="h-4 w-4" aria-hidden />

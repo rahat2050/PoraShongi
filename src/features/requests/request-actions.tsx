@@ -1,28 +1,31 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Check, X } from "lucide-react";
 import { respondToRequest, withdrawRequest } from "@/features/requests/actions";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 
 export function TeacherRequestActions({ requestId }: { requestId: string }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
   const [pending, startTransition] = useTransition();
 
   function respond(decision: "accepted" | "rejected") {
-    setError(null);
     startTransition(async () => {
       const result = await respondToRequest(requestId, decision);
-      if (!result.ok) setError(result.error);
-      else router.refresh();
+      if (result.ok) {
+        toast(decision === "accepted" ? "Request গ্রহণ করা হয়েছে" : "Request প্রত্যাখ্যান করা হয়েছে", decision === "accepted" ? "success" : "danger");
+        router.refresh();
+      } else {
+        toast(result.error, "danger");
+      }
     });
   }
 
   return (
     <div className="flex items-center gap-2">
-      {error && <span className="text-xs text-red-600">{error}</span>}
       <Button size="sm" variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50" disabled={pending} onClick={() => respond("accepted")}>
         <Check className="h-4 w-4" aria-hidden /> গ্রহণ
       </Button>
@@ -35,24 +38,24 @@ export function TeacherRequestActions({ requestId }: { requestId: string }) {
 
 export function SenderRequestActions({ requestId }: { requestId: string }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
   const [pending, startTransition] = useTransition();
 
   function withdraw() {
-    setError(null);
     startTransition(async () => {
       const result = await withdrawRequest(requestId);
-      if (!result.ok) setError(result.error);
-      else router.refresh();
+      if (result.ok) {
+        toast("Request প্রত্যাহার করা হয়েছে", "success");
+        router.refresh();
+      } else {
+        toast(result.error, "danger");
+      }
     });
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {error && <span className="text-xs text-red-600">{error}</span>}
-      <Button size="sm" variant="ghost" disabled={pending} onClick={withdraw}>
-        প্রত্যাহার
-      </Button>
-    </div>
+    <Button size="sm" variant="ghost" disabled={pending} onClick={withdraw}>
+      প্রত্যাহার
+    </Button>
   );
 }

@@ -1,19 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Camera } from "lucide-react";
 import { updateBaseProfile } from "@/features/profile/actions";
+import { isCloudinaryConfigured } from "@/lib/env";
+import { uploadProfileImage } from "@/lib/cloudinary";
 import { DISTRICTS } from "@/config/options";
 import { type Profile } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormField } from "@/components/ui/form-field";
-import { Alert } from "@/components/ui/alert";
 import { Avatar } from "@/components/ui/avatar";
+import { useToast } from "@/components/ui/toast";
 
 export function BaseProfileForm({ profile }: { profile: Profile }) {
   const router = useRouter();
+  const { toast } = useToast();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [fullName, setFullName] = useState(profile.full_name ?? "");
   const [district, setDistrict] = useState(profile.district ?? "");
   const [area, setArea] = useState(profile.area ?? "");
@@ -22,11 +27,27 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url ?? "");
 
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "danger"; text: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const cloudinaryReady = isCloudinaryConfigured();
+
+  async function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const result = await uploadProfileImage(file);
+    setUploading(false);
+    if (result.ok) {
+      setAvatarUrl(result.url);
+      toast("ছবি upload হয়েছে — সেভ করলে প্রোফাইলে বসবে", "success");
+    } else {
+      toast(result.error, "danger");
+    }
+    event.target.value = "";
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage(null);
     setSaving(true);
     const result = await updateBaseProfile({
       fullName,
@@ -38,22 +59,30 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
     });
     setSaving(false);
     if (!result.ok) {
-      setMessage({ type: "danger", text: result.error });
+      toast(result.error, "danger");
       return;
     }
-    setMessage({ type: "success", text: "প্রোফাইল আপডেট হয়েছে।" });
+    toast("প্রোফাইল আপডেট হয়েছে", "success");
     router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
-      {message && <Alert variant={message.type}>{message.text}</Alert>}
-
       <div className="flex items-center gap-4">
         <Avatar src={avatarUrl} name={fullName} size="xl" />
-        <FormField label="ছবির URL" className="flex-1">
-          <Input placeholder="https://…/avatar.jpg" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
-        </FormField>
+        <div className="flex-1 space-y-2">
+          {cloudinaryReady && (
+            <>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+              <Button type="button" variant="outline" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}>
+                <Camera className="h-4 w-4" aria-hidden /> ছবি upload
+              </Button>
+            </>
+          )}
+          <FormField label="অথবা ছবির URL">
+            <Input placeholder="https://…/avatar.jpg" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+          </FormField>
+        </div>
       </div>
 
       <FormField label="পুরো নাম" required>

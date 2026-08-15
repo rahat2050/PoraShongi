@@ -237,6 +237,15 @@ export type NotificationPreferences = {
   updated_at: string;
 };
 
+export type ContactRequest = {
+  id: string;
+  sender_id: string;
+  teacher_id: string;
+  status: "pending" | "accepted" | "rejected";
+  created_at: string;
+  responded_at: string | null;
+};
+
 /** Teacher search result (search_teachers RPC)। */
 export type TeacherPublic = {
   id: string;

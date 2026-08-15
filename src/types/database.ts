@@ -2,6 +2,7 @@ import {
   type AccountStatus,
   type AppNotification,
   type Block,
+  type ContactRequest,
   type Conversation,
   type Favorite,
   type GuardianProfile,
@@ -295,6 +296,19 @@ export interface Database {
         Update: Partial<Omit<NotificationPreferences, "user_id" | "updated_at"> & { updated_at?: string }>;
         Relationships: [];
       };
+      contact_requests: {
+        Row: ContactRequest;
+        Insert: {
+          id?: string;
+          sender_id: string;
+          teacher_id: string;
+          status?: ContactRequest["status"];
+          created_at?: string;
+          responded_at?: string | null;
+        };
+        Update: Partial<Omit<ContactRequest, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -375,6 +389,8 @@ export interface Database {
         Returns: Json;
       };
       get_teacher_own_reviews: { Args: { p_teacher_id: string }; Returns: Json };
+      get_teacher_phone: { Args: { p_teacher_id: string }; Returns: string };
+      cleanup_old_notifications: { Args: { p_days?: number | null }; Returns: number };
     };
     Enums: {
       user_role: UserRole;

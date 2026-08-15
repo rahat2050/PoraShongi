@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NotificationBell } from "@/components/shared/notification-bell";
 
 interface AuthUser {
   id: string;
@@ -49,6 +50,7 @@ export function AuthArea() {
         <Link href="/messages" className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100" aria-label="মেসেজ">
           <MessageSquare className="h-5 w-5" aria-hidden />
         </Link>
+        <NotificationBell />
         <Link href="/dashboard" className={buttonStyles({ variant: "primary", size: "sm" })}>
           Dashboard
         </Link>

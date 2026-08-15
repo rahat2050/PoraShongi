@@ -4,6 +4,9 @@ import { getTuitionsByIds } from "@/lib/data/tuitions";
 import { type ProfilePublic, type Tuition, type TuitionRequest } from "@/types/index";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
 
+// message (লম্বা text) list-এ দরকার নেই — data বাঁচাতে বাদ
+const REQUEST_COLUMNS = "id,tuition_id,sender_id,teacher_id,student_id,status,created_at,responded_at";
+
 export async function listSentRequests(
   profileId: string,
   linkedStudentId?: string | null,
@@ -13,13 +16,14 @@ export async function listSentRequests(
 
   const { data, error } = await db
     .from("tuition_requests")
-    .select("*")
+    .select(REQUEST_COLUMNS)
     .or(
       linkedStudentId
         ? `sender_id.eq.${profileId},student_id.eq.${linkedStudentId}`
         : `sender_id.eq.${profileId}`,
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(50);
   if (error) return fail(error.message);
   return ok((data ?? []) as TuitionRequest[]);
 }
@@ -31,9 +35,10 @@ export async function listReceivedRequests(
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("tuition_requests")
-    .select("*")
+    .select(REQUEST_COLUMNS)
     .eq("teacher_id", teacherId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(50);
   if (error) return fail(error.message);
   return ok((data ?? []) as TuitionRequest[]);
 }

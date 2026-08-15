@@ -6,6 +6,7 @@ import { getPublicTeacher } from "@/lib/data/teachers";
 import { listTuitionsFor } from "@/lib/data/tuitions";
 import { isFavorite } from "@/lib/data/favorites";
 import { getTeacherReputation, getTeacherReviews, hasReviewed, hasAcceptedInteraction, isBlocked } from "@/lib/data/reviews";
+import { getContactStatus, getTeacherPhone } from "@/lib/data/contact";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/shared/setup-required";
@@ -17,6 +18,8 @@ import { FavoriteButton } from "@/components/shared/favorite-button";
 import { MessageButton } from "@/components/shared/message-button";
 import { BlockButton } from "@/components/shared/block-button";
 import { ReportButton } from "@/components/shared/report-dialog";
+import { ContactRequestButton } from "@/components/shared/contact-request-button";
+import { ShareButtons } from "@/components/shared/share-buttons";
 import { ReviewList } from "@/components/shared/review-list";
 import { ReviewForm } from "@/components/shared/review-form";
 import { VerificationTierBadge } from "@/components/shared/verification-tier";
@@ -44,13 +47,14 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     ? ((await listTuitionsFor(profile.id)).data ?? []).filter((t) => t.status === "open")
     : [];
 
-  const [savedRes, reputation, reviews, reviewedRes, interactionRes, blockedRes] = await Promise.all([
+  const [savedRes, reputation, reviews, reviewedRes, interactionRes, blockedRes, contactRes] = await Promise.all([
     canInteract && profile ? isFavorite(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
     getTeacherReputation(teacher.id),
     getTeacherReviews(teacher.id, 1, 6),
     canInteract && profile ? hasReviewed(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
     canInteract && profile ? hasAcceptedInteraction(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
     canInteract && profile ? isBlocked(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+    canInteract && profile ? getContactStatus(profile.id, teacher.id) : Promise.resolve({ data: null, error: null }),
   ]);
 
   const saved = savedRes.data ?? false;
@@ -58,6 +62,10 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
   const canReview = (interactionRes.data ?? false) && !(reviewedRes.data ?? false);
   const blocked = blockedRes.data ?? false;
   const tier = reputation.data?.tier ?? "unverified";
+  const contact = contactRes.data ?? null;
+  const teacherPhone = contact?.status === "accepted" && profile
+    ? (await getTeacherPhone(teacher.id)).data
+    : null;
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
@@ -99,6 +107,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 {!blocked && <RequestSheet teacherId={teacher.id} teacherName={name} tuitions={openTuitions.map((t) => ({ id: t.id, title: t.title }))} />}
                 {!blocked && <MessageButton otherId={teacher.id} />}
                 <FavoriteButton teacherId={teacher.id} initiallySaved={saved} />
+                {!blocked && <ContactRequestButton teacherId={teacher.id} initialStatus={contact?.status ?? "none"} />}
                 <BlockButton otherId={teacher.id} initiallyBlocked={blocked} />
                 <ReportButton targetType="teacher" targetId={teacher.id} />
               </>
@@ -109,6 +118,20 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 request পাঠাতে লগইন করুন
               </Link>
             )}
+          </div>
+
+          {teacherPhone && (
+            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              📞 যোগাযোগ: <span className="font-semibold">{teacherPhone}</span>
+            </div>
+          )}
+
+          <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
+            <p className="text-xs text-slate-400">এই প্রোফাইলটি শেয়ার করুন:</p>
+            <ShareButtons
+              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/teachers/${teacher.id}`}
+              title={`${name} — PoraSathi`}
+            />
           </div>
         </CardContent>
       </Card>
