@@ -18,6 +18,11 @@ export type Profile = {
   gender: string | null;
   is_minor: boolean;
   guardian_consent: boolean;
+  phone: string | null;
+  phone_verified: boolean;
+  education_verified: boolean;
+  identity_verified: boolean;
+  trusted_tutor: boolean;
   account_status: AccountStatus;
   verification_status: VerificationStatus;
   created_at: string;
@@ -124,6 +129,112 @@ export type AppNotification = {
   link: string | null;
   read: boolean;
   created_at: string;
+};
+
+/** Phase 3 entities */
+export type Session = {
+  id: string;
+  tuition_id: string;
+  teacher_id: string;
+  student_id: string | null;
+  scheduled_at: string;
+  status: "scheduled" | "completed" | "cancelled" | "rescheduled";
+  attendance: "present" | "absent" | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Conversation = {
+  id: string;
+  tuition_id: string | null;
+  participant_a: string;
+  participant_b: string;
+  created_at: string;
+  updated_at: string;
+  last_message_at: string | null;
+};
+
+export type Message = {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  status: "sent" | "read";
+  created_at: string;
+};
+
+export type Review = {
+  id: string;
+  teacher_id: string;
+  reviewer_id: string;
+  tuition_id: string | null;
+  rating: number;
+  body: string | null;
+  verified: boolean;
+  status: "published" | "hidden" | "removed";
+  created_at: string;
+  updated_at: string;
+};
+
+export type ReviewPublic = {
+  id: string;
+  rating: number;
+  body: string | null;
+  verified: boolean;
+  created_at: string;
+  reviewer_name: string | null;
+  reviewer_display_name: string | null;
+  reviewer_avatar: string | null;
+  reviewer_role: UserRole;
+};
+
+export type TeacherReputation = {
+  verification_status: VerificationStatus;
+  phone_verified: boolean;
+  education_verified: boolean;
+  identity_verified: boolean;
+  trusted_tutor: boolean;
+  tier: "unverified" | "phone" | "education" | "identity" | "trusted";
+  rating_avg: number;
+  review_count: number;
+  completed_tuitions: number;
+  response_rate: number;
+  cancellation_rate: number;
+};
+
+export type Report = {
+  id: string;
+  reporter_id: string;
+  target_type: "teacher" | "student" | "guardian" | "tuition" | "review" | "conversation";
+  target_id: string;
+  category: "fake_profile" | "harassment" | "inappropriate" | "scam" | "spam" | "safety_concern" | "other";
+  details: string | null;
+  status: "open" | "investigating" | "resolved" | "dismissed";
+  resolution: string | null;
+  created_at: string;
+  updated_at: string;
+  resolved_at: string | null;
+};
+
+export type Block = {
+  id: string;
+  blocker_id: string;
+  blocked_id: string;
+  created_at: string;
+};
+
+export type NotificationPreferences = {
+  user_id: string;
+  new_match: boolean;
+  new_request: boolean;
+  request_response: boolean;
+  new_message: boolean;
+  upcoming_class: boolean;
+  schedule_change: boolean;
+  review_received: boolean;
+  verification_update: boolean;
+  updated_at: string;
 };
 
 /** Teacher search result (search_teachers RPC)। */

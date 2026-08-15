@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { MessageSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
@@ -44,7 +45,10 @@ export function AuthArea() {
 
   if (user) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
+        <Link href="/messages" className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100" aria-label="মেসেজ">
+          <MessageSquare className="h-5 w-5" aria-hidden />
+        </Link>
         <Link href="/dashboard" className={buttonStyles({ variant: "primary", size: "sm" })}>
           Dashboard
         </Link>

@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lucide-react";
+import { Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lucide-react";
 import { getPublicTeacher } from "@/lib/data/teachers";
 import { listTuitionsFor } from "@/lib/data/tuitions";
 import { isFavorite } from "@/lib/data/favorites";
+import { getTeacherReputation, getTeacherReviews, hasReviewed, hasAcceptedInteraction, isBlocked } from "@/lib/data/reviews";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/shared/setup-required";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestSheet } from "@/components/shared/request-sheet";
 import { FavoriteButton } from "@/components/shared/favorite-button";
+import { MessageButton } from "@/components/shared/message-button";
+import { BlockButton } from "@/components/shared/block-button";
+import { ReportButton } from "@/components/shared/report-dialog";
+import { ReviewList } from "@/components/shared/review-list";
+import { ReviewForm } from "@/components/shared/review-form";
+import { VerificationTierBadge } from "@/components/shared/verification-tier";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
 
@@ -37,7 +44,20 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     ? ((await listTuitionsFor(profile.id)).data ?? []).filter((t) => t.status === "open")
     : [];
 
-  const saved = canInteract && profile ? (await isFavorite(profile.id, teacher.id)).data ?? false : false;
+  const [savedRes, reputation, reviews, reviewedRes, interactionRes, blockedRes] = await Promise.all([
+    canInteract && profile ? isFavorite(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+    getTeacherReputation(teacher.id),
+    getTeacherReviews(teacher.id, 1, 6),
+    canInteract && profile ? hasReviewed(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+    canInteract && profile ? hasAcceptedInteraction(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+    canInteract && profile ? isBlocked(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+  ]);
+
+  const saved = savedRes.data ?? false;
+  const reviewData = reviews.data;
+  const canReview = (interactionRes.data ?? false) && !(reviewedRes.data ?? false);
+  const blocked = blockedRes.data ?? false;
+  const tier = reputation.data?.tier ?? "unverified";
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
@@ -48,9 +68,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold text-slate-900">{name}</h1>
-                {teacher.verification_status === "verified" && (
-                  <Badge variant="success"><BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Verified</Badge>
-                )}
+                <VerificationTierBadge tier={tier} />
               </div>
               <p className="mt-1 text-slate-600">{teacher.headline || "Tuition শিক্ষক"}</p>
               {teacher.review_count ? (
@@ -59,6 +77,11 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                   {teacher.rating_avg} · {teacher.review_count} রিভিউ
                 </p>
               ) : null}
+              {reputation.data && (
+                <p className="mt-1 text-xs text-slate-400">
+                  {reputation.data.completed_tuitions} টা tuition সম্পন্ন · response {reputation.data.response_rate}%
+                </p>
+              )}
 
               <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                 <Detail icon={<GraduationCap className="h-4 w-4" />} label="শিক্ষাগত যোগ্যতা" value={[teacher.education, teacher.institution].filter(Boolean).join(", ") || "—"} />
@@ -73,8 +96,11 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           <div className="mt-6 flex flex-wrap gap-3">
             {canInteract && profile ? (
               <>
-                <RequestSheet teacherId={teacher.id} teacherName={name} tuitions={openTuitions.map((t) => ({ id: t.id, title: t.title }))} />
+                {!blocked && <RequestSheet teacherId={teacher.id} teacherName={name} tuitions={openTuitions.map((t) => ({ id: t.id, title: t.title }))} />}
+                {!blocked && <MessageButton otherId={teacher.id} />}
                 <FavoriteButton teacherId={teacher.id} initiallySaved={saved} />
+                <BlockButton otherId={teacher.id} initiallyBlocked={blocked} />
+                <ReportButton targetType="teacher" targetId={teacher.id} />
               </>
             ) : profile?.role === "teacher" ? (
               <p className="text-sm text-slate-500">আপনি শিক্ষক হিসেবে লগইন করেছেন।</p>
@@ -121,6 +147,27 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           </CardContent>
         </Card>
       </div>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>রিভিউ ({reviewData?.total ?? 0})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {canReview && profile && (
+            <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <h3 className="text-sm font-semibold text-slate-800">এই শিক্ষককে রেট করুন</h3>
+              <div className="mt-3">
+                <ReviewForm teacherId={teacher.id} />
+              </div>
+            </div>
+          )}
+          {reviewData && reviewData.results.length > 0 ? (
+            <ReviewList reviews={reviewData.results} />
+          ) : (
+            <p className="text-sm text-slate-400">এখনো কোনো রিভিউ নেই।</p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

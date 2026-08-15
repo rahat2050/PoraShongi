@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { BellOff } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { listNotifications } from "@/lib/data/notifications";
+import { getNotificationPreferencesServer } from "@/features/notifications/preferences-actions";
 import { NotificationItem } from "@/features/notifications/notification-item";
 import { MarkAllReadButton } from "@/features/notifications/mark-all-button";
-import { Card, CardContent } from "@/components/ui/card";
+import { PreferencesForm } from "@/features/notifications/preferences-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata: Metadata = { title: "নোটিফিকেশন" };
@@ -14,7 +16,10 @@ export default async function NotificationsPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
 
-  const result = await listNotifications(profile.id);
+  const [result, prefs] = await Promise.all([
+    listNotifications(profile.id),
+    getNotificationPreferencesServer(),
+  ]);
   const notifications = result.data ?? [];
   const hasUnread = notifications.some((n) => !n.read);
 
@@ -38,6 +43,11 @@ export default async function NotificationsPage() {
             notifications.map((n) => <NotificationItem key={n.id} notification={n} />)
           )}
         </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader><CardTitle>নোটিফিকেশন পছন্দ</CardTitle></CardHeader>
+        <CardContent><PreferencesForm prefs={prefs} /></CardContent>
       </Card>
     </div>
   );
