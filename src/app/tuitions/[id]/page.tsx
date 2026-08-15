@@ -13,6 +13,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { MatchBadge } from "@/components/shared/match-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ShareButtons } from "@/components/shared/share-buttons";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
@@ -95,6 +96,14 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
                 Manage
               </Link>
             )}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
+            <p className="text-xs text-slate-400">শেয়ার করুন:</p>
+            <ShareButtons
+              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/tuitions/${tuition.id}`}
+              title={`${tuition.title} — PoraSathi`}
+            />
           </div>
         </CardContent>
       </Card>

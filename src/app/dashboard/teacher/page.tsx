@@ -8,6 +8,7 @@ import { listTuitionsFor } from "@/lib/data/tuitions";
 import { listReceivedRequests, loadRequestDisplay } from "@/lib/data/requests";
 import { listReceivedContactRequests } from "@/lib/data/contact";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
+import { listMyStudents } from "@/lib/data/students";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
@@ -45,6 +46,8 @@ export default async function TeacherDashboardPage() {
   const contactList = contactRequests.data ?? [];
   const contactSenders = (await getProfilesPublic(contactList.map((c) => c.sender_id))).data ?? [];
   const senderMap = new Map(contactSenders.map((p) => [p.id, p]));
+
+  const myStudents = (await listMyStudents(profile.id)).data ?? [];
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -129,6 +132,28 @@ export default async function TeacherDashboardPage() {
                       </div>
                     </div>
                     <ContactRequestActions requestId={c.id} />
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {myStudents.length > 0 && (
+        <Card className="mt-6">
+          <CardContent className="p-5">
+            <h2 className="text-base font-semibold text-slate-900">আমার শিক্ষার্থী ({myStudents.length})</h2>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {myStudents.map((s) => {
+                const name = s.display_name || s.full_name || "শিক্ষার্থী";
+                return (
+                  <div key={s.id} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3">
+                    <Avatar src={s.avatar_url} name={name} size="md" />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-800">{name}</p>
+                      <p className="truncate text-xs text-slate-400">{[s.area, s.district].filter(Boolean).join(", ") || "এলাকা নেই"}</p>
+                    </div>
                   </div>
                 );
               })}

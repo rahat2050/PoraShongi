@@ -1,0 +1,78 @@
+import "server-only";
+import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { type UserRole } from "@/lib/auth/roles";
+import { type Profile, type Report } from "@/types/index";
+
+export interface Paged<T> {
+  rows: T[];
+  total: number;
+}
+
+export async function adminListProfiles(
+  role: UserRole | undefined,
+  page: number,
+  pageSize: number,
+): Promise<DataResult<Paged<Profile>>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const base = db
+    .from("profiles")
+    .select("id,role,full_name,display_name,avatar_url,district,area,gender,is_minor,phone_verified,education_verified,identity_verified,trusted_tutor,account_status,verification_status,created_at", { count: "exact" });
+
+  const query = role ? base.eq("role", role) : base;
+  const { data, count, error } = await query
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) return fail(error.message);
+  return ok({ rows: (data ?? []) as Profile[], total: count ?? 0 });
+}
+
+export async function adminListReports(
+  page: number,
+  pageSize: number,
+  status?: Report["status"],
+): Promise<DataResult<Paged<Report>>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = db.from("reports").select("*", { count: "exact" });
+  if (status) query = query.eq("status", status);
+
+  const { data, count, error } = await query
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) return fail(error.message);
+  return ok({ rows: (data ?? []) as Report[], total: count ?? 0 });
+}
+
+export async function adminStats(): Promise<
+  DataResult<{ users: number; teachers: number; students: number; guardians: number; openReports: number }>
+> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const [users, teachers, students, guardians, reports] = await Promise.all([
+    db.from("profiles").select("id", { count: "exact", head: true }),
+    db.from("profiles").select("id", { count: "exact", head: true }).eq("role", "teacher"),
+    db.from("profiles").select("id", { count: "exact", head: true }).eq("role", "student"),
+    db.from("profiles").select("id", { count: "exact", head: true }).eq("role", "guardian"),
+    db.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
+  ]);
+
+  return ok({
+    users: users.count ?? 0,
+    teachers: teachers.count ?? 0,
+    students: students.count ?? 0,
+    guardians: guardians.count ?? 0,
+    openReports: reports.count ?? 0,
+  });
+}
