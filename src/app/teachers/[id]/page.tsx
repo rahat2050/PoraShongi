@@ -30,6 +30,7 @@ import { recommendTeachers } from "@/lib/data/features";
 import { TeacherCard } from "@/components/shared/teacher-card";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
+import { getSiteUrl } from "@/config/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -171,7 +172,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
             <p className="text-xs text-slate-400">এই প্রোফাইলটি শেয়ার করুন:</p>
             <ShareButtons
-              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/teachers/${teacher.id}`}
+              url={`${getSiteUrl()}/teachers/${teacher.id}`}
               title={`${name} — PoraSathi`}
             />
           </div>

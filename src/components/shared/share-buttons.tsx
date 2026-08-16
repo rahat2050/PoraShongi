@@ -11,7 +11,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
 
   function shareWhatsApp() {
     const text = encodeURIComponent(`${title} — ${url}`);
-    window.open(`https://wa.me/?text=${text}`, "_blank");
+    window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
   }
 
   async function copyLink() {
