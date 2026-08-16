@@ -31,20 +31,7 @@
   --color-accent-600: #d97706;
   --color-accent-700: #b45309;
 
-  /* animations */
-  --animate-fade-in: fade-in 0.4s ease-out;
-  --animate-fade-up: fade-up 0.45s ease-out;
   --animate-shimmer: shimmer 1.6s linear infinite;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
@@ -67,11 +54,6 @@ body {
 .dark body {
   background-color: #0f172a;
   color: #e2e8f0;
-}
-
-/* পেজ লোডের সাথে হালকা fade-in */
-main > * {
-  animation: var(--animate-fade-in);
 }
 
 /* স্ক্রলবার হালকা রাখা (horizontal nav-এর জন্য) */

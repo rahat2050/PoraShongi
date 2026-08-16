@@ -11,13 +11,13 @@ import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "optional" });
 
 const hindSiliguri = Hind_Siliguri({
   subsets: ["bengali", "latin"],
   variable: "--font-hind-siliguri",
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
