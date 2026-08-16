@@ -10,7 +10,9 @@ export const siteConfig = {
   taglineEnglish: "The Right Teacher, A Beautiful Learning Companion",
   branding: "A platform by FS Coaching",
   description:
-    "PoraSathi (পড়াসাথী) — বাংলাদেশের শিক্ষার্থী/অভিভাবক এবং যোগ্য শিক্ষককে একটি trusted digital platform-এর মাধ্যমে সহজে সংযুক্ত করে।",
+    "PoraSathi (পড়াসাথী) — বাংলাদেশের শিক্ষার্থী/অভিভাবক এবং যোগ্য শিক্ষককে যুক্ত করার trusted প্ল্যাটফর্ম। শিক্ষক খুঁজুন, tuition দিন, schedule manage করুন।",
+  /** সাইটের উপরে ছোট ঘোষণা — খালি রাখলে দেখাবে না। */
+  announcement: null as { text: string; href?: string } | null,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   locale: "bn-BD",
 } as const;

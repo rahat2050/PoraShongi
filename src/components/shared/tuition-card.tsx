@@ -3,8 +3,9 @@ import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { type TuitionPublic } from "@/types/index";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
-import { formatTaka, modeLabel } from "@/lib/utils";
+import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
 export function TuitionCard({ tuition }: { tuition: TuitionPublic }) {
   const location = [tuition.area, tuition.district].filter(Boolean).join(", ");
@@ -47,14 +48,21 @@ export function TuitionCard({ tuition }: { tuition: TuitionPublic }) {
           </div>
         </dl>
 
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-          <span className="text-sm font-semibold text-slate-800">
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-700">
+          <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
             {formatTaka(tuition.budget)}
             {tuition.budget_negotiable && <span className="ml-1 text-xs font-normal text-slate-400">(আলোচনা সাপেক্ষ)</span>}
           </span>
           <Link href={`/tuitions/${tuition.id}`} className="text-sm font-medium text-brand-700 hover:underline">
             বিস্তারিত →
           </Link>
+        </div>
+
+        <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
+          <Avatar src={tuition.poster_avatar} name={tuition.poster_display_name ?? tuition.poster_name ?? undefined} size="sm" />
+          <span className="truncate">
+            {tuition.poster_display_name || tuition.poster_name || "সদস্য"} · {formatDate(tuition.created_at)}
+          </span>
         </div>
       </CardContent>
     </Card>
