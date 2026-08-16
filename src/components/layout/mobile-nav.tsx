@@ -9,6 +9,7 @@ const links = [
   { href: "/tuitions", label: "Tuition" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/messages", label: "মেসেজ" },
+  { href: "/dashboard/referrals", label: "রেফারেল" },
   { href: "/#how", label: "কীভাবে কাজ করে" },
 ];
 

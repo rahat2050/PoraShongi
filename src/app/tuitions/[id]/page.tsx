@@ -14,10 +14,23 @@ import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { MatchBadge } from "@/components/shared/match-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ShareButtons } from "@/components/shared/share-buttons";
+import { MeetingLinkForm } from "@/features/tuitions/meeting-link-form";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Tuition বিস্তারিত" };
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const t = (await getPublicTuition(id)).data;
+    if (!t) return { title: "Tuition বিস্তারিত" };
+    return {
+      title: `${t.title} — ${t.class_level} ${t.subject}`,
+      description: `${t.title} (${t.class_level} · ${t.subject})${t.district ? ` · ${t.district}` : ""} — PoraSathi-তে tuition দেখুন।`,
+    };
+  } catch {
+    return { title: "Tuition বিস্তারিত" };
+  }
+}
 
 export default async function TuitionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -97,6 +110,25 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
               </Link>
             )}
           </div>
+
+          {isOwner && (
+            <MeetingLinkForm tuitionId={tuition.id} initialLink={tuition.meeting_link ?? null} />
+          )}
+
+          {!isOwner && tuition.meeting_link && (
+            <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <p className="text-sm font-semibold text-emerald-800">🎥 অনলাইন ক্লাস</p>
+              <p className="mt-1 text-xs text-emerald-700">শিক্ষক মিটিং লিংক দিয়েছেন — ক্লাসের সময় join করুন।</p>
+              <a
+                href={tuition.meeting_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonStyles({ className: "mt-3 bg-emerald-600 hover:bg-emerald-700" })}
+              >
+                Join Class →
+              </a>
+            </div>
+          )}
 
           <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
             <p className="text-xs text-slate-400">শেয়ার করুন:</p>

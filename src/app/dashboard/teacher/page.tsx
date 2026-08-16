@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Inbox, Plus, ScrollText } from "lucide-react";
+import { Inbox, Plus, ScrollText, Users } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { getRoleProfileRow, computeProfileCompletion } from "@/lib/data/profiles";
 import { listTuitionsFor } from "@/lib/data/tuitions";
@@ -9,6 +9,7 @@ import { listReceivedRequests, loadRequestDisplay } from "@/lib/data/requests";
 import { listReceivedContactRequests } from "@/lib/data/contact";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
 import { listMyStudents } from "@/lib/data/students";
+import { getTeacherAnalytics } from "@/lib/data/growth";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
@@ -48,6 +49,7 @@ export default async function TeacherDashboardPage() {
   const senderMap = new Map(contactSenders.map((p) => [p.id, p]));
 
   const myStudents = (await listMyStudents(profile.id)).data ?? [];
+  const analytics = (await getTeacherAnalytics(profile.id)).data ?? null;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -66,8 +68,41 @@ export default async function TeacherDashboardPage() {
         <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
           <StatCard label="আমার tuition" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
           <StatCard label="অপেক্ষমাণ request" value={pendingCount} icon={<Inbox className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
+          <StatCard label="প্রোফাইল ভিউ" value={analytics?.profile_views ?? 0} icon={<Users className="h-5 w-5" aria-hidden />} />
         </div>
       </div>
+
+      {analytics && (
+        <Card className="mt-6">
+          <CardContent className="p-5">
+            <h2 className="text-base font-semibold text-slate-900">আপনার analytics</h2>
+            <div className="mt-4 grid grid-cols-2 gap-4 text-sm sm:grid-cols-5">
+              <div>
+                <p className="text-xs text-slate-400">মোট request</p>
+                <p className="text-lg font-bold text-slate-800">{analytics.total_requests}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">গ্রহণ</p>
+                <p className="text-lg font-bold text-slate-800">{analytics.accepted_requests}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">Accept rate</p>
+                <p className="text-lg font-bold text-slate-800">{analytics.acceptance_rate}%</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">সেভ করেছেন</p>
+                <p className="text-lg font-bold text-slate-800">{analytics.favorites}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">রেটিং</p>
+                <p className="text-lg font-bold text-slate-800">
+                  {analytics.review_count > 0 ? `★ ${analytics.rating_avg}` : "নতুন"}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <Card>

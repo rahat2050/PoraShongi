@@ -9,6 +9,7 @@ import {
   type Message,
   type NotificationPreferences,
   type Profile,
+  type Referral,
   type Report,
   type RequestStatus,
   type Review,
@@ -53,6 +54,9 @@ export interface Database {
           education_verified?: boolean;
           identity_verified?: boolean;
           trusted_tutor?: boolean;
+          referral_code?: string | null;
+          is_premium?: boolean;
+          premium_until?: string | null;
           account_status?: AccountStatus;
           verification_status?: VerificationStatus;
           created_at?: string;
@@ -99,6 +103,7 @@ export interface Database {
           available_time?: string | null;
           rating_avg?: number;
           review_count?: number;
+          profile_views?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -138,6 +143,9 @@ export interface Database {
           preferred_days?: string[] | null;
           preferred_time?: string | null;
           requirements?: string | null;
+          is_featured?: boolean;
+          featured_until?: string | null;
+          meeting_link?: string | null;
           status?: TuitionStatus;
           created_at?: string;
           updated_at?: string;
@@ -309,6 +317,18 @@ export interface Database {
         Update: Partial<Omit<ContactRequest, "id" | "created_at"> & { created_at?: string }>;
         Relationships: [];
       };
+      referrals: {
+        Row: Referral;
+        Insert: {
+          id?: string;
+          referrer_id: string;
+          referred_id?: string | null;
+          code: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<Referral, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -391,6 +411,8 @@ export interface Database {
       get_teacher_own_reviews: { Args: { p_teacher_id: string }; Returns: Json };
       get_teacher_phone: { Args: { p_teacher_id: string }; Returns: string };
       cleanup_old_notifications: { Args: { p_days?: number | null }; Returns: number };
+      record_profile_view: { Args: { p_teacher_id: string }; Returns: undefined };
+      is_premium_active: { Args: { p_profile_id: string }; Returns: boolean };
     };
     Enums: {
       user_role: UserRole;

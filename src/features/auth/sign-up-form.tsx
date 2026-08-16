@@ -18,6 +18,7 @@ export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,11 @@ export function SignUpForm() {
       email,
       password,
       options: {
-        data: { full_name: fullName, role },
+        data: {
+          full_name: fullName,
+          role,
+          ...(referralCode.trim() ? { referral_code: referralCode.trim().toUpperCase() } : {}),
+        },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -88,6 +93,10 @@ export function SignUpForm() {
 
       <FormField label="ইমেইল" htmlFor="email" required>
         <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </FormField>
+
+      <FormField label="রেফারেল কোড (ঐচ্ছিক)" htmlFor="referralCode" hint="বন্ধুর কোড থাকলে লিখুন">
+        <Input id="referralCode" placeholder="যেমন: PS1234ABCD" value={referralCode} onChange={(e) => setReferralCode(e.target.value)} />
       </FormField>
 
       <FormField label="পাসওয়ার্ড" htmlFor="password" required hint="কমপক্ষে ৮ অক্ষর">

@@ -7,7 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { AdminAccountButtons, AdminVerifyButtons } from "@/features/admin/admin-actions";
+import { AdminAccountButtons, AdminPremiumToggle, AdminVerifyButtons } from "@/features/admin/admin-actions";
 import { buildQueryString, firstParam } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "অ্যাডমিন — ব্যবহারকারী" };
@@ -89,6 +89,7 @@ export default async function AdminUsersPage({
                       <td className="px-4 py-3"><Badge variant={p.verification_status === "verified" ? "success" : "default"}>{p.verification_status}</Badge></td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
+                          {p.role === "teacher" && <AdminPremiumToggle teacherId={p.id} premium={p.is_premium} />}
                           {p.role === "teacher" && p.verification_status !== "verified" && <AdminVerifyButtons teacherId={p.id} />}
                           {p.role !== "admin" && <AdminAccountButtons userId={p.id} status={p.account_status} />}
                         </div>

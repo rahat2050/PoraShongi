@@ -54,3 +54,23 @@ export async function adminResolveReport(
   revalidatePath("/admin/reports");
   return success();
 }
+
+/** Premium teacher চালু/বন্ধ (admin — payment এখনো নেই)। */
+export async function adminSetPremium(
+  teacherId: string,
+  premium: boolean,
+): Promise<ActionResult> {
+  await requireRole(["admin"]);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      is_premium: premium,
+      premium_until: premium ? null : null,
+    })
+    .eq("id", teacherId)
+    .eq("role", "teacher");
+  if (error) return failure(error.message);
+  revalidatePath("/admin/users");
+  return success();
+}

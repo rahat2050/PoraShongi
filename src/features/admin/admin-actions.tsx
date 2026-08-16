@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { BadgeCheck, ShieldBan, ShieldCheck, X, XCircle } from "lucide-react";
-import { adminResolveReport, adminSetAccountStatus, adminSetVerification } from "@/features/admin/actions";
+import { adminResolveReport, adminSetAccountStatus, adminSetPremium, adminSetVerification } from "@/features/admin/actions";
 import { type AccountStatus, type VerificationStatus } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -72,6 +72,35 @@ export function AdminAccountButtons({ userId, status }: { userId: string; status
         </Button>
       )}
     </div>
+  );
+}
+
+export function AdminPremiumToggle({ teacherId, premium }: { teacherId: string; premium: boolean }) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [pending, startTransition] = useTransition();
+
+  function toggle() {
+    startTransition(async () => {
+      const result = await adminSetPremium(teacherId, !premium);
+      if (result.ok) {
+        toast(premium ? "প্রিমিয়াম বন্ধ হয়েছে" : "প্রিমিয়াম চালু হয়েছে", "success");
+        router.refresh();
+      } else {
+        toast(result.error, "danger");
+      }
+    });
+  }
+
+  return (
+    <Button
+      size="sm"
+      variant={premium ? "secondary" : "outline"}
+      disabled={pending}
+      onClick={toggle}
+    >
+      {premium ? "★ Premium (বন্ধ করুন)" : "Premium করুন"}
+    </Button>
   );
 }
 

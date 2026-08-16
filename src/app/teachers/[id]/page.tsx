@@ -5,6 +5,7 @@ import { Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lu
 import { getPublicTeacher } from "@/lib/data/teachers";
 import { listTuitionsFor } from "@/lib/data/tuitions";
 import { isFavorite } from "@/lib/data/favorites";
+import { createClient } from "@/lib/supabase/server";
 import { getTeacherReputation, getTeacherReviews, hasReviewed, hasAcceptedInteraction, isBlocked } from "@/lib/data/reviews";
 import { getContactStatus, getTeacherPhone } from "@/lib/data/contact";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
@@ -26,7 +27,25 @@ import { VerificationTierBadge } from "@/components/shared/verification-tier";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "শিক্ষকের প্রোফাইল" };
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const result = await getPublicTeacher(id);
+    const teacher = result.data;
+    const name = teacher?.display_name || teacher?.full_name || "শিক্ষক";
+    const subjects = teacher?.subjects?.slice(0, 3).join(", ") ?? "Tuition";
+    return {
+      title: `${name} — ${subjects} শিক্ষক`,
+      description: `${name} (${subjects}) — ${teacher?.district ?? "বাংলাদেশ"} এলাকার শিক্ষক। PoraSathi-তে প্রোফাইল দেখুন।`,
+      openGraph: {
+        title: `${name} — PoraSathi শিক্ষক`,
+        description: subjects,
+      },
+    };
+  } catch {
+    return { title: "শিক্ষকের প্রোফাইল" };
+  }
+}
 
 export default async function TeacherProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -67,6 +86,12 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     ? (await getTeacherPhone(teacher.id)).data
     : null;
 
+  // profile view count (নিজের ভিউ বাদ — শুধু অন্যের ভিউতে +1)
+  if (!profile || profile.id !== teacher.id) {
+    const supabase = await createClient();
+    await supabase.rpc("record_profile_view", { p_teacher_id: teacher.id });
+  }
+
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
       <Card>
@@ -77,6 +102,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold text-slate-900">{name}</h1>
                 <VerificationTierBadge tier={tier} />
+                {teacher.is_premium && <Badge variant="accent">★ Premium</Badge>}
               </div>
               <p className="mt-1 text-slate-600">{teacher.headline || "Tuition শিক্ষক"}</p>
               {teacher.review_count ? (

@@ -23,6 +23,9 @@ export type Profile = {
   education_verified: boolean;
   identity_verified: boolean;
   trusted_tutor: boolean;
+  referral_code: string | null;
+  is_premium: boolean;
+  premium_until: string | null;
   account_status: AccountStatus;
   verification_status: VerificationStatus;
   created_at: string;
@@ -61,6 +64,7 @@ export type TeacherProfile = {
   available_time: string | null;
   rating_avg: number;
   review_count: number;
+  profile_views: number;
   created_at: string;
   updated_at: string;
 };
@@ -94,6 +98,9 @@ export type Tuition = {
   preferred_days: string[] | null;
   preferred_time: string | null;
   requirements: string | null;
+  is_featured: boolean;
+  featured_until: string | null;
+  meeting_link: string | null;
   status: TuitionStatus;
   created_at: string;
   updated_at: string;
@@ -246,6 +253,14 @@ export type ContactRequest = {
   responded_at: string | null;
 };
 
+export type Referral = {
+  id: string;
+  referrer_id: string;
+  referred_id: string | null;
+  code: string;
+  created_at: string;
+};
+
 /** Teacher search result (search_teachers RPC)। */
 export type TeacherPublic = {
   id: string;
@@ -256,6 +271,8 @@ export type TeacherPublic = {
   district: string | null;
   area: string | null;
   verification_status: VerificationStatus;
+  is_premium?: boolean;
+  premium_until?: string | null;
   headline: string | null;
   education: string | null;
   subjects: string[] | null;
@@ -282,6 +299,8 @@ export type TeacherDetail = {
   district: string | null;
   area: string | null;
   verification_status: VerificationStatus;
+  is_premium?: boolean;
+  premium_until?: string | null;
   headline: string | null;
   education: string | null;
   institution: string | null;
@@ -297,6 +316,7 @@ export type TeacherDetail = {
   bio: string | null;
   rating_avg: number | null;
   review_count: number | null;
+  profile_views?: number;
   created_at: string;
 };
 
@@ -334,6 +354,9 @@ export type TuitionPublic = {
   preferred_days: string[] | null;
   preferred_time: string | null;
   requirements: string | null;
+  is_featured?: boolean;
+  featured_until?: string | null;
+  meeting_link?: string | null;
   status: TuitionStatus;
   created_at: string;
   poster_id: string;

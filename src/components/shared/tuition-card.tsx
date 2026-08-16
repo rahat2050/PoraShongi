@@ -13,9 +13,14 @@ export function TuitionCard({ tuition }: { tuition: TuitionPublic }) {
     <Card className="transition-shadow hover:shadow-md">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
-          <Link href={`/tuitions/${tuition.id}`} className="text-base font-semibold text-slate-900 hover:text-brand-700">
-            {tuition.title}
-          </Link>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Link href={`/tuitions/${tuition.id}`} className="text-base font-semibold text-slate-900 hover:text-brand-700">
+                {tuition.title}
+              </Link>
+              {tuition.is_featured && <Badge variant="accent">Featured</Badge>}
+            </div>
+          </div>
           <TuitionStatusBadge status={tuition.status} />
         </div>
 

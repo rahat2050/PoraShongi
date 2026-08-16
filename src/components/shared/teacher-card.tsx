@@ -35,6 +35,9 @@ export function TeacherCard({
               {teacher.verification_status === "verified" && (
                 <BadgeCheck className="h-4 w-4 shrink-0 text-brand-600" aria-label="Verified" />
               )}
+              {teacher.is_premium && (
+                <Badge variant="accent">★ Premium</Badge>
+              )}
             </div>
             <p className="truncate text-sm text-slate-500">{teacher.headline || teacher.education || "Tuition শিক্ষক"}</p>
             {location && (
