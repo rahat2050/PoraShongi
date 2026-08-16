@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: ["tuition", "Bangladesh", "শিক্ষক", "শিক্ষার্থী", "টিউশন", "PoraSathi", "পড়াসাথী", "FS Coaching"],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

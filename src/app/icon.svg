@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#134e4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <!-- Graduation cap -->
+  <path d="M32 16 L52 25 L32 34 L12 25 Z" fill="#fbbf24"/>
+  <path d="M22 29.5 V37 C22 41 27 44 32 44 C37 44 42 41 42 37 V29.5 L32 34 Z" fill="#d1fae5"/>
+  <path d="M52 25 V35" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="52" cy="37" r="2" fill="#ffffff"/>
+  <!-- Book (base) -->
+  <path d="M32 40 C29 38 26 38 22 38 V50 C26 50 29 50 32 52 C35 50 38 50 42 50 V38 C38 38 35 38 32 40 Z" fill="#ffffff" opacity="0.9"/>
+</svg>
