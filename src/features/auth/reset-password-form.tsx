@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
+import { getLocalizedAuthError } from "@/lib/auth/errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { Alert } from "@/components/ui/alert";
+
+interface PasswordErrors {
+  password?: string;
+  confirm?: string;
+}
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -16,6 +22,7 @@ export function ResetPasswordForm() {
   const [hasSession, setHasSession] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<PasswordErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [pending, setPending] = useState(false);
@@ -38,14 +45,12 @@ export function ResetPasswordForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    if (password.length < 8) {
-      setError("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
-      return;
-    }
-    if (password !== confirm) {
-      setError("পাসওয়ার্ড দুটো মিলছে না।");
-      return;
-    }
+
+    const nextErrors: PasswordErrors = {};
+    if (password.length < 8) nextErrors.password = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।";
+    if (password !== confirm) nextErrors.confirm = "পাসওয়ার্ড দুটো মিলছে না।";
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
 
     setPending(true);
     const supabase = createClient();
@@ -53,19 +58,23 @@ export function ResetPasswordForm() {
     setPending(false);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(getLocalizedAuthError(updateError, "পাসওয়ার্ড বদলানো যায়নি। নতুন রিসেট লিংক নিয়ে আবার চেষ্টা করুন।"));
       return;
     }
     setSuccess(true);
   }
 
-  if (checking) return <p className="py-8 text-center text-sm text-slate-400">লোড হচ্ছে…</p>;
+  if (!configured) {
+    return <Alert variant="warning">পাসওয়ার্ড রিসেট সেবা এখনো কনফিগার করা হয়নি।</Alert>;
+  }
+
+  if (checking) return <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">লোড হচ্ছে…</p>;
 
   if (success) {
     return (
       <div className="space-y-4">
         <Alert variant="success" title="পাসওয়ার্ড বদলেছে">নতুন পাসওয়ার্ড দিয়ে লগইন করুন।</Alert>
-        <Button className="w-full" onClick={() => router.push("/login")}>লগইনে যান</Button>
+        <Button className="w-full" onClick={() => router.replace("/login")}>লগইনে যান</Button>
       </div>
     );
   }
@@ -73,20 +82,46 @@ export function ResetPasswordForm() {
   if (!hasSession) {
     return (
       <Alert variant="warning" title="লিংক মেয়াদোত্তীর্ণ বা ভুল">
-        আবার <a href="/forgot-password" className="font-medium underline">reset link</a> নিন।
+        আবার <a href="/forgot-password" className="font-medium underline">রিসেট লিংক</a> নিন।
       </Alert>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && <Alert variant="danger">{error}</Alert>}
-      <p className="text-sm text-slate-500">নতুন পাসওয়ার্ড দিন।</p>
-      <FormField label="নতুন পাসওয়ার্ড" required hint="কমপক্ষে ৮ অক্ষর">
-        <Input type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <p className="text-sm text-slate-500 dark:text-slate-300">নতুন পাসওয়ার্ড দিন।</p>
+      <FormField label="নতুন পাসওয়ার্ড" htmlFor="newPassword" required hint="কমপক্ষে ৮ অক্ষর" error={fieldErrors.password}>
+        <Input
+          id="newPassword"
+          name="newPassword"
+          type="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          minLength={8}
+          maxLength={72}
+          required
+          invalid={Boolean(fieldErrors.password)}
+          aria-invalid={Boolean(fieldErrors.password)}
+          aria-describedby={fieldErrors.password ? "newPassword-error" : "newPassword-hint"}
+        />
       </FormField>
-      <FormField label="আবার লিখুন" required>
-        <Input type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+      <FormField label="আবার লিখুন" htmlFor="confirmPassword" required error={fieldErrors.confirm}>
+        <Input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          autoComplete="new-password"
+          value={confirm}
+          onChange={(event) => setConfirm(event.target.value)}
+          minLength={8}
+          maxLength={72}
+          required
+          invalid={Boolean(fieldErrors.confirm)}
+          aria-invalid={Boolean(fieldErrors.confirm)}
+          aria-describedby={fieldErrors.confirm ? "confirmPassword-error" : undefined}
+        />
       </FormField>
       <Button type="submit" className="w-full" loading={pending}>পাসওয়ার্ড বদলান</Button>
     </form>

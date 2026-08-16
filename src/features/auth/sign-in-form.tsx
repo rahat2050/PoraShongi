@@ -21,6 +21,7 @@ export function SignInForm({
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [error, setError] = useState<string | null>(initialError);
   const [loading, setLoading] = useState(false);
 
@@ -28,14 +29,11 @@ export function SignInForm({
     event.preventDefault();
     setError(null);
 
-    if (!email.trim()) {
-      setError("ইমেইল লিখুন।");
-      return;
-    }
-    if (!password) {
-      setError("পাসওয়ার্ড লিখুন।");
-      return;
-    }
+    const nextErrors: { email?: string; password?: string } = {};
+    if (!email.trim()) nextErrors.email = "ইমেইল লিখুন।";
+    if (!password) nextErrors.password = "পাসওয়ার্ড লিখুন।";
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
     if (!isSupabaseConfigured()) {
       setError("লগইন সেবা এখনো কনফিগার করা হয়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।");
       return;
@@ -59,7 +57,7 @@ export function SignInForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <FormField label="ইমেইল" htmlFor="email" required>
+      <FormField label="ইমেইল" htmlFor="email" required error={fieldErrors.email}>
         <Input
           id="email"
           name="email"
@@ -70,10 +68,13 @@ export function SignInForm({
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           required
+          invalid={Boolean(fieldErrors.email)}
+          aria-invalid={Boolean(fieldErrors.email)}
+          aria-describedby={fieldErrors.email ? "email-error" : undefined}
         />
       </FormField>
 
-      <FormField label="পাসওয়ার্ড" htmlFor="password" required>
+      <FormField label="পাসওয়ার্ড" htmlFor="password" required error={fieldErrors.password}>
         <Input
           id="password"
           name="password"
@@ -83,6 +84,9 @@ export function SignInForm({
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required
+          invalid={Boolean(fieldErrors.password)}
+          aria-invalid={Boolean(fieldErrors.password)}
+          aria-describedby={fieldErrors.password ? "password-error" : undefined}
         />
       </FormField>
 

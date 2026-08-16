@@ -22,9 +22,9 @@ export function FormField({
         {required && <span className="ml-0.5 text-red-500" aria-hidden>*</span>}
       </label>
       {children}
-      {hint && !error && <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
+      {hint && !error && <p id={htmlFor ? `${htmlFor}-hint` : undefined} className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
       {error && (
-        <p className="mt-1.5 text-xs font-medium text-red-600" role="alert">
+        <p id={htmlFor ? `${htmlFor}-error` : undefined} className="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
       )}
