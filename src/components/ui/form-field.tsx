@@ -17,12 +17,12 @@ export function FormField({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-slate-700">
+      <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
         {label}
         {required && <span className="ml-0.5 text-red-500" aria-hidden>*</span>}
       </label>
       {children}
-      {hint && !error && <p className="mt-1.5 text-xs text-slate-500">{hint}</p>}
+      {hint && !error && <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
       {error && (
         <p className="mt-1.5 text-xs font-medium text-red-600" role="alert">
           {error}

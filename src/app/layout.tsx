@@ -36,9 +36,20 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `
+  try {
+    if (localStorage.getItem("porasathi_theme") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  } catch {}
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} h-full`}>
+    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} h-full`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <SettingsProvider>
           <ToastProvider>

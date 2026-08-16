@@ -17,17 +17,17 @@ export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDi
 }
 
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex flex-col gap-1.5 border-b border-slate-100 p-6", className)} {...props} />;
+  return <div className={cn("flex flex-col gap-1.5 border-b border-slate-100 p-6 dark:border-slate-700", className)} {...props} />;
 }
 
 export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn("text-lg font-semibold text-slate-900", className)} {...props} />;
+  return <h3 className={cn("text-lg font-semibold text-slate-900 dark:text-slate-100", className)} {...props} />;
 }
 
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-slate-500", className)} {...props} />;
+  return <p className={cn("text-sm text-slate-500 dark:text-slate-300", className)} {...props} />;
 }
 
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex items-center gap-3 border-t border-slate-100 p-6", className)} {...props} />;
+  return <div className={cn("flex items-center gap-3 border-t border-slate-100 p-6 dark:border-slate-700", className)} {...props} />;
 }

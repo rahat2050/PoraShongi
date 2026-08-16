@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50">
+    <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="max-w-sm">
@@ -37,7 +37,7 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
+        <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs text-slate-600 dark:border-slate-700 dark:text-slate-400">
           © {new Date().getFullYear()} {siteConfig.brandName} ({siteConfig.brandNameBangla}) — {siteConfig.branding}
         </div>
       </div>

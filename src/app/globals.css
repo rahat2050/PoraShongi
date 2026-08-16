@@ -14,10 +14,11 @@
   --color-brand-300: #6ee7b7;
   --color-brand-400: #34d399;
   --color-brand-500: #10b981;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
+  /* 600+ are dark enough for white normal text (WCAG AA). */
+  --color-brand-600: #0f766e;
+  --color-brand-700: #115e59;
+  --color-brand-800: #134e4a;
+  --color-brand-900: #042f2e;
   --color-brand-950: #042f2e;
 
   /* Accent (warm amber) */
@@ -100,4 +101,43 @@ main > * {
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px -8px rgb(15 23 42 / 0.12);
+}
+
+/*
+ * Dark-mode safety net for server-rendered pages that use semantic slate
+ * utilities. Component-level dark classes remain preferred; these rules stop
+ * a missed class from producing dark text on a dark surface.
+ */
+.dark {
+  color-scheme: dark;
+}
+.dark .text-slate-900:not([class*="dark:text-"]),
+.dark .text-slate-800:not([class*="dark:text-"]) {
+  color: #f1f5f9;
+}
+.dark .text-slate-700:not([class*="dark:text-"]),
+.dark .text-slate-600:not([class*="dark:text-"]) {
+  color: #cbd5e1;
+}
+.dark .text-slate-500:not([class*="dark:text-"]),
+.dark .text-slate-400:not([class*="dark:text-"]) {
+  color: #94a3b8;
+}
+.dark .bg-white:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .bg-slate-50:not([class*="dark:bg-"]) {
+  background-color: #0f172a;
+}
+.dark .bg-slate-100:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .border-slate-100:not([class*="dark:border-"]),
+.dark .border-slate-200:not([class*="dark:border-"]),
+.dark .border-slate-300:not([class*="dark:border-"]) {
+  border-color: #334155;
+}
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover {
+  background-color: #334155;
 }

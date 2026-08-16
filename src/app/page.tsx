@@ -40,7 +40,7 @@ export default async function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white">
+      <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white dark:border-slate-700 dark:from-slate-900 dark:to-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 sm:py-28">
           <Badge variant="brand" className="mb-6">{siteConfig.branding}</Badge>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
@@ -74,7 +74,7 @@ export default async function Home() {
                 { value: stats.open_tuitions, label: "খোলা tuition" },
                 { value: stats.districts, label: "জেলা" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur">
+                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
                   <p className="text-2xl font-extrabold text-brand-700">{s.value}</p>
                   <p className="text-xs text-slate-500">{s.label}</p>
                 </div>
@@ -166,7 +166,7 @@ export default async function Home() {
       )}
 
       {/* How it works */}
-      <section id="how" className="bg-white">
+      <section id="how" className="bg-white dark:bg-slate-900">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">কীভাবে কাজ করে</h2>
@@ -174,7 +174,7 @@ export default async function Home() {
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
-              <div key={step.n} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
+              <div key={step.n} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 dark:border-slate-700 dark:bg-slate-800">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 font-bold text-white">
                   {step.n}
                 </div>
@@ -194,7 +194,7 @@ export default async function Home() {
             <p className="mx-auto mt-3 max-w-2xl text-brand-100/90">
               শিক্ষক হলে profile খুলে student খুঁজুন — শিক্ষার্থী হলে সঠিক শিক্ষক খুঁজে নিন।
             </p>
-            <Link href="/register" className={buttonStyles({ size: "lg", className: "mt-8 bg-white text-brand-900 hover:bg-brand-50" })}>
+            <Link href="/register" className={buttonStyles({ size: "lg", className: "mt-8 bg-white text-brand-900 hover:bg-brand-50 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-50" })}>
               ফ্রিতে যুক্ত হোন
             </Link>
           </div>
