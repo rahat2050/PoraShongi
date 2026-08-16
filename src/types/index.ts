@@ -261,6 +261,41 @@ export type Referral = {
   created_at: string;
 };
 
+export type CoachingCenter = {
+  id: string;
+  owner_id: string;
+  name: string;
+  description: string | null;
+  district: string | null;
+  area: string | null;
+  contact: string | null;
+  website: string | null;
+  verified: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CoachingCourse = {
+  id: string;
+  center_id: string;
+  title: string;
+  description: string | null;
+  price: number | null;
+  created_at: string;
+};
+
+export type EducationResource = {
+  id: string;
+  uploader_id: string;
+  title: string;
+  description: string | null;
+  resource_url: string;
+  subject: string | null;
+  class_level: string | null;
+  price: number;
+  created_at: string;
+};
+
 /** Teacher search result (search_teachers RPC)। */
 export type TeacherPublic = {
   id: string;

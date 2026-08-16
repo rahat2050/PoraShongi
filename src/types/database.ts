@@ -2,8 +2,11 @@ import {
   type AccountStatus,
   type AppNotification,
   type Block,
+  type CoachingCenter,
+  type CoachingCourse,
   type ContactRequest,
   type Conversation,
+  type EducationResource,
   type Favorite,
   type GuardianProfile,
   type Message,
@@ -329,6 +332,84 @@ export interface Database {
         Update: Partial<Omit<Referral, "id" | "created_at"> & { created_at?: string }>;
         Relationships: [];
       };
+      coaching_centers: {
+        Row: CoachingCenter;
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name: string;
+          description?: string | null;
+          district?: string | null;
+          area?: string | null;
+          contact?: string | null;
+          website?: string | null;
+          verified?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<CoachingCenter, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      coaching_courses: {
+        Row: CoachingCourse;
+        Insert: {
+          id?: string;
+          center_id: string;
+          title: string;
+          description?: string | null;
+          price?: number | null;
+          created_at?: string;
+        };
+        Update: Partial<Omit<CoachingCourse, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      education_resources: {
+        Row: EducationResource;
+        Insert: {
+          id?: string;
+          uploader_id: string;
+          title: string;
+          description?: string | null;
+          resource_url: string;
+          subject?: string | null;
+          class_level?: string | null;
+          price?: number;
+          created_at?: string;
+        };
+        Update: Partial<Omit<EducationResource, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      subscriptions: {
+        Row: {
+          id: string;
+          profile_id: string;
+          plan: string;
+          method: "bkash" | "nagad" | "card" | "manual" | null;
+          amount: number | null;
+          status: "pending" | "paid" | "failed" | "refunded";
+          started_at: string;
+          expires_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          plan?: string;
+          method?: "bkash" | "nagad" | "card" | "manual" | null;
+          amount?: number | null;
+          status?: "pending" | "paid" | "failed" | "refunded";
+          started_at?: string;
+          expires_at?: string | null;
+        };
+        Update: Partial<{
+          plan?: string;
+          method?: "bkash" | "nagad" | "card" | "manual" | null;
+          amount?: number | null;
+          status?: "pending" | "paid" | "failed" | "refunded";
+          started_at?: string;
+          expires_at?: string | null;
+        }>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -413,6 +494,10 @@ export interface Database {
       cleanup_old_notifications: { Args: { p_days?: number | null }; Returns: number };
       record_profile_view: { Args: { p_teacher_id: string }; Returns: undefined };
       is_premium_active: { Args: { p_profile_id: string }; Returns: boolean };
+      match_tuitions_for_teacher_rpc: {
+        Args: { p_teacher_id: string; p_limit?: number | null };
+        Returns: Json;
+      };
     };
     Enums: {
       user_role: UserRole;

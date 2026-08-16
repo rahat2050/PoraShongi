@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 const navLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
   { href: "/tuitions", label: "Tuition" },
+  { href: "/coaching", label: "Coaching" },
   { href: "/#how", label: "কীভাবে কাজ করে" },
 ];
 
