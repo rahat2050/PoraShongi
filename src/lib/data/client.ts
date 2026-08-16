@@ -26,7 +26,9 @@ export function ok<T>(data: T): DataResult<T> {
 }
 
 export function fail<T>(error: string): DataResult<T> {
-  return { data: null, error };
+  if (process.env.NODE_ENV !== "production") return { data: null, error };
+  console.error("[PoraSathi data error]", error);
+  return { data: null, error: "সাময়িক কারিগরি সমস্যা হয়েছে। একটু পরে আবার চেষ্টা করুন।" };
 }
 
 export function asJson<T>(value: unknown): T {
