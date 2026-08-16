@@ -62,7 +62,10 @@ export default async function StudentDashboardPage() {
           <h1 className="text-2xl font-bold text-slate-900">শিক্ষার্থী ড্যাশবোর্ড</h1>
           <p className="mt-1 text-slate-500">আপনার tuition ও request manage করুন।</p>
         </div>
-        <Badge variant="brand">{ROLE_LABELS.student.bn} · {ROLE_LABELS.student.en}</Badge>
+        <div className="flex items-center gap-2">
+          {profile.verification_status === "verified" && <Badge variant="success">Verified Student</Badge>}
+          <Badge variant="brand">{ROLE_LABELS.student.bn} · {ROLE_LABELS.student.en}</Badge>
+        </div>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">

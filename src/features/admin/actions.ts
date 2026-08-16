@@ -7,16 +7,17 @@ import { failure, success, type ActionResult } from "@/features/types";
 import { type VerificationStatus } from "@/types/index";
 
 export async function adminSetVerification(
-  teacherId: string,
+  userId: string,
   status: VerificationStatus,
 ): Promise<ActionResult> {
   await requireRole(["admin"]);
   const supabase = await createClient();
+  // এখন teacher + student দুজনকেই verify করা যায় (Verified Student badge)
   const { error } = await supabase
     .from("profiles")
     .update({ verification_status: status })
-    .eq("id", teacherId)
-    .eq("role", "teacher");
+    .eq("id", userId)
+    .in("role", ["teacher", "student"]);
   if (error) return failure(error.message);
   revalidatePath("/admin");
   return success();

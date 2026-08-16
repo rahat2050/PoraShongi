@@ -3,10 +3,19 @@ import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
 import {
   type AdminAnalytics,
   type BlogPost,
+  type HomeFeed,
   type LeaderboardTeacher,
   type TeacherPublic,
   type TrialRequest,
 } from "@/types/index";
+
+export async function homeFeed(): Promise<DataResult<HomeFeed>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("home_feed", { p_teachers: 6, p_tuitions: 6 });
+  if (error) return fail(error.message);
+  return ok(asJson<HomeFeed>(data));
+}
 
 export async function topTeachers(
   district?: string,

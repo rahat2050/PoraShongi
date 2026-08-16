@@ -97,6 +97,8 @@ export async function updateTeacherProfile(input: unknown): Promise<ActionResult
       expected_salary: parsed.data.expectedSalary,
       available_days: parsed.data.availableDays ?? null,
       available_time: parsed.data.availableTime,
+      teaching_style: parsed.data.teachingStyle,
+      languages: parsed.data.languages ?? null,
     })
     .eq("id", profile.id);
 

@@ -6,7 +6,7 @@ import { type NotificationPreferences } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 
-const ITEMS: { key: keyof Omit<NotificationPreferences, "user_id" | "updated_at">; label: string }[] = [
+const ITEMS: { key: keyof Omit<NotificationPreferences, "user_id" | "updated_at" | "email_notify">; label: string }[] = [
   { key: "new_match", label: "নতুন ম্যাচিং tuition/শিক্ষক" },
   { key: "new_request", label: "নতুন tuition request" },
   { key: "request_response", label: "request accept/reject" },
@@ -28,13 +28,14 @@ export function PreferencesForm({ prefs }: { prefs: NotificationPreferences | nu
     review_received: prefs?.review_received ?? true,
     verification_update: prefs?.verification_update ?? true,
   });
+  const [emailNotify, setEmailNotify] = useState(prefs?.email_notify ?? false);
   const [pending, setPending] = useState(false);
   const [saved, setSaved] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
-    const result = await updateNotificationPreferences(state);
+    const result = await updateNotificationPreferences({ ...state, email_notify: emailNotify } as never);
     setPending(false);
     setSaved(result.ok);
   }
@@ -53,6 +54,15 @@ export function PreferencesForm({ prefs }: { prefs: NotificationPreferences | nu
           />
         </label>
       ))}
+      <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3">
+        <span className="text-sm font-medium text-slate-700">📧 ইমেইলেও নোটিফিকেশন পাঠাও</span>
+        <input
+          type="checkbox"
+          checked={emailNotify}
+          onChange={(e) => setEmailNotify(e.target.checked)}
+          className="h-4 w-4 accent-brand-600"
+        />
+      </label>
       <div className="pt-3">
         <Button type="submit" loading={pending}>সেভ করুন</Button>
       </div>

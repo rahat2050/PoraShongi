@@ -58,6 +58,8 @@ export const teacherProfileSchema = z.object({
     }),
   availableDays: z.array(z.string()).optional(),
   availableTime: optionalText(80),
+  teachingStyle: optionalText(500),
+  languages: z.array(z.string()).optional(),
 });
 
 export const guardianProfileSchema = z.object({

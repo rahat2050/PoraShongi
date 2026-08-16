@@ -62,6 +62,8 @@ export type TeacherProfile = {
   expected_salary: number | null;
   available_days: string[] | null;
   available_time: string | null;
+  teaching_style: string | null;
+  languages: string[] | null;
   rating_avg: number;
   review_count: number;
   profile_views: number;
@@ -247,6 +249,7 @@ export type NotificationPreferences = {
   schedule_change: boolean;
   review_received: boolean;
   verification_update: boolean;
+  email_notify?: boolean;
   updated_at: string;
 };
 
@@ -366,6 +369,11 @@ export type AdminAnalytics = {
   top_districts: { district: string; c: number }[];
 };
 
+export type HomeFeed = {
+  teachers: TeacherPublic[];
+  tuitions: TuitionPublic[];
+};
+
 /** Teacher search result (search_teachers RPC)। */
 export type TeacherPublic = {
   id: string;
@@ -419,6 +427,8 @@ export type TeacherDetail = {
   available_days: string[] | null;
   available_time: string | null;
   bio: string | null;
+  teaching_style?: string | null;
+  languages?: string[] | null;
   rating_avg: number | null;
   review_count: number | null;
   profile_views?: number;

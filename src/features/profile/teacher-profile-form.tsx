@@ -27,6 +27,8 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
   const [salary, setSalary] = useState(data?.expected_salary != null ? String(data.expected_salary) : "");
   const [days, setDays] = useState<string[]>(data?.available_days ?? []);
   const [time, setTime] = useState(data?.available_time ?? "");
+  const [teachingStyle, setTeachingStyle] = useState(data?.teaching_style ?? "");
+  const [languages, setLanguages] = useState((data?.languages ?? []).join(", "));
   const [bio, setBio] = useState(data?.bio ?? "");
 
   const [saving, setSaving] = useState(false);
@@ -49,6 +51,8 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
       expectedSalary: salary || undefined,
       availableDays: days,
       availableTime: time || undefined,
+      teachingStyle: teachingStyle || undefined,
+      languages: languages.split(",").map((l) => l.trim()).filter(Boolean),
       bio: bio || undefined,
     });
     setSaving(false);
@@ -119,6 +123,14 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
           <option value="">যেকোনো সময়</option>
           {TIME_SLOTS.map((t) => <option key={t} value={t}>{t}</option>)}
         </Select>
+      </FormField>
+
+      <FormField label="পড়ানোর ধরণ (teaching style)">
+        <Textarea placeholder="যেমন: ধৈর্য ধরে বুঝিয়ে পড়াই, নিয়মিত প্র্যাকটিস করাই…" value={teachingStyle} onChange={(e) => setTeachingStyle(e.target.value)} rows={2} />
+      </FormField>
+
+      <FormField label="ভাষা (কমা দিয়ে আলাদা)" hint="যেমন: বাংলা, English">
+        <Input placeholder="বাংলা, English" value={languages} onChange={(e) => setLanguages(e.target.value)} />
       </FormField>
 
       <FormField label="বায়ো">

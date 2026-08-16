@@ -209,6 +209,20 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
             <p className="mt-1 text-sm text-slate-600">{teacher.available_time || "নমনীয় সময়"}</p>
             <h2 className="mt-6 text-base font-semibold text-slate-900">আমার সম্পর্কে</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{teacher.bio || "বায়ো দেওয়া হয়নি।"}</p>
+            {teacher.teaching_style && (
+              <>
+                <h2 className="mt-6 text-base font-semibold text-slate-900">পড়ানোর ধরণ</h2>
+                <p className="mt-2 whitespace-pre-line text-sm text-slate-600">{teacher.teaching_style}</p>
+              </>
+            )}
+            {teacher.languages && teacher.languages.length > 0 && (
+              <>
+                <h2 className="mt-6 text-base font-semibold text-slate-900">ভাষা</h2>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {teacher.languages.map((l) => <Badge key={l} variant="outline">{l}</Badge>)}
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

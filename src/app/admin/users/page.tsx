@@ -90,7 +90,7 @@ export default async function AdminUsersPage({
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           {p.role === "teacher" && <AdminPremiumToggle teacherId={p.id} premium={p.is_premium} />}
-                          {p.role === "teacher" && p.verification_status !== "verified" && <AdminVerifyButtons teacherId={p.id} />}
+                          {(p.role === "teacher" || p.role === "student") && p.verification_status !== "verified" && <AdminVerifyButtons teacherId={p.id} />}
                           {p.role !== "admin" && <AdminAccountButtons userId={p.id} status={p.account_status} />}
                         </div>
                       </td>

@@ -107,6 +107,8 @@ export interface Database {
           expected_salary?: number | null;
           available_days?: string[] | null;
           available_time?: string | null;
+          teaching_style?: string | null;
+          languages?: string[] | null;
           rating_avg?: number;
           review_count?: number;
           profile_views?: number;
@@ -554,6 +556,7 @@ export interface Database {
       top_teachers: { Args: { p_district?: string | null; p_limit?: number | null }; Returns: Json };
       recommend_teachers: { Args: { p_teacher_id: string; p_limit?: number | null }; Returns: Json };
       admin_analytics: { Args: Record<PropertyKey, never>; Returns: Json };
+      home_feed: { Args: { p_teachers?: number | null; p_tuitions?: number | null }; Returns: Json };
     };
     Enums: {
       user_role: UserRole;

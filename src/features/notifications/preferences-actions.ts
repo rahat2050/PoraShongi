@@ -13,7 +13,15 @@ export async function updateNotificationPreferences(
   const supabase = await createClient();
   const { error } = await supabase.from("notification_preferences").upsert({
     user_id: profile.id,
-    ...input,
+    new_match: input.new_match,
+    new_request: input.new_request,
+    request_response: input.request_response,
+    new_message: input.new_message,
+    upcoming_class: input.upcoming_class,
+    schedule_change: input.schedule_change,
+    review_received: input.review_received,
+    verification_update: input.verification_update,
+    email_notify: input.email_notify ?? false,
   });
   if (error) return failure(error.message);
   revalidatePath("/dashboard/notifications");

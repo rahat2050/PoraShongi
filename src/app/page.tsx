@@ -1,9 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Star, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { homeFeed } from "@/lib/data/features";
+import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
+import { formatTaka } from "@/lib/utils";
 
 const roles = [
   { icon: GraduationCap, title: "শিক্ষার্থী", desc: "নিজের জন্য যোগ্য শিক্ষক খুঁজুন — class, subject, বাজেট ও এলাকা অনুযায়ী।" },
@@ -18,7 +22,18 @@ const steps = [
   { n: "৪", title: "শেখা শুরু", desc: "Accept হলে schedule ঠিক করুন, attendance আর review দিন।" },
 ];
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  // Live feed — Supabase configure থাকলে top teachers + recent tuition দেখায়
+  let feed: { teachers: import("@/types/index").TeacherPublic[]; tuitions: import("@/types/index").TuitionPublic[] } = {
+    teachers: [],
+    tuitions: [],
+  };
+  if (isSupabaseConfigured()) {
+    feed = (await homeFeed()).data ?? { teachers: [], tuitions: [] };
+  }
+
   return (
     <>
       {/* Hero */}
@@ -72,6 +87,64 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Live: সেরা শিক্ষক */}
+      {feed.teachers.length > 0 && (
+        <section className="bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-slate-900">সেরা শিক্ষক</h2>
+              <Link href="/leaderboard" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন →</Link>
+            </div>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {feed.teachers.slice(0, 6).map((t) => {
+                const name = t.display_name || t.full_name || "শিক্ষক";
+                return (
+                  <Link key={t.id} href={`/teachers/${t.id}`} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md">
+                    <Avatar src={t.avatar_url} name={name} size="lg" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="truncate text-sm font-semibold text-slate-800">{name}</p>
+                        {t.is_premium && <Badge variant="accent">★</Badge>}
+                      </div>
+                      <p className="truncate text-xs text-slate-500">{t.subjects?.slice(0, 3).join(", ") || "শিক্ষক"}</p>
+                      <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-400">
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden />
+                        {t.review_count ? `${t.rating_avg} (${t.review_count})` : "নতুন"}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Live: সাম্প্রতিক tuition */}
+      {feed.tuitions.length > 0 && (
+        <section>
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-slate-900">সাম্প্রতিক tuition</h2>
+              <Link href="/tuitions" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন →</Link>
+            </div>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {feed.tuitions.slice(0, 6).map((t) => (
+                <Link key={t.id} href={`/tuitions/${t.id}`} className="rounded-2xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md">
+                  <p className="truncate text-sm font-semibold text-slate-800">{t.title}</p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    <Badge variant="brand">{t.class_level}</Badge>
+                    <Badge variant="outline">{t.subject}</Badge>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-400">{[t.area, t.district].filter(Boolean).join(", ") || "এলাকা নেই"}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-700">{formatTaka(t.budget)}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How it works */}
       <section id="how" className="bg-white">

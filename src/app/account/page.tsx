@@ -4,6 +4,7 @@ import { ShieldCheck } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccountStatusToggle } from "@/features/account/account-status-toggle";
+import { ChangePasswordForm } from "@/features/account/change-password-form";
 
 export const metadata: Metadata = { title: "প্রাইভেসি ও অ্যাকাউন্ট" };
 export const dynamic = "force-dynamic";
@@ -33,6 +34,15 @@ export default async function AccountPage() {
               : "আপনার অ্যাকাউন্ট সক্রিয়। চাইলে যেকোনো সময় নিষ্ক্রিয় করতে পারবেন (ডাটা মুছবে না)।"}
           </p>
           <AccountStatusToggle current={profile.account_status === "deleted" ? "deleted" : "active"} />
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>পাসওয়ার্ড বদলান</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ChangePasswordForm />
         </CardContent>
       </Card>
 
