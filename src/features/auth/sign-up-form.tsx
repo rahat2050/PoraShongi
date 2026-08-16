@@ -92,6 +92,7 @@ export function SignUpForm() {
       return;
     }
 
+    window.dispatchEvent(new Event("porasathi:auth-changed"));
     router.replace("/dashboard");
     router.refresh();
   }

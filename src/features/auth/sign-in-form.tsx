@@ -49,6 +49,7 @@ export function SignInForm({
       return;
     }
 
+    window.dispatchEvent(new Event("porasathi:auth-changed"));
     router.replace(getSafeNextPath(nextPath));
     router.refresh();
   }
