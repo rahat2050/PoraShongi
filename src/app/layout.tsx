@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Hind_Siliguri, Inter } from "next/font/google";
 import "./globals.css";
 import { getSiteUrl, siteConfig } from "@/config/site";
 import { Header } from "@/components/layout/header";
@@ -10,15 +9,6 @@ import { ToastProvider } from "@/components/ui/toast";
 import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "optional" });
-
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["bengali", "latin"],
-  variable: "--font-hind-siliguri",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "optional",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -72,7 +62,7 @@ const themeInitScript = `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} h-full`} suppressHydrationWarning>
+    <html lang="bn" className="h-full" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
