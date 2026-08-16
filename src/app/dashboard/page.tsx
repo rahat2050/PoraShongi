@@ -5,6 +5,6 @@ export default async function DashboardIndexPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
 
-  const target = profile.role === "admin" ? "/dashboard/teacher" : `/dashboard/${profile.role}`;
-  redirect(target);
+  if (profile.role === "admin") redirect("/admin");
+  redirect(`/dashboard/${profile.role}`);
 }

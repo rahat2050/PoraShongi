@@ -13,7 +13,7 @@ import { SessionForm } from "@/features/schedule/session-form";
 import { TeacherSessionActions } from "@/features/schedule/session-actions";
 import { formatDateTime } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Schedule" };
+export const metadata: Metadata = { title: "সময়সূচি" };
 export const dynamic = "force-dynamic";
 
 const STATUS_BADGE: Record<Session["status"], { label: string; variant: "success" | "warning" | "danger" | "info" | "default" }> = {
@@ -57,8 +57,8 @@ export default async function SchedulePage() {
         <div className="flex items-center gap-3">
           <CalendarDays className="h-6 w-6 text-brand-600" aria-hidden />
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Schedule</h1>
-            <p className="mt-1 text-slate-500">{isTeacher ? "ক্লাস manage ও attendance দিন।" : "আপনার ক্লাসের সময়সূচি।"}</p>
+            <h1 className="text-2xl font-bold text-slate-900">সময়সূচি</h1>
+            <p className="mt-1 text-slate-500">{isTeacher ? "ক্লাস পরিচালনা ও উপস্থিতি নথিভুক্ত করুন।" : "আপনার ক্লাসের সময়সূচি।"}</p>
           </div>
         </div>
         {isTeacher && <SessionForm tuitions={scheduleable} />}
@@ -70,7 +70,7 @@ export default async function SchedulePage() {
           <Card><CardContent className="p-5 text-sm text-slate-400">কোনো আসন্ন ক্লাস নেই।</CardContent></Card>
         ) : (
           upcoming.map(({ session, tuitionTitle }) => (
-            <SessionRow key={session.id} session={session} title={tuitionTitle ?? "Tuition"} isTeacher={isTeacher} />
+            <SessionRow key={session.id} session={session} title={tuitionTitle ?? "টিউশন"} isTeacher={isTeacher} />
           ))
         )}
       </div>
@@ -81,7 +81,7 @@ export default async function SchedulePage() {
           <Card><CardContent className="p-5 text-sm text-slate-400">কোনো অতীত ক্লাস নেই।</CardContent></Card>
         ) : (
           past.map(({ session, tuitionTitle }) => (
-            <SessionRow key={session.id} session={session} title={tuitionTitle ?? "Tuition"} isTeacher={isTeacher} />
+            <SessionRow key={session.id} session={session} title={tuitionTitle ?? "টিউশন"} isTeacher={isTeacher} />
           ))
         )}
       </div>
@@ -89,7 +89,7 @@ export default async function SchedulePage() {
       {sessions.length === 0 && (
         <Card className="mt-6">
           <CardContent className="p-6">
-            <EmptyState icon={<CalendarDays className="h-6 w-6" aria-hidden />} title="কোনো ক্লাস schedule হয়নি" description={isTeacher ? "আপনার tuition-এর জন্য ক্লাস schedule করুন।" : "শিক্ষক ক্লাস schedule করলে এখানে দেখাবে।"} />
+            <EmptyState icon={<CalendarDays className="h-6 w-6" aria-hidden />} title="কোনো ক্লাস নির্ধারিত হয়নি" description={isTeacher ? "আপনার টিউশনের জন্য ক্লাসের সময় নির্ধারণ করুন।" : "শিক্ষক ক্লাসের সময় নির্ধারণ করলে এখানে দেখাবে।"} />
           </CardContent>
         </Card>
       )}

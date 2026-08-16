@@ -21,7 +21,6 @@ import { MatchBadge } from "@/components/shared/match-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
-import { DashboardNav } from "@/components/shared/dashboard-nav";
 
 export const metadata: Metadata = { title: "শিক্ষার্থী ড্যাশবোর্ড" };
 
@@ -52,8 +51,8 @@ export default async function StudentDashboardPage() {
 
   const onboardingSteps = [
     { label: "প্রোফাইল পূরণ করুন", done: completion.percent >= 60, href: "/profile" },
-    { label: "একটা tuition তৈরি করুন", done: tuitionList.length > 0, href: "/dashboard/tuitions/new" },
-    { label: "শিক্ষক খুঁজে request পাঠান", done: requestList.length > 0, href: "/teachers" },
+    { label: "একটি টিউশন তৈরি করুন", done: tuitionList.length > 0, href: "/dashboard/tuitions/new" },
+    { label: "শিক্ষক খুঁজে অনুরোধ পাঠান", done: requestList.length > 0, href: "/teachers" },
   ];
 
   return (
@@ -61,17 +60,14 @@ export default async function StudentDashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">শিক্ষার্থী ড্যাশবোর্ড</h1>
-          <p className="mt-1 text-slate-500">আপনার tuition ও request manage করুন।</p>
+          <p className="mt-1 text-slate-500">আপনার টিউশন ও অনুরোধ পরিচালনা করুন।</p>
         </div>
         <div className="flex items-center gap-2">
-          {profile.verification_status === "verified" && <Badge variant="success">Verified Student</Badge>}
-          <Badge variant="brand">{ROLE_LABELS.student.bn} · {ROLE_LABELS.student.en}</Badge>
+          {profile.verification_status === "verified" && <Badge variant="success">যাচাইকৃত শিক্ষার্থী</Badge>}
+          <Badge variant="brand">{ROLE_LABELS.student.bn}</Badge>
         </div>
       </div>
 
-      <div className="mt-5">
-        <DashboardNav active="/dashboard" />
-      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-1">
@@ -79,8 +75,8 @@ export default async function StudentDashboardPage() {
           <OnboardingChecklist steps={onboardingSteps} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">
-          <StatCard label="Tuition চাহিদা" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
-          <StatCard label="অপেক্ষমাণ request" value={pendingCount} icon={<Send className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
+          <StatCard label="টিউশন চাহিদা" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
+          <StatCard label="অপেক্ষমাণ অনুরোধ" value={pendingCount} icon={<Send className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
           <StatCard label="সেভ করা শিক্ষক" value={savedTeachers.length} icon={<Heart className="h-5 w-5" aria-hidden />} href="/dashboard/favorites" />
         </div>
       </div>
@@ -116,14 +112,14 @@ export default async function StudentDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">আমার tuition</h2>
+              <h2 className="text-base font-semibold text-slate-900">আমার টিউশন</h2>
               <Link href="/dashboard/tuitions/new" className={buttonStyles({ variant: "primary", size: "sm" })}>
-                <Plus className="h-4 w-4" aria-hidden /> নতুন tuition
+                <Plus className="h-4 w-4" aria-hidden /> নতুন টিউশন
               </Link>
             </div>
             <div className="mt-4 divide-y divide-slate-100">
               {tuitionList.length === 0 ? (
-                <EmptyState title="কোনো tuition নেই" description="প্রথম tuition তৈরি করলেই শিক্ষক খুঁজতে পারবেন।" />
+                <EmptyState title="কোনো টিউশন নেই" description="প্রথম টিউশন তৈরি করলেই শিক্ষক খুঁজতে পারবেন।" />
               ) : (
                 tuitionList.slice(0, 3).map((t) => (
                   <div key={t.id} className="flex items-center justify-between gap-3 py-3">
@@ -142,12 +138,12 @@ export default async function StudentDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">পাঠানো request</h2>
+              <h2 className="text-base font-semibold text-slate-900">পাঠানো অনুরোধ</h2>
               <Link href="/dashboard/requests" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন</Link>
             </div>
             <div className="mt-2 divide-y divide-slate-100">
               {sentRows.length === 0 ? (
-                <EmptyState title="কোনো request নেই" description="শিক্ষক খুঁজে request পাঠান।" />
+                <EmptyState title="কোনো অনুরোধ নেই" description="শিক্ষক খুঁজে অনুরোধ পাঠান।" />
               ) : (
                 sentRows.map((row) => <RequestRow key={row.request.id} row={row} direction="sent" />)
               )}

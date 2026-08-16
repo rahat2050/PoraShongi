@@ -4,20 +4,33 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, MessageSquare, ScrollText, User } from "lucide-react";
 
-const items = [
+type BottomNavItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+  exact?: boolean;
+  matchPrefixes?: string[];
+};
+
+const items: BottomNavItem[] = [
   { href: "/", label: "হোম", icon: Home, exact: true },
   { href: "/teachers", label: "খুঁজুন", icon: Compass },
   { href: "/tuitions", label: "টিউশন", icon: ScrollText },
   { href: "/messages", label: "মেসেজ", icon: MessageSquare },
-  { href: "/dashboard", label: "আমার", icon: User },
+  { href: "/dashboard", label: "আমার", icon: User, matchPrefixes: ["/dashboard", "/profile", "/account"] },
 ];
 
 /** মোবাইলের জন্য bottom navigation bar — অ্যাপের মতো সহজ নেভিগেশন। */
 export function BottomNav() {
   const pathname = usePathname();
 
-  const isActive = (item: (typeof items)[number]) =>
-    item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
+  const isActive = (item: BottomNavItem) => {
+    if (item.exact) return pathname === item.href;
+    if (item.matchPrefixes) {
+      return item.matchPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+    }
+    return pathname === item.href || pathname.startsWith(`${item.href}/`);
+  };
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-slate-700 dark:bg-slate-900/95 md:hidden" aria-label="মোবাইল নেভিগেশন">

@@ -16,12 +16,12 @@ export function StatCard({
 }) {
   const body = (
     <CardContent className="flex items-center gap-4 p-5">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300">
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
-        <p className="truncate text-sm text-slate-500">{label}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+        <p className="truncate text-sm text-slate-500 dark:text-slate-400">{label}</p>
       </div>
     </CardContent>
   );

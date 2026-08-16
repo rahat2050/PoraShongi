@@ -7,7 +7,7 @@ import { TuitionForm } from "@/features/tuitions/tuition-form";
 import { TuitionManageActions } from "@/features/tuitions/tuition-actions";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
 
-export const metadata: Metadata = { title: "Tuition edit" };
+export const metadata: Metadata = { title: "টিউশন সম্পাদনা" };
 
 export default async function TuitionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -36,7 +36,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
       </Card>
 
       <Card className="mt-6">
-        <CardHeader><CardTitle>Tuition edit করুন</CardTitle></CardHeader>
+        <CardHeader><CardTitle>টিউশন সম্পাদনা করুন</CardTitle></CardHeader>
         <CardContent><TuitionForm tuition={tuition} /></CardContent>
       </Card>
     </div>

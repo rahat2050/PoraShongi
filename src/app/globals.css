@@ -110,6 +110,10 @@ html:not(.dark) .text-slate-400 {
 .dark .text-slate-400:not([class*="dark:text-"]) {
   color: #94a3b8;
 }
+.dark .text-brand-700:not([class*="dark:text-"]),
+.dark .text-brand-800:not([class*="dark:text-"]) {
+  color: #6ee7b7;
+}
 .dark .bg-white:not([class*="dark:bg-"]) {
   background-color: #1e293b;
 }

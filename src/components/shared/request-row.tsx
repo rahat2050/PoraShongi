@@ -16,21 +16,21 @@ export function RequestRow({
   const otherName = other?.display_name || other?.full_name || "সদস্য";
 
   return (
-    <div className="flex flex-col gap-3 border-b border-slate-100 p-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 border-b border-slate-100 dark:border-slate-700 p-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
         <Avatar src={other?.avatar_url ?? null} name={otherName} size="sm" />
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-slate-800">
+          <p className="truncate text-sm font-medium text-slate-800 dark:text-slate-100">
             {direction === "sent" ? `প্রতি: ${otherName}` : `থেকে: ${otherName}`}
           </p>
-          <Link href={`/tuitions/${request.tuition_id}`} className="block truncate text-xs text-slate-500 hover:text-brand-700">
-            {tuition?.title ?? "Tuition"}
+          <Link href={`/tuitions/${request.tuition_id}`} className="block truncate text-xs text-slate-500 hover:text-brand-700 dark:text-slate-400 dark:hover:text-brand-300">
+            {tuition?.title ?? "টিউশন"}
           </Link>
-          <p className="text-xs text-slate-400">{formatDate(request.created_at)}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(request.created_at)}</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <RequestStatusBadge status={request.status} />
         {direction === "received" && request.status === "pending" && (
           <TeacherRequestActions requestId={request.id} />

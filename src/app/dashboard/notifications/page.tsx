@@ -28,7 +28,7 @@ export default async function NotificationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">নোটিফিকেশন</h1>
-          <p className="mt-1 text-slate-500">request, match ও আপডেটের খবর।</p>
+          <p className="mt-1 text-slate-500">অনুরোধ, মিল ও গুরুত্বপূর্ণ আপডেটের খবর।</p>
         </div>
         {hasUnread && <MarkAllReadButton />}
       </div>
