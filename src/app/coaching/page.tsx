@@ -10,7 +10,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
-export const metadata: Metadata = { title: "Coaching Center" };
+export const metadata: Metadata = {
+  title: "কোচিং সেন্টার",
+  description: "PoraSathi-তে প্রকাশিত কোচিং সেন্টার খুঁজুন।",
+  robots: { index: false, follow: true },
+};
 export const dynamic = "force-dynamic";
 
 export default async function CoachingPage({

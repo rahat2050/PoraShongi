@@ -12,7 +12,11 @@ import { Pagination } from "@/components/ui/pagination";
 import { buttonStyles } from "@/components/ui/button";
 import { buildQueryString, firstParam } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Tuition খুঁজুন" };
+export const metadata: Metadata = {
+  title: "টিউশন খুঁজুন",
+  description: "লগইন করে আপনার জন্য প্রকাশিত টিউশন খুঁজুন।",
+  robots: { index: false, follow: false, nocache: true },
+};
 
 const PAGE_SIZE = 12;
 

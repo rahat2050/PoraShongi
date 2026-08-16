@@ -20,8 +20,6 @@ export function Footer() {
                 <li><Link href="/teachers" className={linkClass}>শিক্ষক খুঁজুন</Link></li>
                 <li><Link href="/tuitions" className={linkClass}>টিউশন দেখুন</Link></li>
                 <li><Link href="/leaderboard" className={linkClass}>সেরা শিক্ষক</Link></li>
-                <li><Link href="/blog" className={linkClass}>ব্লগ</Link></li>
-                <li><Link href="/coaching" className={linkClass}>কোচিং</Link></li>
               </ul>
             </div>
             <div>

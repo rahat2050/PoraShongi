@@ -126,9 +126,36 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
   // Recommendation — একই subject/এলাকার আরও teacher
   const similar = (await recommendTeachers(teacher.id, 3)).data ?? [];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name,
+    url: `${getSiteUrl()}/teachers/${teacher.id}`,
+    ...(teacher.avatar_url ? { image: teacher.avatar_url } : {}),
+    jobTitle: "শিক্ষক",
+    knowsAbout: teacher.subjects ?? [],
+    ...(teacher.district
+      ? { address: { "@type": "PostalAddress", addressRegion: teacher.district, addressCountry: "BD" } }
+      : {}),
+    ...(teacher.review_count && teacher.review_count > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: teacher.rating_avg,
+            ratingCount: teacher.review_count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       <Card>
         <CardContent className="p-6 sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row">

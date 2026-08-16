@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Hind_Siliguri, Inter } from "next/font/google";
 import "./globals.css";
 import { getSiteUrl, siteConfig } from "@/config/site";
@@ -26,7 +26,24 @@ export const metadata: Metadata = {
     template: `%s · ${siteConfig.brandName}`,
   },
   description: siteConfig.description,
+  applicationName: siteConfig.brandName,
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: siteConfig.brandName,
+    locale: "bn_BD",
+    title: `${siteConfig.brandName} (${siteConfig.brandNameBangla}) — ${siteConfig.tagline}`,
+    description: siteConfig.description,
+    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: `${siteConfig.brandName} logo` }],
+  },
+  twitter: {
+    card: "summary",
+    title: `${siteConfig.brandName} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
+    images: ["/icon-512.png"],
+  },
   keywords: ["tuition", "Bangladesh", "শিক্ষক", "শিক্ষার্থী", "টিউশন", "PoraSathi", "পড়াসাথী", "FS Coaching"],
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -34,6 +51,14 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0f766e" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+  colorScheme: "light dark",
 };
 
 const themeInitScript = `

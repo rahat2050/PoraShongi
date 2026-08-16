@@ -13,7 +13,8 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "ব্লগ — পড়াশোনার টিপস",
-  description: "SSC/HSC প্রস্তুতি, স্কলারশিপ, ক্যারিয়ার ও শিক্ষার টিপস — PoraSathi ব্লগ।",
+  description: "PoraSathi শিক্ষা ব্লগে প্রকাশিত পড়াশোনার টিপস ও গাইড।",
+  robots: { index: false, follow: true },
 };
 export const dynamic = "force-dynamic";
 

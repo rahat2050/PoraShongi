@@ -13,7 +13,14 @@ import { buildQueryString, firstParam } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "শিক্ষক খুঁজুন",
-  description: "আপনার এলাকার কাছের ও যোগ্য শিক্ষক খুঁজুন — PoraSathi।",
+  description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী PoraSathi-তে প্রকাশিত শিক্ষক খুঁজুন।",
+  alternates: { canonical: "/teachers" },
+  openGraph: {
+    type: "website",
+    url: "/teachers",
+    title: "শিক্ষক খুঁজুন — PoraSathi",
+    description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী শিক্ষক খুঁজুন।",
+  },
 };
 
 const PAGE_SIZE = 12;

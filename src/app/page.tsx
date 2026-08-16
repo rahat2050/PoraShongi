@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Star, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -22,6 +23,7 @@ const steps = [
   { n: "৪", title: "শেখা শুরু", desc: "Accept হলে schedule ঠিক করুন, attendance আর review দিন।" },
 ];
 
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -37,8 +39,35 @@ export default async function Home() {
     stats = statsRes.data;
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteConfig.url}/#organization`,
+        name: siteConfig.brandName,
+        alternateName: siteConfig.brandNameBangla,
+        url: siteConfig.url,
+        logo: `${siteConfig.url}/icon-512.png`,
+        email: "hello@porasathi.com",
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteConfig.url}/#website`,
+        name: siteConfig.brandName,
+        url: siteConfig.url,
+        inLanguage: "bn-BD",
+        publisher: { "@id": `${siteConfig.url}/#organization` },
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white dark:border-slate-700 dark:from-slate-900 dark:to-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 sm:py-28">

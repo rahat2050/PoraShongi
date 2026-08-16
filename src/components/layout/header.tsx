@@ -8,7 +8,6 @@ const navLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
   { href: "/tuitions", label: "Tuition" },
   { href: "/leaderboard", label: "সেরা শিক্ষক" },
-  { href: "/blog", label: "ব্লগ" },
 ];
 
 export function Header() {

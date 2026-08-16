@@ -13,7 +13,17 @@ import { Select } from "@/components/ui/select";
 import { buttonStyles } from "@/components/ui/button";
 import { firstParam } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "সেরা শিক্ষক" };
+export const metadata: Metadata = {
+  title: "সেরা শিক্ষক",
+  description: "ভেরিফাইড, সম্পন্ন টিউশন ও পর্যাপ্ত রিভিউ থাকা শিক্ষকদের প্রমাণভিত্তিক র‍্যাঙ্কিং।",
+  alternates: { canonical: "/leaderboard" },
+  openGraph: {
+    type: "website",
+    url: "/leaderboard",
+    title: "সেরা শিক্ষক — PoraSathi",
+    description: "ভেরিফাইড ও পর্যাপ্ত কার্যক্রম থাকা শিক্ষকদের প্রমাণভিত্তিক র‍্যাঙ্কিং।",
+  },
+};
 export const dynamic = "force-dynamic";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
