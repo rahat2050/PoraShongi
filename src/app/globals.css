@@ -4,8 +4,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-hind-siliguri), ui-sans-serif,
-    system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Noto Sans Bengali", "Nirmala UI", Arial, sans-serif;
 
   /* FS Coaching brand — primary (deep teal/emerald) */
   --color-brand-50: #ecfdf5;
@@ -14,10 +14,11 @@
   --color-brand-300: #6ee7b7;
   --color-brand-400: #34d399;
   --color-brand-500: #10b981;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
+  /* 600+ are dark enough for white normal text (WCAG AA). */
+  --color-brand-600: #0f766e;
+  --color-brand-700: #115e59;
+  --color-brand-800: #134e4a;
+  --color-brand-900: #042f2e;
   --color-brand-950: #042f2e;
 
   /* Accent (warm amber) */
@@ -30,20 +31,7 @@
   --color-accent-600: #d97706;
   --color-accent-700: #b45309;
 
-  /* animations */
-  --animate-fade-in: fade-in 0.4s ease-out;
-  --animate-fade-up: fade-up 0.45s ease-out;
   --animate-shimmer: shimmer 1.6s linear infinite;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
@@ -66,11 +54,6 @@ body {
 .dark body {
   background-color: #0f172a;
   color: #e2e8f0;
-}
-
-/* পেজ লোডের সাথে হালকা fade-in */
-main > * {
-  animation: var(--animate-fade-in);
 }
 
 /* স্ক্রলবার হালকা রাখা (horizontal nav-এর জন্য) */
@@ -100,4 +83,57 @@ main > * {
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px -8px rgb(15 23 42 / 0.12);
+}
+
+/* Slate-400 is too light for normal text on white; use slate-500 in light mode. */
+html:not(.dark) .text-slate-400 {
+  color: #64748b;
+}
+
+/*
+ * Dark-mode safety net for server-rendered pages that use semantic slate
+ * utilities. Component-level dark classes remain preferred; these rules stop
+ * a missed class from producing dark text on a dark surface.
+ */
+.dark {
+  color-scheme: dark;
+}
+.dark .text-slate-900:not([class*="dark:text-"]),
+.dark .text-slate-800:not([class*="dark:text-"]) {
+  color: #f1f5f9;
+}
+.dark .text-slate-700:not([class*="dark:text-"]),
+.dark .text-slate-600:not([class*="dark:text-"]) {
+  color: #cbd5e1;
+}
+.dark .text-slate-500:not([class*="dark:text-"]),
+.dark .text-slate-400:not([class*="dark:text-"]) {
+  color: #94a3b8;
+}
+.dark .bg-white:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .bg-slate-50:not([class*="dark:bg-"]) {
+  background-color: #0f172a;
+}
+.dark .bg-slate-100:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .border-slate-100:not([class*="dark:border-"]),
+.dark .border-slate-200:not([class*="dark:border-"]),
+.dark .border-slate-300:not([class*="dark:border-"]) {
+  border-color: #334155;
+}
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover {
+  background-color: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

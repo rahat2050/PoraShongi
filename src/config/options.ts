@@ -15,9 +15,9 @@ export const SUBJECTS = [
 ] as const;
 
 export const TEACHING_MODES = [
-  { value: "offline", label: "Offline (সরাসরি)" },
-  { value: "online", label: "Online" },
-  { value: "both", label: "দুটোই" },
+  { value: "offline", label: "সরাসরি" },
+  { value: "online", label: "অনলাইন" },
+  { value: "both", label: "অনলাইন ও সরাসরি" },
 ] as const;
 
 export const WEEK_DAYS = [
@@ -32,12 +32,31 @@ export const DIVISIONS = [
   "Sylhet", "Rangpur", "Mymensingh",
 ] as const;
 
-/** কিছু সাধারণ জেলা */
+/** বাংলাদেশের ৬৪ জেলা (বিভাগ অনুযায়ী), সঙ্গে online-only option। */
 export const DISTRICTS = [
-  "Sunamganj", "Sylhet", "Moulvibazar", "Habiganj", "Dhaka", "Chattogram",
-  "Rajshahi", "Khulna", "Barishal", "Rangpur", "Mymensingh", "Cumilla",
-  "Narayanganj", "Gazipur", "Bogra", "Jessore", "Dinajpur", "Pabna",
-  "Cox's Bazar", "Kishoreganj", "Online / Anywhere",
+  // Dhaka Division
+  "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur",
+  "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari",
+  "Shariatpur", "Tangail",
+  // Chattogram Division
+  "Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cumilla",
+  "Cox's Bazar", "Feni", "Khagrachhari", "Lakshmipur", "Noakhali", "Rangamati",
+  // Rajshahi Division
+  "Bogura", "Chapainawabganj", "Joypurhat", "Naogaon", "Natore", "Pabna",
+  "Rajshahi", "Sirajganj",
+  // Khulna Division
+  "Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia",
+  "Magura", "Meherpur", "Narail", "Satkhira",
+  // Barishal Division
+  "Barguna", "Barishal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur",
+  // Sylhet Division
+  "Habiganj", "Moulvibazar", "Sunamganj", "Sylhet",
+  // Rangpur Division
+  "Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari",
+  "Panchagarh", "Rangpur", "Thakurgaon",
+  // Mymensingh Division
+  "Jamalpur", "Mymensingh", "Netrokona", "Sherpur",
+  "Online / Anywhere",
 ] as const;
 
 export const RELATIONSHIPS = [

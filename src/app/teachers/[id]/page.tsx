@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lucide-react";
@@ -30,25 +31,52 @@ import { recommendTeachers } from "@/lib/data/features";
 import { TeacherCard } from "@/components/shared/teacher-card";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
+import { getSiteUrl } from "@/config/site";
+
+const getTeacher = cache((id: string) => getPublicTeacher(id));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  try {
-    const result = await getPublicTeacher(id);
-    const teacher = result.data;
-    const name = teacher?.display_name || teacher?.full_name || "শিক্ষক";
-    const subjects = teacher?.subjects?.slice(0, 3).join(", ") ?? "Tuition";
+  const result = await getTeacher(id);
+  const teacher = result.data;
+
+  if (result.error) {
     return {
-      title: `${name} — ${subjects} শিক্ষক`,
-      description: `${name} (${subjects}) — ${teacher?.district ?? "বাংলাদেশ"} এলাকার শিক্ষক। PoraSathi-তে প্রোফাইল দেখুন।`,
-      openGraph: {
-        title: `${name} — PoraSathi শিক্ষক`,
-        description: subjects,
-      },
+      title: "শিক্ষকের প্রোফাইল",
+      robots: { index: false, follow: false },
     };
-  } catch {
-    return { title: "শিক্ষকের প্রোফাইল" };
   }
+  if (!teacher) notFound();
+
+  const name = teacher.display_name || teacher.full_name || "শিক্ষক";
+  const subjects = teacher.subjects?.slice(0, 3).join(", ") || "টিউশন";
+  const location = [teacher.area, teacher.district].filter(Boolean).join(", ");
+  const description = location
+    ? `${name}—${subjects} বিষয়ে ${location} এলাকার শিক্ষক। যোগ্যতা, অভিজ্ঞতা, ফি ও রিভিউ দেখুন।`
+    : `${name}—${subjects} বিষয়ের শিক্ষক। যোগ্যতা, অভিজ্ঞতা, ফি ও রিভিউ দেখুন।`;
+  const canonicalPath = `/teachers/${teacher.id}`;
+  const image = teacher.avatar_url || "/icon-512.png";
+
+  return {
+    title: `${name} — ${subjects} শিক্ষক`,
+    description,
+    alternates: { canonical: canonicalPath },
+    openGraph: {
+      type: "profile",
+      url: canonicalPath,
+      siteName: "PoraSathi",
+      locale: "bn_BD",
+      title: `${name} — PoraSathi শিক্ষক`,
+      description,
+      images: [{ url: image, alt: `${name}-এর প্রোফাইল ছবি` }],
+    },
+    twitter: {
+      card: "summary",
+      title: `${name} — PoraSathi শিক্ষক`,
+      description,
+      images: [image],
+    },
+  };
 }
 
 export default async function TeacherProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -56,7 +84,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
-  const result = await getPublicTeacher(id);
+  const result = await getTeacher(id);
   const teacher = result.data ?? null;
   if (!teacher) notFound();
 
@@ -98,9 +126,36 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
   // Recommendation — একই subject/এলাকার আরও teacher
   const similar = (await recommendTeachers(teacher.id, 3)).data ?? [];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name,
+    url: `${getSiteUrl()}/teachers/${teacher.id}`,
+    ...(teacher.avatar_url ? { image: teacher.avatar_url } : {}),
+    jobTitle: "শিক্ষক",
+    knowsAbout: teacher.subjects ?? [],
+    ...(teacher.district
+      ? { address: { "@type": "PostalAddress", addressRegion: teacher.district, addressCountry: "BD" } }
+      : {}),
+    ...(teacher.review_count && teacher.review_count > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: teacher.rating_avg,
+            ratingCount: teacher.review_count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       <Card>
         <CardContent className="p-6 sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row">
@@ -111,7 +166,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 <VerificationTierBadge tier={tier} />
                 {teacher.is_premium && <Badge variant="accent">★ Premium</Badge>}
               </div>
-              <p className="mt-1 text-slate-600">{teacher.headline || "Tuition শিক্ষক"}</p>
+              <p className="mt-1 text-slate-600">{teacher.headline || "টিউশন শিক্ষক"}</p>
               {teacher.review_count ? (
                 <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden />
@@ -120,10 +175,13 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
               ) : null}
               {reputation.data && (
                 <div className="mt-1 space-y-0.5">
-                  <p className="text-xs text-slate-400">
-                    {reputation.data.completed_tuitions} টা tuition সম্পন্ন · response {reputation.data.response_rate}%
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {reputation.data.completed_tuitions}টি টিউশন সম্পন্ন
+                    {reputation.data.response_count > 0
+                      ? ` · ${reputation.data.response_count}টি উত্তরযোগ্য অনুরোধে সাড়া ${reputation.data.response_rate}%`
+                      : ""}
                   </p>
-                  <FastResponse avgHours={reputation.data.avg_response_hours} />
+                  {reputation.data.response_count > 0 && <FastResponse avgHours={reputation.data.avg_response_hours} />}
                 </div>
               )}
               {teacher.trial_available && (
@@ -154,10 +212,10 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 <ReportButton targetType="teacher" targetId={teacher.id} />
               </>
             ) : profile?.role === "teacher" ? (
-              <p className="text-sm text-slate-500">আপনি শিক্ষক হিসেবে লগইন করেছেন।</p>
+              <p className="text-sm text-slate-500">শিক্ষক অ্যাকাউন্ট থেকে টিউশনের অনুরোধ পাঠানো যায় না।</p>
             ) : (
               <Link href={`/login?next=/teachers/${teacher.id}`} className={buttonStyles()}>
-                request পাঠাতে লগইন করুন
+                অনুরোধ পাঠাতে লগইন করুন
               </Link>
             )}
           </div>
@@ -169,9 +227,9 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           )}
 
           <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-            <p className="text-xs text-slate-400">এই প্রোফাইলটি শেয়ার করুন:</p>
+            <p className="text-xs text-slate-400">প্রোফাইল শেয়ার করুন:</p>
             <ShareButtons
-              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/teachers/${teacher.id}`}
+              url={`${getSiteUrl()}/teachers/${teacher.id}`}
               title={`${name} — PoraSathi`}
             />
           </div>
@@ -208,7 +266,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
             <p className="mt-2 text-sm text-slate-600">{teacher.available_days?.length ? teacher.available_days.join(", ") : "নমনীয়"}</p>
             <p className="mt-1 text-sm text-slate-600">{teacher.available_time || "নমনীয় সময়"}</p>
             <h2 className="mt-6 text-base font-semibold text-slate-900">আমার সম্পর্কে</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{teacher.bio || "বায়ো দেওয়া হয়নি।"}</p>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{teacher.bio || "নিজের সম্পর্কে কোনো তথ্য দেওয়া হয়নি।"}</p>
             {teacher.teaching_style && (
               <>
                 <h2 className="mt-6 text-base font-semibold text-slate-900">পড়ানোর ধরণ</h2>
@@ -269,12 +327,12 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
 function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-2">
-      <span className="mt-0.5 text-slate-400">{icon}</span>
-      <div>
-        <dt className="text-xs text-slate-400">{label}</dt>
-        <dd className="text-slate-700">{value}</dd>
-      </div>
+    <div>
+      <dt className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <span aria-hidden>{icon}</span>
+        {label}
+      </dt>
+      <dd className="ml-6 text-slate-700 dark:text-slate-200">{value}</dd>
     </div>
   );
 }

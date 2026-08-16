@@ -13,7 +13,14 @@ import { buildQueryString, firstParam } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "শিক্ষক খুঁজুন",
-  description: "আপনার এলাকার কাছের ও যোগ্য শিক্ষক খুঁজুন — PoraSathi।",
+  description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী PoraSathi-তে প্রকাশিত শিক্ষক খুঁজুন।",
+  alternates: { canonical: "/teachers" },
+  openGraph: {
+    type: "website",
+    url: "/teachers",
+    title: "শিক্ষক খুঁজুন — PoraSathi",
+    description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী শিক্ষক খুঁজুন।",
+  },
 };
 
 const PAGE_SIZE = 12;
@@ -40,8 +47,14 @@ export default async function TeachersPage({
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
-  // বর্তমান user-এর অবস্থান (GPS) থাকলে distance filter + nearest sort কাজ করবে
+  // বর্তমান user-এর অবস্থান (GPS) থাকলেই radius/nearest ব্যবহার করা যাবে।
   const profile = await getCurrentProfile();
+  const canUseDistance =
+    typeof profile?.latitude === "number" &&
+    Number.isFinite(profile.latitude) &&
+    typeof profile?.longitude === "number" &&
+    Number.isFinite(profile.longitude);
+  const effectiveSort = sort === "nearest" && !canUseDistance ? "relevance" : sort;
 
   const result = await searchTeachers({
     classLevel: classLevel || undefined,
@@ -56,7 +69,7 @@ export default async function TeachersPage({
     minExperience: experience ? Number(experience) : undefined,
     minRating: minRating ? Number(minRating) : undefined,
     verified: verified === "1" ? true : undefined,
-    sort: sort as "relevance" | "nearest" | "rating" | "experience" | "newest",
+    sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
     page,
     pageSize: PAGE_SIZE,
   });
@@ -80,8 +93,8 @@ export default async function TeachersPage({
       experience,
       minRating,
       verified,
-      sort: sort !== "relevance" ? sort : undefined,
-      radius,
+      sort: effectiveSort !== "relevance" ? effectiveSort : undefined,
+      radius: canUseDistance ? radius : undefined,
       page: p > 1 ? p : undefined,
     })}`;
 
@@ -89,11 +102,24 @@ export default async function TeachersPage({
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">শিক্ষক খুঁজুন</h1>
-        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা ও বাজেট ধরে আপনার কাছের শিক্ষক খুঁজুন।</p>
+        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা, মাধ্যম ও অভিজ্ঞতা অনুযায়ী শিক্ষক খুঁজুন।</p>
       </div>
 
       <TeacherFilters
-        current={{ classLevel, subject, district, area, mode, gender, experience, minRating, verified, sort, radius }}
+        current={{
+          classLevel,
+          subject,
+          district,
+          area,
+          mode,
+          gender,
+          experience,
+          minRating,
+          verified,
+          sort: effectiveSort,
+          radius: canUseDistance ? radius : undefined,
+        }}
+        canUseDistance={canUseDistance}
       />
 
       <div className="mt-6">

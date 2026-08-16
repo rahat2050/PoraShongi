@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
@@ -10,6 +11,7 @@ const items = [
   { href: "/admin/blog/new", label: "নতুন ব্লগ" },
 ];
 
+export const metadata: Metadata = { robots: { index: false, follow: false, nocache: true } };
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

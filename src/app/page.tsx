@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Star, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -7,22 +8,22 @@ import { buttonStyles } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { formatTaka } from "@/lib/utils";
 
 const roles = [
-  { icon: GraduationCap, title: "শিক্ষার্থী", desc: "নিজের জন্য যোগ্য শিক্ষক খুঁজুন — class, subject, বাজেট ও এলাকা অনুযায়ী।" },
-  { icon: Users, title: "অভিভাবক", desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং তার tuition journey manage করুন।" },
-  { icon: ShieldCheck, title: "শিক্ষক", desc: "নিজের profile তৈরি করুন, tuition/student খুঁজুন, schedule manage করুন।" },
+  { icon: GraduationCap, title: "শিক্ষার্থী", desc: "ক্লাস, বিষয়, এলাকা ও প্রয়োজন অনুযায়ী যোগ্য শিক্ষক খুঁজুন।" },
+  { icon: Users, title: "অভিভাবক", desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং টিউশনের অগ্রগতি পরিচালনা করুন।" },
+  { icon: ShieldCheck, title: "শিক্ষক", desc: "নিজের প্রোফাইল তৈরি করুন, শিক্ষার্থী খুঁজুন এবং সময়সূচি পরিচালনা করুন।" },
 ];
 
 const steps = [
-  { n: "১", title: "প্রয়োজন দিন", desc: "কোন class, কোন subject, কোন এলাকা, কত বাজেট — লিখুন।" },
-  { n: "২", title: "Match পান", desc: "সিস্টেম আপনার সাথে সবচেয়ে compatible শিক্ষক দেখাবে (যেমন ৯৫% Match)।" },
-  { n: "৩", title: "Request করুন", desc: "পছন্দের শিক্ষককে tuition request পাঠান।" },
-  { n: "৪", title: "শেখা শুরু", desc: "Accept হলে schedule ঠিক করুন, attendance আর review দিন।" },
+  { n: "১", title: "প্রয়োজন জানান", desc: "ক্লাস, বিষয়, এলাকা ও বাজেট লিখুন।" },
+  { n: "২", title: "মিল দেখুন", desc: "আপনার প্রয়োজনের সঙ্গে সবচেয়ে বেশি মিলে এমন শিক্ষক দেখুন।" },
+  { n: "৩", title: "অনুরোধ পাঠান", desc: "পছন্দের শিক্ষককে টিউশনের অনুরোধ পাঠান।" },
+  { n: "৪", title: "শেখা শুরু করুন", desc: "অনুরোধ গ্রহণ হলে সময় ঠিক করুন, উপস্থিতি রাখুন ও রিভিউ দিন।" },
 ];
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const revalidate = 300;
 
 export default async function Home() {
   // Live feed — Supabase configure থাকলে top teachers + recent tuition দেখায়
@@ -37,10 +38,37 @@ export default async function Home() {
     stats = statsRes.data;
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteConfig.url}/#organization`,
+        name: siteConfig.brandName,
+        alternateName: siteConfig.brandNameBangla,
+        url: siteConfig.url,
+        logo: `${siteConfig.url}/icon-512.png`,
+        email: "hello@porasathi.com",
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteConfig.url}/#website`,
+        name: siteConfig.brandName,
+        url: siteConfig.url,
+        inLanguage: "bn-BD",
+        publisher: { "@id": `${siteConfig.url}/#organization` },
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white">
+      <section className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-b from-brand-50 to-white dark:border-slate-700 dark:from-slate-900 dark:to-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6 sm:py-28">
           <Badge variant="brand" className="mb-6">{siteConfig.branding}</Badge>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
@@ -48,7 +76,7 @@ export default async function Home() {
           </h1>
           <p className="mt-3 text-xl font-semibold text-brand-700">{siteConfig.tagline}</p>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            শিক্ষার্থী/অভিভাবক আর যোগ্য শিক্ষককে যুক্ত করি — trusted, সহজ ও নিরাপদ উপায়ে।
+            শিক্ষার্থী ও অভিভাবকের সঙ্গে যোগ্য শিক্ষককে সহজ ও নিরাপদ উপায়ে যুক্ত করি।
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link href="/teachers" className={buttonStyles({ size: "lg" })}>
@@ -71,10 +99,10 @@ export default async function Home() {
               {[
                 { value: stats.teachers, label: "শিক্ষক" },
                 { value: stats.students, label: "শিক্ষার্থী" },
-                { value: stats.open_tuitions, label: "খোলা tuition" },
+                { value: stats.open_tuitions, label: "খোলা টিউশন" },
                 { value: stats.districts, label: "জেলা" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur">
+                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
                   <p className="text-2xl font-extrabold text-brand-700">{s.value}</p>
                   <p className="text-xs text-slate-500">{s.label}</p>
                 </div>
@@ -89,7 +117,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">সবার জন্য</h2>
-            <p className="mt-3 text-slate-600">শিক্ষার্থী, অভিভাবক আর শিক্ষক — সবাই এক trusted প্ল্যাটফর্মে।</p>
+            <p className="mt-3 text-slate-600">শিক্ষার্থী, অভিভাবক ও শিক্ষক—সবাই একই বিশ্বস্ত প্ল্যাটফর্মে।</p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {roles.map((role) => (
@@ -140,41 +168,16 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Live: সাম্প্রতিক tuition */}
-      {feed.tuitions.length > 0 && (
-        <section>
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-slate-900">সাম্প্রতিক tuition</h2>
-              <Link href="/tuitions" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন →</Link>
-            </div>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {feed.tuitions.slice(0, 6).map((t) => (
-                <Link key={t.id} href={`/tuitions/${t.id}`} className="rounded-2xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md">
-                  <p className="truncate text-sm font-semibold text-slate-800">{t.title}</p>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    <Badge variant="brand">{t.class_level}</Badge>
-                    <Badge variant="outline">{t.subject}</Badge>
-                  </div>
-                  <p className="mt-2 text-xs text-slate-400">{[t.area, t.district].filter(Boolean).join(", ") || "এলাকা নেই"}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-700">{formatTaka(t.budget)}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* How it works */}
-      <section id="how" className="bg-white">
+      <section id="how" className="bg-white dark:bg-slate-900">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">কীভাবে কাজ করে</h2>
-            <p className="mt-3 text-slate-600">মাত্র ৪টা ধাপে সঠিক শিক্ষক।</p>
+            <p className="mt-3 text-slate-600">মাত্র ৪টি ধাপে সঠিক শিক্ষক খুঁজুন।</p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
-              <div key={step.n} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
+              <div key={step.n} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 dark:border-slate-700 dark:bg-slate-800">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 font-bold text-white">
                   {step.n}
                 </div>
@@ -192,9 +195,9 @@ export default async function Home() {
           <div className="rounded-3xl bg-brand-950 px-6 py-12 text-center sm:px-12">
             <h2 className="text-2xl font-bold text-white sm:text-3xl">আজই শুরু করুন</h2>
             <p className="mx-auto mt-3 max-w-2xl text-brand-100/90">
-              শিক্ষক হলে profile খুলে student খুঁজুন — শিক্ষার্থী হলে সঠিক শিক্ষক খুঁজে নিন।
+              শিক্ষক হলে প্রোফাইল খুলে শিক্ষার্থী খুঁজুন—শিক্ষার্থী হলে সঠিক শিক্ষক বেছে নিন।
             </p>
-            <Link href="/register" className={buttonStyles({ size: "lg", className: "mt-8 bg-white text-brand-900 hover:bg-brand-50" })}>
+            <Link href="/register" className={buttonStyles({ size: "lg", className: "mt-8 bg-white text-brand-900 hover:bg-brand-50 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-50" })}>
               ফ্রিতে যুক্ত হোন
             </Link>
           </div>

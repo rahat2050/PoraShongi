@@ -8,10 +8,19 @@ export type CloudinaryUploadResult =
   | { ok: true; url: string }
   | { ok: false; error: string };
 
+const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_PROFILE_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
 /** Browser থেকে সরাসরি Cloudinary-তে ছবি upload (unsigned preset)। */
 export async function uploadProfileImage(file: File): Promise<CloudinaryUploadResult> {
   if (!isCloudinaryConfigured()) {
-    return { ok: false, error: "Cloudinary configure করা হয়নি।" };
+    return { ok: false, error: "ছবি আপলোড সেবা কনফিগার করা হয়নি।" };
+  }
+  if (!ALLOWED_PROFILE_IMAGE_TYPES.has(file.type)) {
+    return { ok: false, error: "শুধু JPG, PNG বা WebP ছবি ব্যবহার করুন।" };
+  }
+  if (file.size <= 0 || file.size > MAX_PROFILE_IMAGE_BYTES) {
+    return { ok: false, error: "ছবির আকার সর্বোচ্চ ৫ MB হতে পারে।" };
   }
 
   const formData = new FormData();

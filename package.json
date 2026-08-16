@@ -2,6 +2,9 @@
   "name": "porasathi",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "description": "PoraSathi (পড়াসাথী) — সঠিক শিক্ষক, সুন্দর শেখার সঙ্গী · A platform by FS Coaching",
   "scripts": {
     "dev": "next dev",

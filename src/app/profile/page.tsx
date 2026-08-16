@@ -12,7 +12,10 @@ import { StudentProfileForm } from "@/features/profile/student-profile-form";
 import { TeacherProfileForm } from "@/features/profile/teacher-profile-form";
 import { GuardianProfileForm } from "@/features/profile/guardian-profile-form";
 
-export const metadata: Metadata = { title: "প্রোফাইল" };
+export const metadata: Metadata = {
+  title: "প্রোফাইল",
+  robots: { index: false, follow: false, nocache: true },
+};
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {

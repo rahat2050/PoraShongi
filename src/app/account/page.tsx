@@ -6,12 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccountStatusToggle } from "@/features/account/account-status-toggle";
 import { ChangePasswordForm } from "@/features/account/change-password-form";
 
-export const metadata: Metadata = { title: "প্রাইভেসি ও অ্যাকাউন্ট" };
+export const metadata: Metadata = {
+  title: "প্রাইভেসি ও অ্যাকাউন্ট",
+  robots: { index: false, follow: false, nocache: true },
+};
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   const profile = await getCurrentProfile();
-  if (!profile) redirect("/login");
+  if (!profile) redirect("/login?next=%2Faccount");
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">

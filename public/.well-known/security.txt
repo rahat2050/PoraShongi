@@ -1,0 +1,5 @@
+Contact: mailto:hello@porasathi.com
+Expires: 2027-08-16T23:59:59Z
+Preferred-Languages: bn, en
+Canonical: https://porasathi.rahatahmed.site/.well-known/security.txt
+Policy: https://porasathi.rahatahmed.site/safety
