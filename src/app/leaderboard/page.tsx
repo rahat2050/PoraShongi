@@ -47,7 +47,7 @@ export default async function LeaderboardPage({
         <Trophy className="h-6 w-6 text-amber-500" aria-hidden />
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">সেরা শিক্ষক</h1>
-          <p className="mt-1 text-slate-500">রেটিং, সম্পন্ন tuition ও রিভিউ অনুযায়ী ranking।</p>
+          <p className="mt-1 text-slate-500">ভেরিফিকেশন, সম্পন্ন টিউশন ও রিভিউ অনুযায়ী প্রমাণভিত্তিক র‍্যাঙ্কিং।</p>
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 const navLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
-  { href: "/tuitions", label: "Tuition" },
+  { href: "/tuitions", label: "টিউশন" },
   { href: "/leaderboard", label: "সেরা শিক্ষক" },
 ];
 

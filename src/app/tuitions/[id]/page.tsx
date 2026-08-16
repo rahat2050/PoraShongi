@@ -20,6 +20,7 @@ import { isTuitionSaved } from "@/lib/data/saved-tuitions";
 import { JoinBatchButton } from "@/features/features-actions-ui";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
+import { getSiteUrl } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "টিউশন বিস্তারিত",
@@ -37,7 +38,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
     return (
       <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-20 text-center sm:px-6">
         <h1 className="text-2xl font-bold text-slate-900">লগইন প্রয়োজন</h1>
-        <p className="mt-2 text-slate-500">Tuition দেখতে লগইন করুন।</p>
+        <p className="mt-2 text-slate-500">টিউশন দেখতে লগইন করুন।</p>
         <Link href={`/login?next=/tuitions/${id}`} className={buttonStyles({ className: "mt-6" })}>লগইন করুন</Link>
       </div>
     );
@@ -111,7 +112,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
             </div>
             {isOwner && (
               <Link href={`/dashboard/tuitions/${tuition.id}`} className={buttonStyles({ variant: "outline", size: "sm" })}>
-                Manage
+                পরিচালনা করুন
               </Link>
             )}
             {profile?.role === "teacher" && !isOwner && (
@@ -147,7 +148,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
           <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
             <p className="text-xs text-slate-400">শেয়ার করুন:</p>
             <ShareButtons
-              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/tuitions/${tuition.id}`}
+              url={`${getSiteUrl()}/tuitions/${tuition.id}`}
               title={`${tuition.title} — PoraSathi`}
             />
           </div>

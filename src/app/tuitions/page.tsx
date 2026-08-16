@@ -45,7 +45,7 @@ export default async function TuitionsPage({
     return (
       <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-20 text-center sm:px-6">
         <h1 className="text-2xl font-bold text-slate-900">লগইন প্রয়োজন</h1>
-        <p className="mt-2 text-slate-500">Tuition দেখতে লগইন করুন।</p>
+        <p className="mt-2 text-slate-500">টিউশন দেখতে লগইন করুন।</p>
         <Link href={`/login?next=/tuitions`} className={buttonStyles({ className: "mt-6" })}>লগইন করুন</Link>
       </div>
     );
@@ -85,18 +85,18 @@ export default async function TuitionsPage({
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Tuition খুঁজুন</h1>
-        <p className="mt-1 text-slate-500">শিক্ষার্থী/অভিভাবকের posted tuition দেখুন।</p>
+        <h1 className="text-2xl font-bold text-slate-900">টিউশন খুঁজুন</h1>
+        <p className="mt-1 text-slate-500">শিক্ষার্থী ও অভিভাবকের প্রকাশিত টিউশন দেখুন।</p>
       </div>
 
       <TuitionFilters current={{ classLevel, subject, district, area, mode, day, time, minBudget, maxBudget }} />
 
       <div className="mt-6">
         {result.error ? (
-          <EmptyState icon={<SearchX className="h-6 w-6" aria-hidden />} title="Tuition লোড করা যায়নি" description={result.error} />
+          <EmptyState icon={<SearchX className="h-6 w-6" aria-hidden />} title="টিউশন লোড করা যায়নি" description={result.error} />
         ) : (
           <>
-            <p className="mb-4 text-sm text-slate-500">{total} টা tuition পাওয়া গেছে</p>
+            <p className="mb-4 text-sm text-slate-500">{total}টি টিউশন পাওয়া গেছে</p>
             {total > 0 && result.data ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {result.data.results.map((tuition) => <TuitionCard key={tuition.id} tuition={tuition} />)}
@@ -104,7 +104,7 @@ export default async function TuitionsPage({
             ) : (
               <EmptyState
                 icon={<ClipboardList className="h-6 w-6" aria-hidden />}
-                title="কোনো tuition পাওয়া যায়নি"
+                title="কোনো টিউশন পাওয়া যায়নি"
                 description="ফিল্টার বদলে দেখুন।"
               />
             )}

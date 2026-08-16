@@ -10,16 +10,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 
 const roles = [
-  { icon: GraduationCap, title: "শিক্ষার্থী", desc: "নিজের জন্য যোগ্য শিক্ষক খুঁজুন — class, subject, বাজেট ও এলাকা অনুযায়ী।" },
-  { icon: Users, title: "অভিভাবক", desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং তার tuition journey manage করুন।" },
-  { icon: ShieldCheck, title: "শিক্ষক", desc: "নিজের profile তৈরি করুন, tuition/student খুঁজুন, schedule manage করুন।" },
+  { icon: GraduationCap, title: "শিক্ষার্থী", desc: "ক্লাস, বিষয়, এলাকা ও প্রয়োজন অনুযায়ী যোগ্য শিক্ষক খুঁজুন।" },
+  { icon: Users, title: "অভিভাবক", desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং টিউশনের অগ্রগতি পরিচালনা করুন।" },
+  { icon: ShieldCheck, title: "শিক্ষক", desc: "নিজের প্রোফাইল তৈরি করুন, শিক্ষার্থী খুঁজুন এবং সময়সূচি পরিচালনা করুন।" },
 ];
 
 const steps = [
-  { n: "১", title: "প্রয়োজন দিন", desc: "কোন class, কোন subject, কোন এলাকা, কত বাজেট — লিখুন।" },
-  { n: "২", title: "Match পান", desc: "সিস্টেম আপনার সাথে সবচেয়ে compatible শিক্ষক দেখাবে (যেমন ৯৫% Match)।" },
-  { n: "৩", title: "Request করুন", desc: "পছন্দের শিক্ষককে tuition request পাঠান।" },
-  { n: "৪", title: "শেখা শুরু", desc: "Accept হলে schedule ঠিক করুন, attendance আর review দিন।" },
+  { n: "১", title: "প্রয়োজন জানান", desc: "ক্লাস, বিষয়, এলাকা ও বাজেট লিখুন।" },
+  { n: "২", title: "মিল দেখুন", desc: "আপনার প্রয়োজনের সঙ্গে সবচেয়ে বেশি মিলে এমন শিক্ষক দেখুন।" },
+  { n: "৩", title: "অনুরোধ পাঠান", desc: "পছন্দের শিক্ষককে টিউশনের অনুরোধ পাঠান।" },
+  { n: "৪", title: "শেখা শুরু করুন", desc: "অনুরোধ গ্রহণ হলে সময় ঠিক করুন, উপস্থিতি রাখুন ও রিভিউ দিন।" },
 ];
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -76,7 +76,7 @@ export default async function Home() {
           </h1>
           <p className="mt-3 text-xl font-semibold text-brand-700">{siteConfig.tagline}</p>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            শিক্ষার্থী/অভিভাবক আর যোগ্য শিক্ষককে যুক্ত করি — trusted, সহজ ও নিরাপদ উপায়ে।
+            শিক্ষার্থী ও অভিভাবকের সঙ্গে যোগ্য শিক্ষককে সহজ ও নিরাপদ উপায়ে যুক্ত করি।
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Link href="/teachers" className={buttonStyles({ size: "lg" })}>
@@ -99,7 +99,7 @@ export default async function Home() {
               {[
                 { value: stats.teachers, label: "শিক্ষক" },
                 { value: stats.students, label: "শিক্ষার্থী" },
-                { value: stats.open_tuitions, label: "খোলা tuition" },
+                { value: stats.open_tuitions, label: "খোলা টিউশন" },
                 { value: stats.districts, label: "জেলা" },
               ].map((s) => (
                 <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
@@ -117,7 +117,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">সবার জন্য</h2>
-            <p className="mt-3 text-slate-600">শিক্ষার্থী, অভিভাবক আর শিক্ষক — সবাই এক trusted প্ল্যাটফর্মে।</p>
+            <p className="mt-3 text-slate-600">শিক্ষার্থী, অভিভাবক ও শিক্ষক—সবাই একই বিশ্বস্ত প্ল্যাটফর্মে।</p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {roles.map((role) => (
@@ -173,7 +173,7 @@ export default async function Home() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">কীভাবে কাজ করে</h2>
-            <p className="mt-3 text-slate-600">মাত্র ৪টা ধাপে সঠিক শিক্ষক।</p>
+            <p className="mt-3 text-slate-600">মাত্র ৪টি ধাপে সঠিক শিক্ষক খুঁজুন।</p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
@@ -195,7 +195,7 @@ export default async function Home() {
           <div className="rounded-3xl bg-brand-950 px-6 py-12 text-center sm:px-12">
             <h2 className="text-2xl font-bold text-white sm:text-3xl">আজই শুরু করুন</h2>
             <p className="mx-auto mt-3 max-w-2xl text-brand-100/90">
-              শিক্ষক হলে profile খুলে student খুঁজুন — শিক্ষার্থী হলে সঠিক শিক্ষক খুঁজে নিন।
+              শিক্ষক হলে প্রোফাইল খুলে শিক্ষার্থী খুঁজুন—শিক্ষার্থী হলে সঠিক শিক্ষক বেছে নিন।
             </p>
             <Link href="/register" className={buttonStyles({ size: "lg", className: "mt-8 bg-white text-brand-900 hover:bg-brand-50 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-50" })}>
               ফ্রিতে যুক্ত হোন

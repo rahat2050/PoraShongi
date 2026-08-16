@@ -39,7 +39,7 @@ export function TeacherCard({
                 <Badge variant="accent">★ Premium</Badge>
               )}
             </div>
-            <p className="truncate text-sm text-slate-500">{teacher.headline || teacher.education || "Tuition শিক্ষক"}</p>
+            <p className="truncate text-sm text-slate-500">{teacher.headline || teacher.education || "টিউশন শিক্ষক"}</p>
             {location && (
               <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-400">
                 <MapPin className="h-3 w-3" aria-hidden />

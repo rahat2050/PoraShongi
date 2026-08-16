@@ -166,7 +166,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 <VerificationTierBadge tier={tier} />
                 {teacher.is_premium && <Badge variant="accent">★ Premium</Badge>}
               </div>
-              <p className="mt-1 text-slate-600">{teacher.headline || "Tuition শিক্ষক"}</p>
+              <p className="mt-1 text-slate-600">{teacher.headline || "টিউশন শিক্ষক"}</p>
               {teacher.review_count ? (
                 <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden />
@@ -212,10 +212,10 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 <ReportButton targetType="teacher" targetId={teacher.id} />
               </>
             ) : profile?.role === "teacher" ? (
-              <p className="text-sm text-slate-500">আপনি শিক্ষক হিসেবে লগইন করেছেন।</p>
+              <p className="text-sm text-slate-500">শিক্ষক অ্যাকাউন্ট থেকে টিউশনের অনুরোধ পাঠানো যায় না।</p>
             ) : (
               <Link href={`/login?next=/teachers/${teacher.id}`} className={buttonStyles()}>
-                request পাঠাতে লগইন করুন
+                অনুরোধ পাঠাতে লগইন করুন
               </Link>
             )}
           </div>
@@ -227,7 +227,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           )}
 
           <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
-            <p className="text-xs text-slate-400">এই প্রোফাইলটি শেয়ার করুন:</p>
+            <p className="text-xs text-slate-400">প্রোফাইল শেয়ার করুন:</p>
             <ShareButtons
               url={`${getSiteUrl()}/teachers/${teacher.id}`}
               title={`${name} — PoraSathi`}
@@ -266,7 +266,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
             <p className="mt-2 text-sm text-slate-600">{teacher.available_days?.length ? teacher.available_days.join(", ") : "নমনীয়"}</p>
             <p className="mt-1 text-sm text-slate-600">{teacher.available_time || "নমনীয় সময়"}</p>
             <h2 className="mt-6 text-base font-semibold text-slate-900">আমার সম্পর্কে</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{teacher.bio || "বায়ো দেওয়া হয়নি।"}</p>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{teacher.bio || "নিজের সম্পর্কে কোনো তথ্য দেওয়া হয়নি।"}</p>
             {teacher.teaching_style && (
               <>
                 <h2 className="mt-6 text-base font-semibold text-slate-900">পড়ানোর ধরণ</h2>

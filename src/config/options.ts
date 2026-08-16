@@ -15,9 +15,9 @@ export const SUBJECTS = [
 ] as const;
 
 export const TEACHING_MODES = [
-  { value: "offline", label: "Offline (সরাসরি)" },
-  { value: "online", label: "Online" },
-  { value: "both", label: "দুটোই" },
+  { value: "offline", label: "সরাসরি" },
+  { value: "online", label: "অনলাইন" },
+  { value: "both", label: "অনলাইন ও সরাসরি" },
 ] as const;
 
 export const WEEK_DAYS = [

@@ -27,9 +27,9 @@ export function formatTaka(amount?: number | null): string {
 
 export function modeLabel(mode?: string | null): string {
   if (!mode) return "—";
-  if (mode === "offline") return "Offline";
-  if (mode === "online") return "Online";
-  if (mode === "both") return "Online & Offline";
+  if (mode === "offline") return "সরাসরি";
+  if (mode === "online") return "অনলাইন";
+  if (mode === "both") return "অনলাইন ও সরাসরি";
   return mode;
 }
 

@@ -102,7 +102,7 @@ export default async function TeachersPage({
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">শিক্ষক খুঁজুন</h1>
-        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা ও বাজেট ধরে আপনার কাছের শিক্ষক খুঁজুন।</p>
+        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা, মাধ্যম ও অভিজ্ঞতা অনুযায়ী শিক্ষক খুঁজুন।</p>
       </div>
 
       <TeacherFilters
