@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
         <ForgotPasswordForm />
       </CardContent>
       <CardFooter className="justify-center">
-        <Link href="/login" className="text-sm font-medium text-brand-700 hover:underline">
+        <Link href="/login" className="text-sm font-medium text-brand-700 hover:underline dark:text-brand-300">
           লগইনে ফিরে যান
         </Link>
       </CardFooter>

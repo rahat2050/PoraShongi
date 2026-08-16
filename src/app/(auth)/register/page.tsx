@@ -18,7 +18,7 @@ export default function RegisterPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-slate-500">
           অ্যাকাউন্ট আছে?{" "}
-          <Link href="/login" className="font-medium text-brand-700 hover:underline">
+          <Link href="/login" className="font-medium text-brand-700 hover:underline dark:text-brand-300">
             লগইন করুন
           </Link>
         </p>
