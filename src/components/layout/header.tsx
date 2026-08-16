@@ -3,7 +3,6 @@ import { Logo } from "@/components/layout/logo";
 import { AuthArea } from "@/components/layout/auth-area";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
-import { LanguageToggle } from "@/components/shared/language-toggle";
 
 const navLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
@@ -26,7 +25,6 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
-          <LanguageToggle />
           <div className="hidden md:block">
             <AuthArea />
           </div>
