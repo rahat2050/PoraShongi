@@ -39,7 +39,7 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
     setUploading(false);
     if (result.ok) {
       setAvatarUrl(result.url);
-      toast("ছবি upload হয়েছে — সেভ করলে প্রোফাইলে বসবে", "success");
+      toast("ছবি আপলোড হয়েছে—সেভ করলে প্রোফাইলে যুক্ত হবে", "success");
     } else {
       toast(result.error, "danger");
     }
@@ -67,52 +67,52 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="flex items-center gap-4">
         <Avatar src={avatarUrl} name={fullName} size="xl" />
         <div className="flex-1 space-y-2">
           {cloudinaryReady && (
             <>
-              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
+              <input ref={fileRef} id="profile-photo" name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} aria-label="প্রোফাইল ছবি নির্বাচন করুন" />
               <Button type="button" variant="outline" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}>
-                <Camera className="h-4 w-4" aria-hidden /> ছবি upload
+                <Camera className="h-4 w-4" aria-hidden /> ছবি আপলোড
               </Button>
             </>
           )}
-          <FormField label="অথবা ছবির URL">
-            <Input placeholder="https://…/avatar.jpg" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+          <FormField label="অথবা ছবির URL" htmlFor="avatar-url">
+            <Input id="avatar-url" name="avatarUrl" type="url" placeholder="https://…/avatar.jpg" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
           </FormField>
         </div>
       </div>
 
-      <FormField label="পুরো নাম" required>
-        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="আপনার নাম" />
+      <FormField label="পুরো নাম" htmlFor="profile-full-name" required>
+        <Input id="profile-full-name" name="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="আপনার নাম" minLength={2} maxLength={100} required />
       </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="জেলা">
-          <Select value={district} onChange={(e) => setDistrict(e.target.value)}>
+        <FormField label="জেলা" htmlFor="profile-district">
+          <Select id="profile-district" name="district" value={district} onChange={(e) => setDistrict(e.target.value)}>
             <option value="">জেলা বাছুন</option>
             {DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
           </Select>
         </FormField>
-        <FormField label="এলাকা (থানা/উপজেলা)">
-          <Input placeholder="যেমন: Sunamganj Sadar" value={area} onChange={(e) => setArea(e.target.value)} />
+        <FormField label="এলাকা (থানা/উপজেলা)" htmlFor="profile-area">
+          <Input id="profile-area" name="area" placeholder="যেমন: সুনামগঞ্জ সদর" value={area} onChange={(e) => setArea(e.target.value)} maxLength={120} />
         </FormField>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="লিঙ্গ">
-          <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+        <FormField label="লিঙ্গ" htmlFor="profile-gender">
+          <Select id="profile-gender" name="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
             <option value="">বলতে চাই না</option>
             <option value="male">পুরুষ</option>
             <option value="female">মহিলা</option>
           </Select>
         </FormField>
         {profile.role === "student" && (
-          <FormField label="নাবালক সুরক্ষা" hint="১৮ বছরের কম হলে টিক দিন — location public হবে না।">
-            <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm text-slate-700">
-              <input type="checkbox" checked={isMinor} onChange={(e) => setIsMinor(e.target.checked)} className="h-4 w-4 rounded border-slate-300 accent-brand-600" />
+          <FormField label="নাবালক সুরক্ষা" hint="১৮ বছরের কম হলে টিক দিন—লোকেশন প্রকাশ করা হবে না।">
+            <label className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm text-slate-700 dark:border-slate-600 dark:text-slate-200">
+              <input type="checkbox" name="isMinor" checked={isMinor} onChange={(e) => setIsMinor(e.target.checked)} className="h-5 w-5 rounded border-slate-300 accent-brand-700" />
               আমি নাবালক (১৮ বছরের কম)
             </label>
           </FormField>

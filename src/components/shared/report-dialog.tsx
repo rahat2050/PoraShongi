@@ -49,16 +49,16 @@ export function ReportButton({
 
   return (
     <>
-      <Button variant="ghost" size="md" onClick={() => setOpen(true)}>
+      <Button variant="ghost" size="md" onClick={() => setOpen(true)} aria-label={label || "রিপোর্ট করুন"} title={label || "রিপোর্ট করুন"}>
         <Flag className="h-4 w-4" aria-hidden />
         {label}
       </Button>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-4 backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-slate-900">রিপোর্ট করুন</h2>
-            <p className="mt-0.5 text-sm text-slate-500">PoraSathi নিরাপদ রাখতে সাহায্য করুন।</p>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="report-dialog-title">
+            <h2 id="report-dialog-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">রিপোর্ট করুন</h2>
+            <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-300">PoraSathi নিরাপদ রাখতে সাহায্য করুন।</p>
 
             <div className="mt-4 space-y-4">
               {message ? (

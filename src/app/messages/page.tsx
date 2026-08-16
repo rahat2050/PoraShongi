@@ -39,14 +39,14 @@ export default async function MessagesPage() {
             conversations.map(({ conversation, other, unread, lastMessage }) => {
               const otherName = other?.display_name || other?.full_name || "সদস্য";
               return (
-                <Link key={conversation.id} href={`/messages/${conversation.id}`} className="flex items-center gap-3 border-b border-slate-100 p-4 transition-colors last:border-0 hover:bg-slate-50">
+                <Link key={conversation.id} href={`/messages/${conversation.id}`} className="flex items-center gap-3 border-b border-slate-100 p-4 transition-colors last:border-0 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
                   <Avatar src={other?.avatar_url ?? null} name={otherName} size="md" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
-                      <p className="truncate text-sm font-semibold text-slate-800">{otherName}</p>
-                      {lastMessage && <span className="text-xs text-slate-400">{formatDateTime(lastMessage.created_at)}</span>}
+                      <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{otherName}</p>
+                      {lastMessage && <span className="text-xs text-slate-500 dark:text-slate-400">{formatDateTime(lastMessage.created_at)}</span>}
                     </div>
-                    <p className="truncate text-sm text-slate-500">
+                    <p className="truncate text-sm text-slate-500 dark:text-slate-300">
                       {lastMessage ? (lastMessage.sender_id === profile.id ? `আপনি: ${lastMessage.body}` : lastMessage.body) : "কথা শুরু করুন"}
                     </p>
                   </div>

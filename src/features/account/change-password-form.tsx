@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
+import { getLocalizedAuthError } from "@/lib/auth/errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
@@ -34,7 +35,7 @@ export function ChangePasswordForm() {
     const { error } = await supabase.auth.updateUser({ password });
     setPending(false);
     if (error) {
-      toast(error.message, "danger");
+      toast(getLocalizedAuthError(error, "পাসওয়ার্ড বদলানো যায়নি। আবার চেষ্টা করুন।"), "danger");
       return;
     }
     toast("পাসওয়ার্ড বদলানো হয়েছে", "success");
@@ -44,11 +45,11 @@ export function ChangePasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <FormField label="নতুন পাসওয়ার্ড" required hint="কমপক্ষে ৮ অক্ষর">
-        <Input type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <FormField label="নতুন পাসওয়ার্ড" htmlFor="account-new-password" required hint="কমপক্ষে ৮ অক্ষর">
+        <Input id="account-new-password" name="newPassword" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} maxLength={72} required />
       </FormField>
-      <FormField label="আবার লিখুন" required>
-        <Input type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+      <FormField label="আবার লিখুন" htmlFor="account-confirm-password" required>
+        <Input id="account-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} minLength={8} maxLength={72} required />
       </FormField>
       <Button type="submit" loading={pending}>পাসওয়ার্ড বদলান</Button>
     </form>
