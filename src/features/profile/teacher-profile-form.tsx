@@ -37,6 +37,10 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage(null);
+    if (!education.trim() || subjects.length === 0 || classes.length === 0 || !mode) {
+      setMessage({ type: "danger", text: "শিক্ষাগত যোগ্যতা, বিষয়, ক্লাস ও পড়ানোর মাধ্যম পূরণ করুন।" });
+      return;
+    }
     setSaving(true);
     const result = await updateTeacherProfile({
       headline: headline || undefined,
@@ -65,23 +69,23 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {message && <Alert variant={message.type}>{message.text}</Alert>}
 
       <FormField label="হেডলাইন">
-        <Input placeholder="যেমন: অভিজ্ঞ Math ও Physics শিক্ষক" value={headline} onChange={(e) => setHeadline(e.target.value)} />
+        <Input placeholder="যেমন: অভিজ্ঞ গণিত ও পদার্থবিজ্ঞান শিক্ষক" value={headline} onChange={(e) => setHeadline(e.target.value)} />
       </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="শিক্ষাগত যোগ্যতা" required>
-          <Input placeholder="যেমন: B.Sc. in Mathematics" value={education} onChange={(e) => setEducation(e.target.value)} />
+        <FormField label="শিক্ষাগত যোগ্যতা" htmlFor="teacher-education" required>
+          <Input id="teacher-education" name="education" placeholder="যেমন: গণিতে স্নাতক" value={education} onChange={(e) => setEducation(e.target.value)} maxLength={160} required />
         </FormField>
         <FormField label="প্রতিষ্ঠান">
           <Input placeholder="বিশ্ববিদ্যালয়/কলেজ" value={institution} onChange={(e) => setInstitution(e.target.value)} />
         </FormField>
       </div>
 
-      <FormField label="যোগ্যতা (কমা দিয়ে আলাদা)" hint="যেমন: M.Sc. Mathematics, B.Ed.">
+      <FormField label="অতিরিক্ত যোগ্যতা (কমা দিয়ে আলাদা)" hint="যেমন: এমএসসি গণিত, বিএড">
         <Input value={qualifications} onChange={(e) => setQualifications(e.target.value)} />
       </FormField>
 
@@ -103,14 +107,14 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="মোড" required>
-          <Select value={mode} onChange={(e) => setMode(e.target.value)}>
-            <option value="">মোড বাছুন</option>
+        <FormField label="পড়ানোর মাধ্যম" htmlFor="teacher-mode" required>
+          <Select id="teacher-mode" name="teachingMode" value={mode} onChange={(e) => setMode(e.target.value)} required>
+            <option value="">মাধ্যম বাছুন</option>
             {TEACHING_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </Select>
         </FormField>
         <FormField label="পড়ানোর এলাকা">
-          <Input placeholder="যেমন: Sunamganj town" value={area} onChange={(e) => setArea(e.target.value)} />
+          <Input placeholder="যেমন: সুনামগঞ্জ শহর" value={area} onChange={(e) => setArea(e.target.value)} />
         </FormField>
       </div>
 
@@ -125,16 +129,16 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
         </Select>
       </FormField>
 
-      <FormField label="পড়ানোর ধরণ (teaching style)">
+      <FormField label="পড়ানোর ধরণ">
         <Textarea placeholder="যেমন: ধৈর্য ধরে বুঝিয়ে পড়াই, নিয়মিত প্র্যাকটিস করাই…" value={teachingStyle} onChange={(e) => setTeachingStyle(e.target.value)} rows={2} />
       </FormField>
 
-      <FormField label="ভাষা (কমা দিয়ে আলাদা)" hint="যেমন: বাংলা, English">
-        <Input placeholder="বাংলা, English" value={languages} onChange={(e) => setLanguages(e.target.value)} />
+      <FormField label="পড়ানোর ভাষা (কমা দিয়ে আলাদা)" hint="যেমন: বাংলা, ইংরেজি">
+        <Input placeholder="বাংলা, ইংরেজি" value={languages} onChange={(e) => setLanguages(e.target.value)} />
       </FormField>
 
       <FormField label="বায়ো">
-        <Textarea placeholder="আপনার teaching style সম্পর্কে লিখুন…" value={bio} onChange={(e) => setBio(e.target.value)} />
+        <Textarea placeholder="আপনার পড়ানোর পদ্ধতি সম্পর্কে লিখুন…" value={bio} onChange={(e) => setBio(e.target.value)} />
       </FormField>
 
       <div className="flex justify-end border-t border-slate-100 pt-5">

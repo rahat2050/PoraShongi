@@ -8,7 +8,7 @@ export function PageSkeleton({ rows = 3 }: { rows?: number }) {
       <Skeleton className="mt-2 h-4 w-64" />
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div key={i} className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
             <div className="flex items-center gap-4">
               <Skeleton className="h-16 w-16 rounded-full" />
               <div className="flex-1 space-y-2">

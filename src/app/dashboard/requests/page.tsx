@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { RequestRow } from "@/components/shared/request-row";
 
-export const metadata: Metadata = { title: "Tuition request" };
+export const metadata: Metadata = { title: "টিউশন অনুরোধ" };
 
 export default async function RequestsPage() {
   const profile = await getCurrentProfile();
@@ -38,7 +38,7 @@ export default async function RequestsPage() {
         {direction === "received" ? <Inbox className="h-6 w-6 text-brand-600" aria-hidden /> : <Send className="h-6 w-6 text-brand-600" aria-hidden />}
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            {direction === "received" ? "যে request এসেছে" : "আমার পাঠানো request"}
+            {direction === "received" ? "প্রাপ্ত অনুরোধ" : "আমার পাঠানো অনুরোধ"}
           </h1>
           <p className="mt-1 text-slate-500">{pending} অপেক্ষমাণ · {requests.length} মোট</p>
         </div>
@@ -50,8 +50,8 @@ export default async function RequestsPage() {
             <div className="p-6">
               <EmptyState
                 icon={direction === "received" ? <Inbox className="h-6 w-6" aria-hidden /> : <Send className="h-6 w-6" aria-hidden />}
-                title={direction === "received" ? "কোনো request আসেনি" : "কোনো request পাঠানো হয়নি"}
-                description={direction === "received" ? "শিক্ষার্থীরা request পাঠালে এখানে দেখাবে।" : "শিক্ষক খুঁজে request পাঠান।"}
+                title={direction === "received" ? "কোনো অনুরোধ আসেনি" : "কোনো অনুরোধ পাঠানো হয়নি"}
+                description={direction === "received" ? "শিক্ষার্থীরা অনুরোধ পাঠালে এখানে দেখাবে।" : "শিক্ষক খুঁজে অনুরোধ পাঠান।"}
               />
             </div>
           ) : (

@@ -12,7 +12,9 @@ import { listMyStudents } from "@/lib/data/students";
 import { getTeacherAnalytics } from "@/lib/data/growth";
 import { listTrialRequests } from "@/lib/data/features";
 import { ROLE_LABELS } from "@/lib/auth/roles";
+import type { TeacherProfile } from "@/types/index";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonStyles } from "@/components/ui/button";
@@ -24,7 +26,6 @@ import { ContactRequestActions } from "@/features/contact/contact-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
 import { TrialRequestActions } from "@/features/features-actions-ui2";
-import { DashboardNav } from "@/components/shared/dashboard-nav";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "শিক্ষক ড্যাশবোর্ড" };
@@ -35,7 +36,16 @@ export default async function TeacherDashboardPage() {
   if (profile.role !== "teacher") redirect("/dashboard");
 
   const roleProfileResult = await getRoleProfileRow(profile);
-  const completion = computeProfileCompletion(profile, roleProfileResult.data);
+  const teacherProfile = roleProfileResult.data as TeacherProfile | null;
+  const completion = computeProfileCompletion(profile, teacherProfile);
+  const isPublicReady = Boolean(
+    profile.full_name?.trim() &&
+      teacherProfile?.education?.trim() &&
+      teacherProfile.subjects?.length &&
+      teacherProfile.classes_taught?.length &&
+      teacherProfile.teaching_mode &&
+      (teacherProfile.teaching_mode === "online" || profile.district?.trim()),
+  );
 
   const [tuitions, receivedRequests, contactRequests] = await Promise.all([
     listTuitionsFor(profile.id),
@@ -60,9 +70,9 @@ export default async function TeacherDashboardPage() {
   const trialSenderMap = new Map(trialSenders.map((p) => [p.id, p]));
 
   const onboardingSteps = [
-    { label: "প্রোফাইল পূরণ করুন", done: completion.percent >= 60, href: "/profile" },
-    { label: "শিক্ষার্থীদের tuition দেখুন", done: tuitionList.length > 0, href: "/tuitions" },
-    { label: "প্রথম request respond করুন", done: requestList.length > 0, href: "/dashboard/requests" },
+    { label: "প্রোফাইল প্রকাশের তথ্য পূরণ করুন", done: isPublicReady, href: "/profile" },
+    { label: "শিক্ষার্থীদের টিউশন দেখুন", done: tuitionList.length > 0, href: "/tuitions" },
+    { label: "প্রথম অনুরোধের উত্তর দিন", done: requestList.length > 0, href: "/dashboard/requests" },
   ];
 
   return (
@@ -70,14 +80,17 @@ export default async function TeacherDashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">শিক্ষক ড্যাশবোর্ড</h1>
-          <p className="mt-1 text-slate-500">আপনার tuition ও request manage করুন।</p>
+          <p className="mt-1 text-slate-500">আপনার টিউশন ও অনুরোধ পরিচালনা করুন।</p>
         </div>
-        <Badge variant="brand">{ROLE_LABELS.teacher.bn} · {ROLE_LABELS.teacher.en}</Badge>
+        <Badge variant="brand">{ROLE_LABELS.teacher.bn}</Badge>
       </div>
 
-      <div className="mt-5">
-        <DashboardNav active="/dashboard" />
-      </div>
+      {!isPublicReady && (
+        <Alert variant="warning" title="আপনার প্রোফাইল এখনো প্রকাশিত নয়" className="mt-6">
+          শিক্ষা, বিষয়, ক্লাস, পড়ানোর মাধ্যম এবং সরাসরি পড়ালে জেলা পূরণ করুন। তারপর আপনার প্রোফাইল শিক্ষক খোঁজ ও শেয়ার লিংকে দেখা যাবে।{" "}
+          <Link href="/profile" className="font-semibold underline">প্রোফাইল সম্পূর্ণ করুন</Link>
+        </Alert>
+      )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-1">
@@ -85,8 +98,8 @@ export default async function TeacherDashboardPage() {
           <OnboardingChecklist steps={onboardingSteps} />
         </div>
         <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
-          <StatCard label="আমার tuition" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
-          <StatCard label="অপেক্ষমাণ request" value={pendingCount} icon={<Inbox className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
+          <StatCard label="আমার টিউশন" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
+          <StatCard label="অপেক্ষমাণ অনুরোধ" value={pendingCount} icon={<Inbox className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
           <StatCard label="প্রোফাইল ভিউ" value={analytics?.profile_views ?? 0} icon={<Users className="h-5 w-5" aria-hidden />} />
         </div>
       </div>
@@ -94,10 +107,10 @@ export default async function TeacherDashboardPage() {
       {analytics && (
         <Card className="mt-6">
           <CardContent className="p-5">
-            <h2 className="text-base font-semibold text-slate-900">আপনার analytics</h2>
+            <h2 className="text-base font-semibold text-slate-900">আপনার পরিসংখ্যান</h2>
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm sm:grid-cols-5">
               <div>
-                <p className="text-xs text-slate-400">মোট request</p>
+                <p className="text-xs text-slate-400">মোট অনুরোধ</p>
                 <p className="text-lg font-bold text-slate-800">{analytics.total_requests}</p>
               </div>
               <div>
@@ -105,7 +118,7 @@ export default async function TeacherDashboardPage() {
                 <p className="text-lg font-bold text-slate-800">{analytics.accepted_requests}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400">Accept rate</p>
+                <p className="text-xs text-slate-400">গ্রহণের হার</p>
                 <p className="text-lg font-bold text-slate-800">{analytics.acceptance_rate}%</p>
               </div>
               <div>
@@ -127,12 +140,12 @@ export default async function TeacherDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Request (যেগুলো এসেছে)</h2>
+              <h2 className="text-base font-semibold text-slate-900">প্রাপ্ত অনুরোধ</h2>
               <Link href="/dashboard/requests" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন</Link>
             </div>
             <div className="mt-2 divide-y divide-slate-100">
               {receivedRows.length === 0 ? (
-                <EmptyState title="কোনো request নেই" description="শিক্ষার্থীরা request পাঠালে এখানে দেখাবে।" />
+                <EmptyState title="কোনো অনুরোধ নেই" description="শিক্ষার্থীরা অনুরোধ পাঠালে এখানে দেখাবে।" />
               ) : (
                 receivedRows.map((row) => <RequestRow key={row.request.id} row={row} direction="received" />)
               )}
@@ -143,14 +156,14 @@ export default async function TeacherDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">আমার tuition</h2>
+              <h2 className="text-base font-semibold text-slate-900">আমার টিউশন</h2>
               <Link href="/dashboard/tuitions/new" className={buttonStyles({ variant: "primary", size: "sm" })}>
-                <Plus className="h-4 w-4" aria-hidden /> নতুন tuition
+                <Plus className="h-4 w-4" aria-hidden /> নতুন টিউশন
               </Link>
             </div>
             <div className="mt-4 divide-y divide-slate-100">
               {tuitionList.length === 0 ? (
-                <EmptyState title="কোনো tuition নেই" description="নিজের tuition listing তৈরি করুন।" />
+                <EmptyState title="কোনো টিউশন নেই" description="নিজের টিউশন তালিকা তৈরি করুন।" />
               ) : (
                 tuitionList.slice(0, 4).map((t) => (
                   <div key={t.id} className="flex items-center justify-between gap-3 py-3">
@@ -197,7 +210,7 @@ export default async function TeacherDashboardPage() {
       {trialRequests.length > 0 && (
         <Card className="mt-6">
           <CardContent className="p-5">
-            <h2 className="text-base font-semibold text-slate-900">Trial class request ({trialRequests.length})</h2>
+            <h2 className="text-base font-semibold text-slate-900">ট্রায়াল ক্লাসের অনুরোধ ({trialRequests.length})</h2>
             <div className="mt-3 divide-y divide-slate-100">
               {trialRequests.map((t) => {
                 const sender = trialSenderMap.get(t.sender_id);

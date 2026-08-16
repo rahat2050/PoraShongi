@@ -32,17 +32,17 @@ export function CheckboxGroup({
           <label
             key={option}
             className={cn(
-              "flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors",
+              "flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors",
               checked
-                ? "border-brand-400 bg-brand-50 text-brand-800"
-                : "border-slate-300 text-slate-700 hover:bg-slate-50",
+                ? "border-brand-400 bg-brand-50 text-brand-800 dark:border-brand-600 dark:bg-brand-950/40 dark:text-brand-200"
+                : "border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800",
             )}
           >
             <input
               type="checkbox"
               checked={checked}
               onChange={() => toggle(option)}
-              className="h-4 w-4 rounded border-slate-300 accent-brand-600"
+              className="h-5 w-5 rounded border-slate-300 accent-brand-700"
             />
             {option}
           </label>

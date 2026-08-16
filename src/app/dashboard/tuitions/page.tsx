@@ -13,7 +13,7 @@ import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { TuitionManageActions } from "@/features/tuitions/tuition-actions";
 import { formatTaka } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "আমার tuition" };
+export const metadata: Metadata = { title: "আমার টিউশন" };
 
 export default async function MyTuitionsPage() {
   const profile = await getCurrentProfile();
@@ -32,11 +32,11 @@ export default async function MyTuitionsPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">আমার tuition</h1>
-          <p className="mt-1 text-slate-500">{tuitions.length} টা tuition</p>
+          <h1 className="text-2xl font-bold text-slate-900">আমার টিউশন</h1>
+          <p className="mt-1 text-slate-500">{tuitions.length}টি টিউশন</p>
         </div>
         <Link href="/dashboard/tuitions/new" className={buttonStyles()}>
-          <Plus className="h-4 w-4" aria-hidden /> নতুন tuition
+          <Plus className="h-4 w-4" aria-hidden /> নতুন টিউশন
         </Link>
       </div>
 
@@ -44,9 +44,9 @@ export default async function MyTuitionsPage() {
         {tuitions.length === 0 ? (
           <EmptyState
             icon={<ScrollText className="h-6 w-6" aria-hidden />}
-            title="কোনো tuition নেই"
-            description="tuition তৈরি করলেই শিক্ষক খুঁজতে/পেতে পারবেন।"
-            action={<Link href="/dashboard/tuitions/new" className={buttonStyles()}>Tuition তৈরি করুন</Link>}
+            title="কোনো টিউশন নেই"
+            description="টিউশন তৈরি করলেই শিক্ষক খুঁজতে/পেতে পারবেন।"
+            action={<Link href="/dashboard/tuitions/new" className={buttonStyles()}>টিউশন তৈরি করুন</Link>}
           />
         ) : (
           tuitions.map((t) => (

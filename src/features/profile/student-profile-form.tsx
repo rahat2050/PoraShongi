@@ -53,12 +53,12 @@ export function StudentProfileForm({ data }: { data: StudentProfile | null }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {message && <Alert variant={message.type}>{message.text}</Alert>}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="ক্লাস" required>
-          <Select value={grade} onChange={(e) => setGrade(e.target.value)}>
+        <FormField label="ক্লাস" htmlFor="student-grade" required>
+          <Select id="student-grade" name="grade" value={grade} onChange={(e) => setGrade(e.target.value)} required>
             <option value="">ক্লাস বাছুন</option>
             {CLASS_LEVELS.map((c) => <option key={c} value={c}>{c}</option>)}
           </Select>
@@ -80,9 +80,9 @@ export function StudentProfileForm({ data }: { data: StudentProfile | null }) {
       </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="মোড পছন্দ" required>
-          <Select value={mode} onChange={(e) => setMode(e.target.value)}>
-            <option value="">মোড বাছুন</option>
+        <FormField label="পড়ানোর মাধ্যম" htmlFor="student-mode" required>
+          <Select id="student-mode" name="teachingModePreference" value={mode} onChange={(e) => setMode(e.target.value)} required>
+            <option value="">মাধ্যম বাছুন</option>
             {TEACHING_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </Select>
         </FormField>

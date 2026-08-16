@@ -34,7 +34,7 @@ export default async function AccountPage() {
           <p className="text-sm text-slate-600">
             {profile.account_status === "deleted"
               ? "আপনার অ্যাকাউন্ট এখন নিষ্ক্রিয় — প্রোফাইল কেউ দেখতে পাবে না।"
-              : "আপনার অ্যাকাউন্ট সক্রিয়। চাইলে যেকোনো সময় নিষ্ক্রিয় করতে পারবেন (ডাটা মুছবে না)।"}
+              : "আপনার অ্যাকাউন্ট সক্রিয়। চাইলে যেকোনো সময় নিষ্ক্রিয় করতে পারবেন (তথ্য মুছবে না)।"}
           </p>
           <AccountStatusToggle current={profile.account_status === "deleted" ? "deleted" : "active"} />
         </CardContent>
@@ -54,9 +54,9 @@ export default async function AccountPage() {
           <CardTitle>গোপনীয়তা</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-slate-600">
-          <p>• আপনার ফোন নম্বর কখনো পাবলিক হয় না — শুধু যোগাযোগ অনুরোধ accept করলে দেখা যায়।</p>
+          <p>• আপনার ফোন নম্বর কখনো পাবলিক হয় না — শুধু যোগাযোগের অনুরোধ গ্রহণ করলে দেখা যায়।</p>
           <p>• নাবালক (১৮ বছরের কম) শিক্ষার্থীর এলাকা সব জায়গায় লুকানো থাকে।</p>
-          <p>• অন্য ব্যবহারকারী আপনার প্রোফাইল/মেসেজ/রিভিউ দেখতে পারে না (Row Level Security)।</p>
+          <p>• আপনার ব্যক্তিগত মেসেজ ও অ্যাকাউন্ট তথ্য অনুমতি ছাড়া অন্য ব্যবহারকারী দেখতে পারে না।</p>
         </CardContent>
       </Card>
     </div>

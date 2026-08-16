@@ -19,7 +19,6 @@ import { RequestRow } from "@/components/shared/request-row";
 import { MatchBadge } from "@/components/shared/match-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
-import { DashboardNav } from "@/components/shared/dashboard-nav";
 
 export const metadata: Metadata = { title: "অভিভাবক ড্যাশবোর্ড" };
 
@@ -55,22 +54,19 @@ export default async function GuardianDashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">অভিভাবক ড্যাশবোর্ড</h1>
-          <p className="mt-1 text-slate-500">আপনার সন্তানের tuition journey manage করুন।</p>
+          <p className="mt-1 text-slate-500">আপনার সন্তানের টিউশন কার্যক্রম পরিচালনা করুন।</p>
         </div>
-        <Badge variant="brand">{ROLE_LABELS.guardian.bn} · {ROLE_LABELS.guardian.en}</Badge>
+        <Badge variant="brand">{ROLE_LABELS.guardian.bn}</Badge>
       </div>
 
-      <div className="mt-5">
-        <DashboardNav active="/dashboard" />
-      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <ProfileCompletion percent={completion.percent} missing={completion.missing} />
         </div>
         <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
-          <StatCard label="Tuition চাহিদা" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
-          <StatCard label="অপেক্ষমাণ request" value={pendingCount} icon={<Send className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
+          <StatCard label="টিউশন চাহিদা" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
+          <StatCard label="অপেক্ষমাণ অনুরোধ" value={pendingCount} icon={<Send className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
           <StatCard label="লিংকড শিক্ষার্থী" value={linkedStudent ? 1 : 0} icon={<Users className="h-5 w-5" aria-hidden />} href="/profile" hrefLabel="শিক্ষার্থী লিংক করুন" />
         </div>
       </div>
@@ -117,14 +113,14 @@ export default async function GuardianDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Tuition চাহিদা</h2>
+              <h2 className="text-base font-semibold text-slate-900">টিউশন চাহিদা</h2>
               <Link href="/dashboard/tuitions/new" className={buttonStyles({ variant: "primary", size: "sm" })}>
-                <Plus className="h-4 w-4" aria-hidden /> নতুন tuition
+                <Plus className="h-4 w-4" aria-hidden /> নতুন টিউশন
               </Link>
             </div>
             <div className="mt-4 divide-y divide-slate-100">
               {tuitionList.length === 0 ? (
-                <EmptyState title="কোনো tuition নেই" description="সন্তানের জন্য tuition তৈরি করুন।" />
+                <EmptyState title="কোনো টিউশন নেই" description="সন্তানের জন্য টিউশন তৈরি করুন।" />
               ) : (
                 tuitionList.slice(0, 4).map((t) => (
                   <div key={t.id} className="flex items-center justify-between gap-3 py-3">
@@ -143,12 +139,12 @@ export default async function GuardianDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">পাঠানো request</h2>
+              <h2 className="text-base font-semibold text-slate-900">পাঠানো অনুরোধ</h2>
               <Link href="/dashboard/requests" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন</Link>
             </div>
             <div className="mt-2 divide-y divide-slate-100">
               {sentRows.length === 0 ? (
-                <EmptyState title="কোনো request নেই" description="শিক্ষক খুঁজে request পাঠান।" />
+                <EmptyState title="কোনো অনুরোধ নেই" description="শিক্ষক খুঁজে অনুরোধ পাঠান।" />
               ) : (
                 sentRows.map((row) => <RequestRow key={row.request.id} row={row} direction="sent" />)
               )}

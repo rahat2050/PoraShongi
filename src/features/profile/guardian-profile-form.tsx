@@ -48,25 +48,25 @@ export function GuardianProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {message && <Alert variant={message.type}>{message.text}</Alert>}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="শিক্ষার্থীর সাথে সম্পর্ক" required>
-          <Select value={relationship} onChange={(e) => setRelationship(e.target.value)}>
+        <FormField label="শিক্ষার্থীর সঙ্গে সম্পর্ক" htmlFor="guardian-relationship" required>
+          <Select id="guardian-relationship" name="relationship" value={relationship} onChange={(e) => setRelationship(e.target.value)} required>
             <option value="">সম্পর্ক বাছুন</option>
             {RELATIONSHIPS.map((r) => <option key={r} value={r}>{r}</option>)}
           </Select>
         </FormField>
-        <FormField label="যোগাযোগ মাধ্যম" required>
-          <Select value={contactPreference} onChange={(e) => setContactPreference(e.target.value)}>
+        <FormField label="যোগাযোগের মাধ্যম" htmlFor="guardian-contact" required>
+          <Select id="guardian-contact" name="contactPreference" value={contactPreference} onChange={(e) => setContactPreference(e.target.value)} required>
             <option value="">মাধ্যম বাছুন</option>
             {CONTACT_PREFERENCES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
           </Select>
         </FormField>
       </div>
 
-      <FormField label="লিংকড শিক্ষার্থী" hint="যে শিক্ষার্থীর tuition আপনি manage করবেন।">
+      <FormField label="লিংকড শিক্ষার্থী" hint="যে শিক্ষার্থীর টিউশন আপনি পরিচালনা করবেন।">
         <Select value={linkedStudentId} onChange={(e) => setLinkedStudentId(e.target.value)}>
           <option value="">কোনো শিক্ষার্থী নেই</option>
           {students.map((s) => (
