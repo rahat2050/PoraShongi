@@ -15,6 +15,7 @@ const SORT_OPTIONS = [
 
 export function TeacherFilters({
   current,
+  canUseDistance,
 }: {
   current: {
     classLevel?: string;
@@ -29,6 +30,7 @@ export function TeacherFilters({
     sort?: string;
     radius?: string;
   };
+  canUseDistance: boolean;
 }) {
   return (
     <form method="get" action="/teachers" className="rounded-2xl border border-slate-200 bg-white p-4">
@@ -50,8 +52,18 @@ export function TeacherFilters({
 
         <Input name="area" placeholder="এলাকা (থানা/উপজেলা)" defaultValue={current.area ?? ""} aria-label="এলাকা" />
 
-        <Select name="radius" defaultValue={current.radius ?? ""} aria-label="দূরত্ব">
-          {DISTANCE_RADIUS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+        <Select
+          name="radius"
+          defaultValue={canUseDistance ? (current.radius ?? "") : ""}
+          aria-label="দূরত্ব"
+          disabled={!canUseDistance}
+          title={!canUseDistance ? "দূরত্ব ব্যবহার করতে প্রোফাইলে লোকেশন যোগ করুন" : undefined}
+        >
+          {canUseDistance ? (
+            DISTANCE_RADIUS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)
+          ) : (
+            <option value="">দূরত্বের জন্য লোকেশন যোগ করুন</option>
+          )}
         </Select>
 
         <Select name="mode" defaultValue={current.mode ?? ""} aria-label="মোড">
@@ -89,7 +101,11 @@ export function TeacherFilters({
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <span>সাজান:</span>
             <Select name="sort" defaultValue={current.sort ?? "relevance"} className="h-9 w-auto min-w-[9.5rem] text-sm">
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value} disabled={o.value === "nearest" && !canUseDistance}>
+                  {o.label}
+                </option>
+              ))}
             </Select>
           </label>
         </div>

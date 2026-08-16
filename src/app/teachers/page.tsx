@@ -40,8 +40,14 @@ export default async function TeachersPage({
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
-  // বর্তমান user-এর অবস্থান (GPS) থাকলে distance filter + nearest sort কাজ করবে
+  // বর্তমান user-এর অবস্থান (GPS) থাকলেই radius/nearest ব্যবহার করা যাবে।
   const profile = await getCurrentProfile();
+  const canUseDistance =
+    typeof profile?.latitude === "number" &&
+    Number.isFinite(profile.latitude) &&
+    typeof profile?.longitude === "number" &&
+    Number.isFinite(profile.longitude);
+  const effectiveSort = sort === "nearest" && !canUseDistance ? "relevance" : sort;
 
   const result = await searchTeachers({
     classLevel: classLevel || undefined,
@@ -56,7 +62,7 @@ export default async function TeachersPage({
     minExperience: experience ? Number(experience) : undefined,
     minRating: minRating ? Number(minRating) : undefined,
     verified: verified === "1" ? true : undefined,
-    sort: sort as "relevance" | "nearest" | "rating" | "experience" | "newest",
+    sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
     page,
     pageSize: PAGE_SIZE,
   });
@@ -80,8 +86,8 @@ export default async function TeachersPage({
       experience,
       minRating,
       verified,
-      sort: sort !== "relevance" ? sort : undefined,
-      radius,
+      sort: effectiveSort !== "relevance" ? effectiveSort : undefined,
+      radius: canUseDistance ? radius : undefined,
       page: p > 1 ? p : undefined,
     })}`;
 
@@ -93,7 +99,20 @@ export default async function TeachersPage({
       </div>
 
       <TeacherFilters
-        current={{ classLevel, subject, district, area, mode, gender, experience, minRating, verified, sort, radius }}
+        current={{
+          classLevel,
+          subject,
+          district,
+          area,
+          mode,
+          gender,
+          experience,
+          minRating,
+          verified,
+          sort: effectiveSort,
+          radius: canUseDistance ? radius : undefined,
+        }}
+        canUseDistance={canUseDistance}
       />
 
       <div className="mt-6">
