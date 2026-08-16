@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseAnonKey, getSupabaseUrl, isSupabaseConfigured } from "@/lib/env";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/admin"];
+const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/admin", "/messages", "/account"];
 
 /**
  * Next.js 16 proxy (আগের middleware) — Supabase session refresh +
@@ -43,7 +43,7 @@ export async function proxy(request: NextRequest) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     redirectUrl.search = "";
-    redirectUrl.searchParams.set("next", pathname);
+    redirectUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(redirectUrl);
   }
 

@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MessagesPage() {
   const profile = await getCurrentProfile();
-  if (!profile) redirect("/login");
+  if (!profile) redirect("/login?next=%2Fmessages");
 
   const result = await listConversations(profile.id);
   const conversations = result.data ?? [];
