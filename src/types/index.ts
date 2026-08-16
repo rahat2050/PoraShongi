@@ -208,6 +208,7 @@ export type TeacherReputation = {
   completed_tuitions: number;
   response_rate: number;
   cancellation_rate: number;
+  avg_response_hours: number | null;
 };
 
 export type Report = {

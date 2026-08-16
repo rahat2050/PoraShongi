@@ -21,6 +21,7 @@ import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { RequestRow } from "@/components/shared/request-row";
 import { ContactRequestActions } from "@/features/contact/contact-actions";
 import { EmptyState } from "@/components/ui/empty-state";
+import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "শিক্ষক ড্যাশবোর্ড" };
@@ -51,6 +52,12 @@ export default async function TeacherDashboardPage() {
   const myStudents = (await listMyStudents(profile.id)).data ?? [];
   const analytics = (await getTeacherAnalytics(profile.id)).data ?? null;
 
+  const onboardingSteps = [
+    { label: "প্রোফাইল পূরণ করুন", done: completion.percent >= 60, href: "/profile" },
+    { label: "শিক্ষার্থীদের tuition দেখুন", done: tuitionList.length > 0, href: "/tuitions" },
+    { label: "প্রথম request respond করুন", done: requestList.length > 0, href: "/dashboard/requests" },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -62,8 +69,9 @@ export default async function TeacherDashboardPage() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1">
+        <div className="space-y-6 lg:col-span-1">
           <ProfileCompletion percent={completion.percent} missing={completion.missing} />
+          <OnboardingChecklist steps={onboardingSteps} />
         </div>
         <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
           <StatCard label="আমার tuition" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />

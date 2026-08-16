@@ -498,6 +498,7 @@ export interface Database {
         Args: { p_teacher_id: string; p_limit?: number | null };
         Returns: Json;
       };
+      toggle_own_account: { Args: { p_active: boolean }; Returns: undefined };
     };
     Enums: {
       user_role: UserRole;

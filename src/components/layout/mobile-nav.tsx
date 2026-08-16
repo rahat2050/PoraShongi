@@ -7,9 +7,11 @@ import { Menu, X } from "lucide-react";
 const links = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
   { href: "/tuitions", label: "Tuition" },
+  { href: "/coaching", label: "Coaching" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/messages", label: "মেসেজ" },
   { href: "/dashboard/referrals", label: "রেফারেল" },
+  { href: "/account", label: "প্রাইভেসি ও অ্যাকাউন্ট" },
   { href: "/#how", label: "কীভাবে কাজ করে" },
 ];
 

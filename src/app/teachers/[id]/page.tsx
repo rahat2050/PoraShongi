@@ -24,6 +24,7 @@ import { ShareButtons } from "@/components/shared/share-buttons";
 import { ReviewList } from "@/components/shared/review-list";
 import { ReviewForm } from "@/components/shared/review-form";
 import { VerificationTierBadge } from "@/components/shared/verification-tier";
+import { FastResponse } from "@/components/shared/fast-response";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
 
@@ -112,9 +113,12 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 </p>
               ) : null}
               {reputation.data && (
-                <p className="mt-1 text-xs text-slate-400">
-                  {reputation.data.completed_tuitions} টা tuition সম্পন্ন · response {reputation.data.response_rate}%
-                </p>
+                <div className="mt-1 space-y-0.5">
+                  <p className="text-xs text-slate-400">
+                    {reputation.data.completed_tuitions} টা tuition সম্পন্ন · response {reputation.data.response_rate}%
+                  </p>
+                  <FastResponse avgHours={reputation.data.avg_response_hours} />
+                </div>
               )}
 
               <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">

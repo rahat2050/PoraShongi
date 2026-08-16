@@ -39,3 +39,39 @@ export async function toggleFavorite(
   revalidatePath("/dashboard/favorites");
   return success({ saved: true });
 }
+
+/** Teacher নিজের পছন্দের tuition save করে (আমার saved tuition)। */
+export async function toggleFavoriteTuition(
+  tuitionId: string,
+): Promise<ActionResult<{ saved: boolean }>> {
+  const profile = await requireProfile();
+  if (profile.role !== "teacher") {
+    return failure("শুধু শিক্ষক tuition save করতে পারবেন।");
+  }
+
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("favorites")
+    .select("id")
+    .eq("user_id", profile.id)
+    .eq("tuition_id", tuitionId)
+    .maybeSingle();
+
+  if (existing) {
+    const { error } = await supabase.from("favorites").delete().eq("id", existing.id);
+    if (error) return failure(error.message);
+    revalidatePath(`/tuitions/${tuitionId}`);
+    revalidatePath("/dashboard");
+    return success({ saved: false });
+  }
+
+  const { error } = await supabase.from("favorites").insert({
+    user_id: profile.id,
+    tuition_id: tuitionId,
+  });
+  if (error) return failure(error.message);
+
+  revalidatePath(`/tuitions/${tuitionId}`);
+  revalidatePath("/dashboard");
+  return success({ saved: true });
+}
