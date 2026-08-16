@@ -9,6 +9,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
+import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
             <BackToTop />
             <BottomNav />
+            <ServiceWorkerRegister />
           </ToastProvider>
         </SettingsProvider>
       </body>
