@@ -18,6 +18,8 @@ export const metadata: Metadata = { title: "আমার টিউশন" };
 export default async function MyTuitionsPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role === "teacher") redirect("/tuitions");
+  if (profile.role === "admin") redirect("/admin");
 
   let linkedStudentId: string | null = null;
   if (profile.role === "guardian") {

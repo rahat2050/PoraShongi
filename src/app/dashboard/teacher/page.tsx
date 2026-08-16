@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Inbox, Plus, ScrollText, Users } from "lucide-react";
+import { Inbox, ScrollText, Users } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { getRoleProfileRow, computeProfileCompletion } from "@/lib/data/profiles";
-import { listTuitionsFor } from "@/lib/data/tuitions";
+import { listAcceptedTuitionsForTeacher } from "@/lib/data/tuitions";
 import { listReceivedRequests, loadRequestDisplay } from "@/lib/data/requests";
 import { listReceivedContactRequests } from "@/lib/data/contact";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
@@ -48,7 +48,7 @@ export default async function TeacherDashboardPage() {
   );
 
   const [tuitions, receivedRequests, contactRequests] = await Promise.all([
-    listTuitionsFor(profile.id),
+    listAcceptedTuitionsForTeacher(profile.id),
     listReceivedRequests(profile.id),
     listReceivedContactRequests(profile.id),
   ]);
@@ -71,7 +71,7 @@ export default async function TeacherDashboardPage() {
 
   const onboardingSteps = [
     { label: "প্রোফাইল প্রকাশের তথ্য পূরণ করুন", done: isPublicReady, href: "/profile" },
-    { label: "শিক্ষার্থীদের টিউশন দেখুন", done: tuitionList.length > 0, href: "/tuitions" },
+    { label: "প্রথম টিউশন অনুরোধ গ্রহণ করুন", done: tuitionList.length > 0, href: "/dashboard/requests" },
     { label: "প্রথম অনুরোধের উত্তর দিন", done: requestList.length > 0, href: "/dashboard/requests" },
   ];
 
@@ -98,7 +98,7 @@ export default async function TeacherDashboardPage() {
           <OnboardingChecklist steps={onboardingSteps} />
         </div>
         <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
-          <StatCard label="আমার টিউশন" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/tuitions" />
+          <StatCard label="গৃহীত টিউশন" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/schedule" />
           <StatCard label="অপেক্ষমাণ অনুরোধ" value={pendingCount} icon={<Inbox className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
           <StatCard label="প্রোফাইল ভিউ" value={analytics?.profile_views ?? 0} icon={<Users className="h-5 w-5" aria-hidden />} />
         </div>
@@ -156,19 +156,19 @@ export default async function TeacherDashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">আমার টিউশন</h2>
-              <Link href="/dashboard/tuitions/new" className={buttonStyles({ variant: "primary", size: "sm" })}>
-                <Plus className="h-4 w-4" aria-hidden /> নতুন টিউশন
+              <h2 className="text-base font-semibold text-slate-900">গৃহীত টিউশন</h2>
+              <Link href="/tuitions" className={buttonStyles({ variant: "primary", size: "sm" })}>
+                <ScrollText className="h-4 w-4" aria-hidden /> টিউশন খুঁজুন
               </Link>
             </div>
             <div className="mt-4 divide-y divide-slate-100">
               {tuitionList.length === 0 ? (
-                <EmptyState title="কোনো টিউশন নেই" description="নিজের টিউশন তালিকা তৈরি করুন।" />
+                <EmptyState title="কোনো গৃহীত টিউশন নেই" description="শিক্ষার্থীর অনুরোধ গ্রহণ করলে টিউশন এখানে দেখাবে।" />
               ) : (
                 tuitionList.slice(0, 4).map((t) => (
                   <div key={t.id} className="flex items-center justify-between gap-3 py-3">
                     <div className="min-w-0">
-                      <Link href={`/dashboard/tuitions/${t.id}`} className="block truncate text-sm font-medium text-slate-800 hover:text-brand-700">{t.title}</Link>
+                      <Link href={`/tuitions/${t.id}`} className="block truncate text-sm font-medium text-slate-800 hover:text-brand-700">{t.title}</Link>
                       <p className="text-xs text-slate-400">{t.class_level} · {t.subject}</p>
                     </div>
                     <TuitionStatusBadge status={t.status} />

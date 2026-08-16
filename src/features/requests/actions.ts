@@ -14,16 +14,20 @@ export async function sendTuitionRequest(input: {
 }): Promise<ActionResult<{ id: string }>> {
   const profile = await requireProfile();
   if (profile.role !== "student" && profile.role !== "guardian") {
-    return failure("শুধু শিক্ষার্থী বা অভিভাবক request পাঠাতে পারবেন।");
+    return failure("শুধু শিক্ষার্থী বা অভিভাবক অনুরোধ পাঠাতে পারবেন।");
   }
+  if ((input.message?.trim().length ?? 0) > 1000) {
+    return failure("বার্তা সর্বোচ্চ ১০০০ অক্ষরের হতে পারে।");
+  }
+  if (input.teacherId === profile.id) return failure("নিজেকে অনুরোধ পাঠানো যাবে না।");
 
-  // স্প্যাম protection: একসাথে ৫টার বেশি pending request রাখা যাবে না
+  // স্প্যাম সুরক্ষা: একসঙ্গে ৫টির বেশি অপেক্ষমাণ অনুরোধ রাখা যাবে না।
   const supabase = await createClient();
   const { data: pendingCount } = await supabase.rpc("pending_request_count", {
     p_user_id: profile.id,
   });
   if ((pendingCount ?? 0) >= MAX_PENDING_REQUESTS) {
-    return failure(`আপনার ${MAX_PENDING_REQUESTS}টা request এখনো অপেক্ষমাণ — আগে সেগুলোর উত্তর দেখুন।`);
+    return failure(`আপনার ${MAX_PENDING_REQUESTS}টি অনুরোধ এখনো অপেক্ষমাণ—আগে সেগুলোর উত্তর দেখুন।`);
   }
 
   let studentId: string | null = profile.role === "student" ? profile.id : null;
@@ -35,6 +39,19 @@ export async function sendTuitionRequest(input: {
       .maybeSingle();
     studentId = (gp?.linked_student_id as string | null) ?? null;
   }
+
+  const { data: tuition } = await supabase
+    .from("tuitions")
+    .select("poster_id,student_id,status")
+    .eq("id", input.tuitionId)
+    .maybeSingle();
+  if (!tuition || tuition.status !== "open") return failure("নির্বাচিত টিউশনটি আর খোলা নেই।");
+
+  const ownsTuition =
+    tuition.poster_id === profile.id ||
+    tuition.student_id === profile.id ||
+    (studentId != null && tuition.student_id === studentId);
+  if (!ownsTuition) return failure("শুধু নিজের টিউশনের জন্য শিক্ষককে অনুরোধ পাঠানো যাবে।");
 
   const { data, error } = await supabase
     .from("tuition_requests")
@@ -51,7 +68,7 @@ export async function sendTuitionRequest(input: {
 
   if (error) {
     if (error.code === "23505" || error.message.includes("duplicate")) {
-      return failure("আপনি ইতিমধ্যে এই teacher-কে request পাঠিয়েছেন।");
+      return failure("আপনি ইতিমধ্যে এই শিক্ষককে অনুরোধ পাঠিয়েছেন।");
     }
     return failure(error.message);
   }
@@ -66,19 +83,30 @@ export async function respondToRequest(
   decision: "accepted" | "rejected",
 ): Promise<ActionResult> {
   const profile = await requireProfile();
-  if (profile.role !== "teacher") return failure("শুধু শিক্ষক respond করতে পারবেন।");
+  if (profile.role !== "teacher") return failure("শুধু শিক্ষক অনুরোধের উত্তর দিতে পারবেন।");
 
   const supabase = await createClient();
   const { data: existing } = await supabase
     .from("tuition_requests")
-    .select("teacher_id,status")
+    .select("teacher_id,status,tuition_id")
     .eq("id", requestId)
     .maybeSingle();
 
   if (!existing || existing.teacher_id !== profile.id) {
-    return failure("শুধু নিজের request respond করতে পারবেন।");
+    return failure("শুধু নিজের কাছে আসা অনুরোধের উত্তর দিতে পারবেন।");
   }
-  if (existing.status !== "pending") return failure("এই request ইতিমধ্যে উত্তর দেওয়া হয়েছে।");
+  if (existing.status !== "pending") return failure("এই অনুরোধের উত্তর ইতিমধ্যে দেওয়া হয়েছে।");
+
+  if (decision === "accepted") {
+    const { data: tuition } = await supabase
+      .from("tuitions")
+      .select("status")
+      .eq("id", existing.tuition_id)
+      .maybeSingle();
+    if (!tuition || tuition.status !== "open") {
+      return failure("এই টিউশন ইতিমধ্যে অন্য শিক্ষককে দেওয়া হয়েছে বা বন্ধ হয়েছে।");
+    }
+  }
 
   const { error } = await supabase
     .from("tuition_requests")
@@ -106,8 +134,8 @@ export async function withdrawRequest(requestId: string): Promise<ActionResult> 
     existing?.sender_id === profile.id ||
     (existing?.student_id != null && existing.student_id === profile.id);
 
-  if (!existing || !involved) return failure("শুধু নিজের request withdraw করতে পারবেন।");
-  if (existing.status !== "pending") return failure("এই request আর withdraw করা যাবে না।");
+  if (!existing || !involved) return failure("শুধু নিজের অনুরোধ প্রত্যাহার করতে পারবেন।");
+  if (existing.status !== "pending") return failure("এই অনুরোধ আর প্রত্যাহার করা যাবে না।");
 
   const { error } = await supabase
     .from("tuition_requests")

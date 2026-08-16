@@ -16,7 +16,7 @@ export function TeacherRequestActions({ requestId }: { requestId: string }) {
     startTransition(async () => {
       const result = await respondToRequest(requestId, decision);
       if (result.ok) {
-        toast(decision === "accepted" ? "Request গ্রহণ করা হয়েছে" : "Request প্রত্যাখ্যান করা হয়েছে", decision === "accepted" ? "success" : "danger");
+        toast(decision === "accepted" ? "অনুরোধ গ্রহণ করা হয়েছে" : "অনুরোধ প্রত্যাখ্যান করা হয়েছে", decision === "accepted" ? "success" : "danger");
         router.refresh();
       } else {
         toast(result.error, "danger");
@@ -45,7 +45,7 @@ export function SenderRequestActions({ requestId }: { requestId: string }) {
     startTransition(async () => {
       const result = await withdrawRequest(requestId);
       if (result.ok) {
-        toast("Request প্রত্যাহার করা হয়েছে", "success");
+        toast("অনুরোধ প্রত্যাহার করা হয়েছে", "success");
         router.refresh();
       } else {
         toast(result.error, "danger");

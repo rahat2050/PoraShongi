@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock, MapPin, Sparkles, User, Users, Wallet } from "lucide-react";
-import { getPublicTuition } from "@/lib/data/tuitions";
+import { getPublicTuition, hasAcceptedTuitionForTeacher } from "@/lib/data/tuitions";
 import { matchTeachersForTuition } from "@/lib/data/teachers";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -50,6 +50,12 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
 
   const profile = await getCurrentProfile();
   const isOwner = profile?.id === tuition.poster_id;
+  const isTuitionStudent = profile?.id === tuition.student_id;
+  const isAcceptedTeacher = profile?.role === "teacher"
+    ? (await hasAcceptedTuitionForTeacher(tuition.id, profile.id)).data ?? false
+    : false;
+  const canManageMeeting = isOwner || isAcceptedTeacher || profile?.role === "admin";
+  const canViewMeeting = canManageMeeting || isTuitionStudent;
   const tuitionSaved = profile?.role === "teacher"
     ? (await isTuitionSaved(profile.id, tuition.id)).data ?? false
     : false;
@@ -126,11 +132,11 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
 
-          {isOwner && (
+          {canManageMeeting && (
             <MeetingLinkForm tuitionId={tuition.id} initialLink={tuition.meeting_link ?? null} />
           )}
 
-          {!isOwner && tuition.meeting_link && (
+          {canViewMeeting && !canManageMeeting && tuition.meeting_link && (
             <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-sm font-semibold text-emerald-800">🎥 অনলাইন ক্লাস</p>
               <p className="mt-1 text-xs text-emerald-700">শিক্ষক মিটিং লিংক দিয়েছেন — ক্লাসের সময় join করুন।</p>

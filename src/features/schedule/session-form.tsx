@@ -22,7 +22,7 @@ export function SessionForm({ tuitions }: { tuitions: { id: string; title: strin
     event.preventDefault();
     setError(null);
     if (!tuitionId || !scheduledAt) {
-      setError("tuition আর সময় বাছুন।");
+      setError("টিউশন এবং সময় বাছুন।");
       return;
     }
     setPending(true);
@@ -39,29 +39,29 @@ export function SessionForm({ tuitions }: { tuitions: { id: string; title: strin
   }
 
   if (tuitions.length === 0) {
-    return <Alert variant="info" title="কোনো active tuition নেই">ক্লাস schedule করতে আগে tuition থাকতে হবে।</Alert>;
+    return <Alert variant="info" title="কোনো সক্রিয় টিউশন নেই">ক্লাসের সময় নির্ধারণ করতে আগে একটি টিউশন অনুরোধ গ্রহণ করতে হবে।</Alert>;
   }
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>ক্লাস schedule করুন</Button>
+      <Button onClick={() => setOpen(true)}>ক্লাসের সময় নির্ধারণ করুন</Button>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-4 backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold text-slate-900">ক্লাস schedule</h2>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="session-dialog-title">
+            <h2 id="session-dialog-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">ক্লাসের সময় নির্ধারণ</h2>
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               {error && <Alert variant="danger">{error}</Alert>}
-              <FormField label="Tuition" required>
-                <Select value={tuitionId} onChange={(e) => setTuitionId(e.target.value)}>
+              <FormField label="টিউশন" htmlFor="session-tuition" required>
+                <Select id="session-tuition" name="tuitionId" value={tuitionId} onChange={(e) => setTuitionId(e.target.value)} required>
                   {tuitions.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </Select>
               </FormField>
-              <FormField label="তারিখ ও সময়" required>
-                <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
+              <FormField label="তারিখ ও সময়" htmlFor="session-time" required>
+                <Input id="session-time" name="scheduledAt" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} required />
               </FormField>
-              <FormField label="নোট (ঐচ্ছিক)">
-                <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="টপিক, স্থান…" />
+              <FormField label="নোট (ঐচ্ছিক)" htmlFor="session-notes">
+                <Input id="session-notes" name="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="বিষয়, স্থান…" maxLength={500} />
               </FormField>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" type="button" onClick={() => setOpen(false)}>বাতিল</Button>

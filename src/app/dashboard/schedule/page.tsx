@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
-import { listTuitionsFor } from "@/lib/data/tuitions";
+import { listAcceptedTuitionsForTeacher, listTuitionsFor } from "@/lib/data/tuitions";
 import { listSessionsForTeacher, listSessionsByTuitions, loadSessionDisplay } from "@/lib/data/sessions";
 import { getRoleProfileRow } from "@/lib/data/profiles";
 import { type GuardianProfile, type Session } from "@/types/index";
@@ -46,7 +46,7 @@ export default async function SchedulePage() {
   const upcoming = display.filter((d) => d.session.status === "scheduled" || d.session.status === "rescheduled");
   const past = display.filter((d) => d.session.status === "completed" || d.session.status === "cancelled");
 
-  const teacherTuitions = isTeacher ? (await listTuitionsFor(profile.id)).data ?? [] : [];
+  const teacherTuitions = isTeacher ? (await listAcceptedTuitionsForTeacher(profile.id)).data ?? [] : [];
   const scheduleable = teacherTuitions
     .filter((t) => t.status === "open" || t.status === "assigned")
     .map((t) => ({ id: t.id, title: t.title }));
