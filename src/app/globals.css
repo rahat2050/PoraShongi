@@ -103,6 +103,11 @@ main > * {
   box-shadow: 0 8px 24px -8px rgb(15 23 42 / 0.12);
 }
 
+/* Slate-400 is too light for normal text on white; use slate-500 in light mode. */
+html:not(.dark) .text-slate-400 {
+  color: #64748b;
+}
+
 /*
  * Dark-mode safety net for server-rendered pages that use semantic slate
  * utilities. Component-level dark classes remain preferred; these rules stop

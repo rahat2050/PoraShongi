@@ -11,8 +11,8 @@ export function Logo({ className, withText = true }: { className?: string; withT
   return (
     <Link
       href="/"
-      className={cn("group flex items-center gap-2.5", className)}
-      aria-label={`${siteConfig.brandName} — ${siteConfig.tagline}`}
+      className={cn("group flex min-h-11 items-center gap-2.5", className)}
+      aria-label={withText ? undefined : `${siteConfig.brandName} — ${siteConfig.tagline}`}
     >
       <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-brand-700 to-brand-900 text-white shadow-sm transition-transform group-hover:scale-105">
         <GraduationCap className="h-5 w-5 text-accent-400" aria-hidden />

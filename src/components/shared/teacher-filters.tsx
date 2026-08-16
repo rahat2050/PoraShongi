@@ -100,7 +100,7 @@ export function TeacherFilters({
           </label>
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <span>সাজান:</span>
-            <Select name="sort" defaultValue={current.sort ?? "relevance"} className="h-9 w-auto min-w-[9.5rem] text-sm">
+            <Select name="sort" defaultValue={current.sort ?? "relevance"} className="h-11 w-auto min-w-[9.5rem] text-sm">
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value} disabled={o.value === "nearest" && !canUseDistance}>
                   {o.label}

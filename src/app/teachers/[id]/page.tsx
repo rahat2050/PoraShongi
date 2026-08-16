@@ -297,12 +297,12 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
 function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-2">
-      <span className="mt-0.5 text-slate-400">{icon}</span>
-      <div>
-        <dt className="text-xs text-slate-400">{label}</dt>
-        <dd className="text-slate-700">{value}</dd>
-      </div>
+    <div>
+      <dt className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <span aria-hidden>{icon}</span>
+        {label}
+      </dt>
+      <dd className="ml-6 text-slate-700 dark:text-slate-200">{value}</dd>
     </div>
   );
 }

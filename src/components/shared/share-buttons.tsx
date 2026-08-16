@@ -30,7 +30,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
       <button
         type="button"
         onClick={shareWhatsApp}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
         aria-label="WhatsApp-এ শেয়ার"
       >
         <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden />
@@ -39,7 +39,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
       <button
         type="button"
         onClick={copyLink}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
         aria-label="লিংক কপি"
       >
         <Link2 className="h-4 w-4" aria-hidden />
