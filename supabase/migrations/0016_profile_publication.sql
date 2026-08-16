@@ -1,5 +1,45 @@
 -- Public profile quality and transparent reputation metrics.
 
+-- Compatibility preflight: some early production projects were initialized
+-- manually and do not have every 0006/0009/0011 portfolio column recorded in
+-- migration history. These additions are idempotent and make this migration
+-- safe for those databases as well as fully migrated projects.
+alter table public.profiles
+  add column if not exists is_premium boolean not null default false,
+  add column if not exists premium_until timestamptz;
+
+alter table public.teacher_profiles
+  add column if not exists profile_views integer not null default 0,
+  add column if not exists trial_available boolean not null default false,
+  add column if not exists trial_price numeric default 0,
+  add column if not exists teaching_style text,
+  add column if not exists languages text[];
+
+create or replace function public.is_teacher_profile_publishable(p_teacher_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.teacher_profiles tp
+    join public.profiles p on p.id = tp.id
+    where tp.id = p_teacher_id
+      and p.role = 'teacher'
+      and p.account_status = 'active'
+      and char_length(trim(coalesce(p.full_name, ''))) >= 2
+      and cardinality(coalesce(tp.subjects, '{}'::text[])) > 0
+      and cardinality(coalesce(tp.classes_taught, '{}'::text[])) > 0
+      and char_length(trim(coalesce(tp.education, ''))) > 0
+      and tp.teaching_mode in ('online', 'offline', 'both')
+      and (tp.teaching_mode = 'online' or char_length(trim(coalesce(p.district, ''))) > 0)
+  );
+$$;
+
+revoke all on function public.is_teacher_profile_publishable(uuid) from public;
+
 -- Incomplete teacher profiles remain editable by their owners but are not
 -- exposed by the anonymous public-profile RPC.
 create or replace function public.get_public_teacher(p_teacher_id uuid)
