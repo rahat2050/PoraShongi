@@ -73,7 +73,7 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
         <div className="flex-1 space-y-2">
           {cloudinaryReady && (
             <>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
               <Button type="button" variant="outline" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}>
                 <Camera className="h-4 w-4" aria-hidden /> ছবি upload
               </Button>
