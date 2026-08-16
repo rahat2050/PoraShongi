@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Star, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
-import { homeFeed } from "@/lib/data/features";
+import { homeFeed, siteStats } from "@/lib/data/features";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,8 +30,11 @@ export default async function Home() {
     teachers: [],
     tuitions: [],
   };
+  let stats: import("@/lib/data/features").SiteStats | null = null;
   if (isSupabaseConfigured()) {
-    feed = (await homeFeed()).data ?? { teachers: [], tuitions: [] };
+    const [feedRes, statsRes] = await Promise.all([homeFeed(), siteStats()]);
+    feed = feedRes.data ?? { teachers: [], tuitions: [] };
+    stats = statsRes.data;
   }
 
   return (
@@ -62,6 +65,22 @@ export default async function Home() {
             <MapPin className="h-4 w-4" aria-hidden />
             বাংলাদেশের যেকোনো এলাকা থেকে — কাছের শিক্ষক খুঁজুন
           </p>
+
+          {stats && (
+            <div className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { value: stats.teachers, label: "শিক্ষক" },
+                { value: stats.students, label: "শিক্ষার্থী" },
+                { value: stats.open_tuitions, label: "খোলা tuition" },
+                { value: stats.districts, label: "জেলা" },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur">
+                  <p className="text-2xl font-extrabold text-brand-700">{s.value}</p>
+                  <p className="text-xs text-slate-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -4,7 +4,7 @@ import { BellOff } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { listNotifications } from "@/lib/data/notifications";
 import { getNotificationPreferencesServer } from "@/features/notifications/preferences-actions";
-import { NotificationItem } from "@/features/notifications/notification-item";
+import { NotificationTabs } from "@/features/notifications/notification-tabs";
 import { MarkAllReadButton } from "@/features/notifications/mark-all-button";
 import { PreferencesForm } from "@/features/notifications/preferences-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,13 +34,13 @@ export default async function NotificationsPage() {
       </div>
 
       <Card className="mt-6">
-        <CardContent className="p-0">
+        <CardContent className="p-4">
           {notifications.length === 0 ? (
-            <div className="p-6">
+            <div className="p-2">
               <EmptyState icon={<BellOff className="h-6 w-6" aria-hidden />} title="কোনো নোটিফিকেশন নেই" description="নতুন নোটিফিকেশন এলে এখানে দেখাবে।" />
             </div>
           ) : (
-            notifications.map((n) => <NotificationItem key={n.id} notification={n} />)
+            <NotificationTabs notifications={notifications} />
           )}
         </CardContent>
       </Card>

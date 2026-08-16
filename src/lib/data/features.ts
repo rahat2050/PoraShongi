@@ -9,12 +9,28 @@ import {
   type TrialRequest,
 } from "@/types/index";
 
+export interface SiteStats {
+  teachers: number;
+  students: number;
+  open_tuitions: number;
+  reviews: number;
+  districts: number;
+}
+
 export async function homeFeed(): Promise<DataResult<HomeFeed>> {
   const db = await getDb();
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db.rpc("home_feed", { p_teachers: 6, p_tuitions: 6 });
   if (error) return fail(error.message);
   return ok(asJson<HomeFeed>(data));
+}
+
+export async function siteStats(): Promise<DataResult<SiteStats>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("site_stats");
+  if (error) return fail(error.message);
+  return ok(asJson<SiteStats>(data));
 }
 
 export async function topTeachers(

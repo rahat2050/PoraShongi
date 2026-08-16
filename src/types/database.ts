@@ -557,6 +557,8 @@ export interface Database {
       recommend_teachers: { Args: { p_teacher_id: string; p_limit?: number | null }; Returns: Json };
       admin_analytics: { Args: Record<PropertyKey, never>; Returns: Json };
       home_feed: { Args: { p_teachers?: number | null; p_tuitions?: number | null }; Returns: Json };
+      site_stats: { Args: Record<PropertyKey, never>; Returns: Json };
+      pending_request_count: { Args: { p_user_id: string }; Returns: number };
     };
     Enums: {
       user_role: UserRole;

@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Announcement } from "@/components/layout/announcement";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
@@ -42,9 +43,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider>
             <Announcement />
             <Header />
-            <main className="flex flex-1 flex-col">{children}</main>
+            <main className="flex flex-1 flex-col pb-14 md:pb-0">{children}</main>
             <Footer />
             <BackToTop />
+            <BottomNav />
           </ToastProvider>
         </SettingsProvider>
       </body>

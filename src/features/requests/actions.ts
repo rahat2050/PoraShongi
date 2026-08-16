@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
 
+const MAX_PENDING_REQUESTS = 5;
+
 export async function sendTuitionRequest(input: {
   tuitionId: string;
   teacherId: string;
@@ -15,9 +17,17 @@ export async function sendTuitionRequest(input: {
     return failure("শুধু শিক্ষার্থী বা অভিভাবক request পাঠাতে পারবেন।");
   }
 
+  // স্প্যাম protection: একসাথে ৫টার বেশি pending request রাখা যাবে না
+  const supabase = await createClient();
+  const { data: pendingCount } = await supabase.rpc("pending_request_count", {
+    p_user_id: profile.id,
+  });
+  if ((pendingCount ?? 0) >= MAX_PENDING_REQUESTS) {
+    return failure(`আপনার ${MAX_PENDING_REQUESTS}টা request এখনো অপেক্ষমাণ — আগে সেগুলোর উত্তর দেখুন।`);
+  }
+
   let studentId: string | null = profile.role === "student" ? profile.id : null;
   if (profile.role === "guardian") {
-    const supabase = await createClient();
     const { data: gp } = await supabase
       .from("guardian_profiles")
       .select("linked_student_id")
@@ -26,7 +36,6 @@ export async function sendTuitionRequest(input: {
     studentId = (gp?.linked_student_id as string | null) ?? null;
   }
 
-  const supabase = await createClient();
   const { data, error } = await supabase
     .from("tuition_requests")
     .insert({
