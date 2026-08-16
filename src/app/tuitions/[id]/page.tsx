@@ -21,19 +21,11 @@ import { JoinBatchButton } from "@/features/features-actions-ui";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params;
-  try {
-    const t = (await getPublicTuition(id)).data;
-    if (!t) return { title: "Tuition বিস্তারিত" };
-    return {
-      title: `${t.title} — ${t.class_level} ${t.subject}`,
-      description: `${t.title} (${t.class_level} · ${t.subject})${t.district ? ` · ${t.district}` : ""} — PoraSathi-তে tuition দেখুন।`,
-    };
-  } catch {
-    return { title: "Tuition বিস্তারিত" };
-  }
-}
+export const metadata: Metadata = {
+  title: "টিউশন বিস্তারিত",
+  description: "টিউশনের বিস্তারিত দেখতে লগইন করুন।",
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function TuitionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -8,7 +8,6 @@ import { buttonStyles } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { formatTaka } from "@/lib/utils";
 
 const roles = [
   { icon: GraduationCap, title: "শিক্ষার্থী", desc: "নিজের জন্য যোগ্য শিক্ষক খুঁজুন — class, subject, বাজেট ও এলাকা অনুযায়ী।" },
@@ -164,31 +163,6 @@ export default async function Home() {
                   </Link>
                 );
               })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Live: সাম্প্রতিক tuition */}
-      {feed.tuitions.length > 0 && (
-        <section>
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-slate-900">সাম্প্রতিক tuition</h2>
-              <Link href="/tuitions" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন →</Link>
-            </div>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {feed.tuitions.slice(0, 6).map((t) => (
-                <Link key={t.id} href={`/tuitions/${t.id}`} className="rounded-2xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md">
-                  <p className="truncate text-sm font-semibold text-slate-800">{t.title}</p>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    <Badge variant="brand">{t.class_level}</Badge>
-                    <Badge variant="outline">{t.subject}</Badge>
-                  </div>
-                  <p className="mt-2 text-xs text-slate-400">{[t.area, t.district].filter(Boolean).join(", ") || "এলাকা নেই"}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-700">{formatTaka(t.budget)}</p>
-                </Link>
-              ))}
             </div>
           </div>
         </section>

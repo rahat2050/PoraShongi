@@ -2,6 +2,35 @@
 -- Fixes a parameter/column comparison bug that made every district/area match,
 -- and prevents radius filters from silently including profiles without GPS.
 
+-- A teacher must provide enough information before appearing in public search.
+create or replace function public.is_teacher_profile_publishable(p_teacher_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.teacher_profiles tp
+    join public.profiles p on p.id = tp.id
+    where tp.id = p_teacher_id
+      and p.role = 'teacher'
+      and p.account_status = 'active'
+      and char_length(trim(coalesce(p.full_name, ''))) >= 2
+      and cardinality(coalesce(tp.subjects, '{}'::text[])) > 0
+      and cardinality(coalesce(tp.classes_taught, '{}'::text[])) > 0
+      and char_length(trim(coalesce(tp.education, ''))) > 0
+      and tp.teaching_mode in ('online', 'offline', 'both')
+      and (
+        tp.teaching_mode = 'online'
+        or char_length(trim(coalesce(p.district, ''))) > 0
+      )
+  );
+$$;
+
+revoke all on function public.is_teacher_profile_publishable(uuid) from public;
+
 -- Normalize the two legacy English district spellings used by older forms.
 update public.profiles set district = 'Bogura' where district = 'Bogra';
 update public.profiles set district = 'Jashore' where district = 'Jessore';
@@ -39,6 +68,7 @@ begin
   join public.profiles pr on pr.id = tp.id
   where pr.role = 'teacher'
     and pr.account_status = 'active'
+    and public.is_teacher_profile_publishable(tp.id)
     and (p_class is null or tp.classes_taught @> array[p_class])
     and (p_subject is null or tp.subjects @> array[p_subject])
     and (p_district is null or lower(trim(coalesce(pr.district, ''))) = lower(trim(p_district)))
@@ -88,6 +118,7 @@ begin
     join public.profiles pr on pr.id = tp.id
     where pr.role = 'teacher'
       and pr.account_status = 'active'
+      and public.is_teacher_profile_publishable(tp.id)
       and (p_class is null or tp.classes_taught @> array[p_class])
       and (p_subject is null or tp.subjects @> array[p_subject])
       and (p_district is null or lower(trim(coalesce(pr.district, ''))) = lower(trim(p_district)))

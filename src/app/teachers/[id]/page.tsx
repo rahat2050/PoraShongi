@@ -175,10 +175,13 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
               ) : null}
               {reputation.data && (
                 <div className="mt-1 space-y-0.5">
-                  <p className="text-xs text-slate-400">
-                    {reputation.data.completed_tuitions} টা tuition সম্পন্ন · response {reputation.data.response_rate}%
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {reputation.data.completed_tuitions}টি টিউশন সম্পন্ন
+                    {reputation.data.response_count > 0
+                      ? ` · ${reputation.data.response_count}টি উত্তরযোগ্য অনুরোধে সাড়া ${reputation.data.response_rate}%`
+                      : ""}
                   </p>
-                  <FastResponse avgHours={reputation.data.avg_response_hours} />
+                  {reputation.data.response_count > 0 && <FastResponse avgHours={reputation.data.avg_response_hours} />}
                 </div>
               )}
               {teacher.trial_available && (

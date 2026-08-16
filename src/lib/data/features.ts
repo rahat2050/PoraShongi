@@ -20,7 +20,7 @@ export interface SiteStats {
 export async function homeFeed(): Promise<DataResult<HomeFeed>> {
   const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
-  const { data, error } = await db.rpc("home_feed", { p_teachers: 6, p_tuitions: 6 });
+  const { data, error } = await db.rpc("home_feed", { p_teachers: 6, p_tuitions: 0 });
   if (error) return fail(error.message);
   return ok(asJson<HomeFeed>(data));
 }
