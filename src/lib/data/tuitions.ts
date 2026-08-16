@@ -52,6 +52,41 @@ export async function getPublicTuition(
   return ok(asJson<TuitionPublic | null>(data));
 }
 
+export async function hasAcceptedTuitionForTeacher(
+  tuitionId: string,
+  teacherId: string,
+): Promise<DataResult<boolean>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db
+    .from("tuition_requests")
+    .select("id")
+    .eq("tuition_id", tuitionId)
+    .eq("teacher_id", teacherId)
+    .eq("status", "accepted")
+    .maybeSingle();
+  if (error) return fail(error.message);
+  return ok(Boolean(data));
+}
+
+export async function listAcceptedTuitionsForTeacher(
+  teacherId: string,
+): Promise<DataResult<Tuition[]>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+
+  const { data: requests, error } = await db
+    .from("tuition_requests")
+    .select("tuition_id")
+    .eq("teacher_id", teacherId)
+    .eq("status", "accepted")
+    .limit(50);
+  if (error) return fail(error.message);
+
+  const ids = Array.from(new Set((requests ?? []).map((request) => request.tuition_id)));
+  return getTuitionsByIds(ids);
+}
+
 /** poster বা linked student-এর tuition list — বড় text (requirements) বাদ, data বাঁচাতে */
 const TUITION_LIST_COLUMNS =
   "id,poster_id,student_id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,status,created_at,updated_at";

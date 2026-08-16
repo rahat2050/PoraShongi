@@ -14,6 +14,8 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
 
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role === "teacher") redirect("/tuitions");
+  if (profile.role === "admin") redirect("/admin");
 
   const result = await getTuitionById(id);
   const tuition = result.data ?? null;

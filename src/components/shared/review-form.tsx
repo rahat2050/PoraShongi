@@ -41,13 +41,13 @@ export function ReviewForm({ teacherId, tuitionId }: { teacherId: string; tuitio
       {message && <Alert variant={message.type}>{message.text}</Alert>}
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} type="button" onClick={() => setRating(n)} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)} aria-label={`${n} স্টার`} className="transition-transform hover:scale-110">
+          <button key={n} type="button" onClick={() => setRating(n)} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(0)} aria-label={`${n} স্টার`} aria-pressed={rating === n} className="inline-flex h-11 w-11 items-center justify-center rounded-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
             <Star className={`h-6 w-6 ${n <= (hover || rating) ? "fill-amber-400 text-amber-400" : "text-slate-300"}`} aria-hidden />
           </button>
         ))}
         <span className="ml-2 text-sm text-slate-500">{rating > 0 ? `${rating}/5` : "রেট করতে চাপুন"}</span>
       </div>
-      <Textarea placeholder="আপনার অভিজ্ঞতা লিখুন…" value={body} onChange={(e) => setBody(e.target.value)} rows={3} />
+      <Textarea name="review" placeholder="আপনার অভিজ্ঞতা লিখুন…" value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={2000} aria-label="রিভিউ" />
       <Button type="submit" loading={pending}>রিভিউ দিন</Button>
     </form>
   );

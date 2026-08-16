@@ -9,6 +9,8 @@ export const metadata: Metadata = { title: "নতুন টিউশন" };
 export default async function NewTuitionPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role === "teacher") redirect("/tuitions");
+  if (profile.role === "admin") redirect("/admin");
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">

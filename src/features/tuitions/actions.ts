@@ -37,8 +37,17 @@ export async function createTuition(
   input: TuitionFormInput,
 ): Promise<ActionResult<{ id: string }>> {
   const profile = await requireProfile();
+  if (profile.role !== "student" && profile.role !== "guardian") {
+    return failure("শুধু শিক্ষার্থী বা অভিভাবক টিউশন তৈরি করতে পারবেন।");
+  }
   const parsed = tuitionSchema.safeParse(input);
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "Invalid input.");
+  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "তথ্যগুলো পরীক্ষা করুন।");
+  if (parsed.data.teachingMode !== "online" && !parsed.data.district) {
+    return failure("সরাসরি পড়ানোর টিউশনের জন্য জেলা নির্বাচন করুন।");
+  }
+  if (input.isBatch && (!input.batchSize || input.batchSize < 2 || input.batchSize > 200)) {
+    return failure("ব্যাচের শিক্ষার্থী সংখ্যা ২–২০০ এর মধ্যে হতে হবে।");
+  }
 
   let studentId: string | null = null;
   if (profile.role === "student") studentId = profile.id;
@@ -80,8 +89,17 @@ export async function updateTuition(
   input: TuitionFormInput,
 ): Promise<ActionResult> {
   const profile = await requireProfile();
+  if (profile.role !== "student" && profile.role !== "guardian") {
+    return failure("শুধু শিক্ষার্থী বা অভিভাবক টিউশন সম্পাদনা করতে পারবেন।");
+  }
   const parsed = tuitionSchema.safeParse(input);
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "Invalid input.");
+  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "তথ্যগুলো পরীক্ষা করুন।");
+  if (parsed.data.teachingMode !== "online" && !parsed.data.district) {
+    return failure("সরাসরি পড়ানোর টিউশনের জন্য জেলা নির্বাচন করুন।");
+  }
+  if (input.isBatch && (!input.batchSize || input.batchSize < 2 || input.batchSize > 200)) {
+    return failure("ব্যাচের শিক্ষার্থী সংখ্যা ২–২০০ এর মধ্যে হতে হবে।");
+  }
 
   const supabase = await createClient();
   const { data: existing } = await supabase
@@ -108,6 +126,8 @@ export async function updateTuition(
       preferred_days: parsed.data.preferredDays ?? null,
       preferred_time: parsed.data.preferredTime || null,
       requirements: parsed.data.requirements || null,
+      is_batch: Boolean(input.isBatch),
+      batch_size: input.isBatch ? input.batchSize ?? null : null,
     })
     .eq("id", tuitionId);
 
@@ -196,8 +216,23 @@ export async function setMeetingLink(
     .eq("id", tuitionId)
     .maybeSingle();
 
-  if (!existing || existing.poster_id !== profile.id) {
-    return failure("শুধু নিজের tuition-এ লিংক বসাতে পারবেন।");
+  if (!existing) return failure("টিউশন পাওয়া যায়নি।");
+
+  const isOwner = existing.poster_id === profile.id;
+  let isAcceptedTeacher = false;
+  if (profile.role === "teacher") {
+    const { data: accepted } = await supabase
+      .from("tuition_requests")
+      .select("id")
+      .eq("tuition_id", tuitionId)
+      .eq("teacher_id", profile.id)
+      .eq("status", "accepted")
+      .maybeSingle();
+    isAcceptedTeacher = Boolean(accepted);
+  }
+
+  if (!isOwner && !isAcceptedTeacher && profile.role !== "admin") {
+    return failure("শুধু টিউশনের মালিক বা গৃহীত শিক্ষক ক্লাসের লিংক দিতে পারবেন।");
   }
 
   const { error } = await supabase
