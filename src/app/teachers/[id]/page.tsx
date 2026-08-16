@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lucide-react";
@@ -32,24 +33,50 @@ import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
 
+const getTeacher = cache((id: string) => getPublicTeacher(id));
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  try {
-    const result = await getPublicTeacher(id);
-    const teacher = result.data;
-    const name = teacher?.display_name || teacher?.full_name || "শিক্ষক";
-    const subjects = teacher?.subjects?.slice(0, 3).join(", ") ?? "Tuition";
+  const result = await getTeacher(id);
+  const teacher = result.data;
+
+  if (result.error) {
     return {
-      title: `${name} — ${subjects} শিক্ষক`,
-      description: `${name} (${subjects}) — ${teacher?.district ?? "বাংলাদেশ"} এলাকার শিক্ষক। PoraSathi-তে প্রোফাইল দেখুন।`,
-      openGraph: {
-        title: `${name} — PoraSathi শিক্ষক`,
-        description: subjects,
-      },
+      title: "শিক্ষকের প্রোফাইল",
+      robots: { index: false, follow: false },
     };
-  } catch {
-    return { title: "শিক্ষকের প্রোফাইল" };
   }
+  if (!teacher) notFound();
+
+  const name = teacher.display_name || teacher.full_name || "শিক্ষক";
+  const subjects = teacher.subjects?.slice(0, 3).join(", ") || "টিউশন";
+  const location = [teacher.area, teacher.district].filter(Boolean).join(", ");
+  const description = location
+    ? `${name}—${subjects} বিষয়ে ${location} এলাকার শিক্ষক। যোগ্যতা, অভিজ্ঞতা, ফি ও রিভিউ দেখুন।`
+    : `${name}—${subjects} বিষয়ের শিক্ষক। যোগ্যতা, অভিজ্ঞতা, ফি ও রিভিউ দেখুন।`;
+  const canonicalPath = `/teachers/${teacher.id}`;
+  const image = teacher.avatar_url || "/icon-512.png";
+
+  return {
+    title: `${name} — ${subjects} শিক্ষক`,
+    description,
+    alternates: { canonical: canonicalPath },
+    openGraph: {
+      type: "profile",
+      url: canonicalPath,
+      siteName: "PoraSathi",
+      locale: "bn_BD",
+      title: `${name} — PoraSathi শিক্ষক`,
+      description,
+      images: [{ url: image, alt: `${name}-এর প্রোফাইল ছবি` }],
+    },
+    twitter: {
+      card: "summary",
+      title: `${name} — PoraSathi শিক্ষক`,
+      description,
+      images: [image],
+    },
+  };
 }
 
 export default async function TeacherProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -57,7 +84,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
-  const result = await getPublicTeacher(id);
+  const result = await getTeacher(id);
   const teacher = result.data ?? null;
   if (!teacher) notFound();
 
