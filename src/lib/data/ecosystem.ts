@@ -1,11 +1,11 @@
 import "server-only";
-import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
 import { type CoachingCenter, type EducationResource } from "@/types/index";
 
 export async function listCoachingCenters(
   district?: string,
 ): Promise<DataResult<CoachingCenter[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
 
   let query = db
@@ -41,7 +41,7 @@ export async function listEducationResources(
 export async function listCoachingCourses(
   centerId: string,
 ): Promise<DataResult<{ id: string; title: string; description: string | null; price: number | null }[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("coaching_courses")

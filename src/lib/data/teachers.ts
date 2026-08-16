@@ -1,5 +1,5 @@
 import "server-only";
-import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { asJson, getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
 import {
   type SearchResponse,
   type TeacherDetail,
@@ -28,7 +28,7 @@ export interface TeacherSearchFilters {
 export async function searchTeachers(
   filters: TeacherSearchFilters,
 ): Promise<DataResult<SearchResponse<TeacherPublic>>> {
-  const db = await getDb();
+  const db = getPublicDb(120);
   if (!db) return fail("Supabase is not configured.");
 
   const { data, error } = await db.rpc("search_teachers", {
@@ -56,7 +56,7 @@ export async function searchTeachers(
 export async function getPublicTeacher(
   teacherId: string,
 ): Promise<DataResult<TeacherDetail | null>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
 
   const { data, error } = await db.rpc("get_public_teacher", {
@@ -69,7 +69,7 @@ export async function getPublicTeacher(
 export async function getPublicTeachers(
   teacherIds: string[],
 ): Promise<DataResult<TeacherPublic[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   if (teacherIds.length === 0) return ok([]);
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { asJson, getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
 import {
   type AdminAnalytics,
   type BlogPost,
@@ -18,7 +18,7 @@ export interface SiteStats {
 }
 
 export async function homeFeed(): Promise<DataResult<HomeFeed>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db.rpc("home_feed", { p_teachers: 6, p_tuitions: 6 });
   if (error) return fail(error.message);
@@ -26,7 +26,7 @@ export async function homeFeed(): Promise<DataResult<HomeFeed>> {
 }
 
 export async function siteStats(): Promise<DataResult<SiteStats>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db.rpc("site_stats");
   if (error) return fail(error.message);
@@ -37,7 +37,7 @@ export async function topTeachers(
   district?: string,
   limit = 10,
 ): Promise<DataResult<LeaderboardTeacher[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db.rpc("top_teachers", {
     p_district: district || null,
@@ -51,7 +51,7 @@ export async function recommendTeachers(
   teacherId: string,
   limit = 4,
 ): Promise<DataResult<TeacherPublic[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db.rpc("recommend_teachers", {
     p_teacher_id: teacherId,
@@ -70,7 +70,7 @@ export async function adminAnalytics(): Promise<DataResult<AdminAnalytics>> {
 }
 
 export async function listBlogPosts(limit = 20): Promise<DataResult<BlogPost[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("blog_posts")
@@ -83,7 +83,7 @@ export async function listBlogPosts(limit = 20): Promise<DataResult<BlogPost[]>>
 }
 
 export async function getBlogPost(slug: string): Promise<DataResult<BlogPost | null>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("blog_posts")

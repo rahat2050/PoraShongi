@@ -2,6 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import { isSupabaseConfigured } from "@/lib/env";
 
 export type DbClient = SupabaseClient<Database>;
@@ -13,6 +14,11 @@ export type DataResult<T> =
 export async function getDb(): Promise<DbClient | null> {
   if (!isSupabaseConfigured()) return null;
   return createClient();
+}
+
+export function getPublicDb(revalidateSeconds = 300): DbClient | null {
+  if (!isSupabaseConfigured()) return null;
+  return createPublicClient(revalidateSeconds);
 }
 
 export function ok<T>(data: T): DataResult<T> {

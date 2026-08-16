@@ -24,7 +24,7 @@ const steps = [
 ];
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function Home() {
   // Live feed — Supabase configure থাকলে top teachers + recent tuition দেখায়
