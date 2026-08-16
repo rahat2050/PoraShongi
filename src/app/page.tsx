@@ -36,6 +36,9 @@ export default function Home() {
             <Link href="/teachers" className={buttonStyles({ size: "lg" })}>
               শিক্ষক খুঁজুন <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
+            <Link href="/leaderboard" className={buttonStyles({ variant: "outline", size: "lg" })}>
+              🏆 সেরা শিক্ষক
+            </Link>
             <Link href="/register" className={buttonStyles({ variant: "outline", size: "lg" })}>
               ফ্রিতে যুক্ত হোন
             </Link>

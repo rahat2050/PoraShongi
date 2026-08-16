@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, Clock, MapPin, Sparkles, User, Wallet } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Sparkles, User, Users, Wallet } from "lucide-react";
 import { getPublicTuition } from "@/lib/data/tuitions";
 import { matchTeachersForTuition } from "@/lib/data/teachers";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
@@ -17,6 +17,7 @@ import { ShareButtons } from "@/components/shared/share-buttons";
 import { MeetingLinkForm } from "@/features/tuitions/meeting-link-form";
 import { SaveTuitionButton } from "@/components/shared/save-tuition-button";
 import { isTuitionSaved } from "@/lib/data/saved-tuitions";
+import { JoinBatchButton } from "@/features/features-actions-ui";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
@@ -89,6 +90,13 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
             <Row icon={<Wallet className="h-4 w-4" />} label="বাজেট" value={`${formatTaka(tuition.budget)}${tuition.budget_negotiable ? " (আলোচনা সাপেক্ষ)" : ""}`} />
             <Row icon={<CalendarDays className="h-4 w-4" />} label="দিন" value={tuition.preferred_days?.length ? tuition.preferred_days.join(", ") : "নমনীয়"} />
             <Row icon={<Clock className="h-4 w-4" />} label="সময়" value={tuition.preferred_time || "নমনীয়"} />
+            {tuition.is_batch && (
+              <Row
+                icon={<Users className="h-4 w-4" />}
+                label="Batch সিট"
+                value={tuition.batch_size ? `${tuition.seats_filled ?? 0}/${tuition.batch_size} ভর্তি` : `${tuition.seats_filled ?? 0} জন ভর্তি`}
+              />
+            )}
           </dl>
 
           {tuition.requirements && (
@@ -116,6 +124,12 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
             )}
             {profile?.role === "teacher" && !isOwner && (
               <SaveTuitionButton tuitionId={tuition.id} initiallySaved={tuitionSaved} />
+            )}
+            {profile?.role === "student" && tuition.is_batch && !isOwner && (
+              <JoinBatchButton
+                tuitionId={tuition.id}
+                seatsLeft={tuition.batch_size ? (tuition.batch_size - (tuition.seats_filled ?? 0)) : 0}
+              />
             )}
           </div>
 

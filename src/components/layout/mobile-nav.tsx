@@ -7,12 +7,13 @@ import { Menu, X } from "lucide-react";
 const links = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
   { href: "/tuitions", label: "Tuition" },
+  { href: "/leaderboard", label: "সেরা শিক্ষক" },
   { href: "/coaching", label: "Coaching" },
+  { href: "/blog", label: "ব্লগ" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/messages", label: "মেসেজ" },
   { href: "/dashboard/referrals", label: "রেফারেল" },
   { href: "/account", label: "প্রাইভেসি ও অ্যাকাউন্ট" },
-  { href: "/#how", label: "কীভাবে কাজ করে" },
 ];
 
 /** মোবাইলের জন্য হ্যামবার্গার menu — ছোট স্ক্রিনে এখন menu-ই দেখা যায় না। */

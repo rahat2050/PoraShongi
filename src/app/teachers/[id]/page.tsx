@@ -25,6 +25,9 @@ import { ReviewList } from "@/components/shared/review-list";
 import { ReviewForm } from "@/components/shared/review-form";
 import { VerificationTierBadge } from "@/components/shared/verification-tier";
 import { FastResponse } from "@/components/shared/fast-response";
+import { TrialRequestButton } from "@/features/features-actions-ui";
+import { recommendTeachers } from "@/lib/data/features";
+import { TeacherCard } from "@/components/shared/teacher-card";
 import { buttonStyles } from "@/components/ui/button";
 import { formatTaka, modeLabel } from "@/lib/utils";
 
@@ -93,6 +96,9 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     await supabase.rpc("record_profile_view", { p_teacher_id: teacher.id });
   }
 
+  // Recommendation — একই subject/এলাকার আরও teacher
+  const similar = (await recommendTeachers(teacher.id, 3)).data ?? [];
+
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6">
       <Card>
@@ -120,6 +126,11 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                   <FastResponse avgHours={reputation.data.avg_response_hours} />
                 </div>
               )}
+              {teacher.trial_available && (
+                <p className="mt-1 text-xs font-medium text-emerald-700">
+                  🎓 Trial class আছে {teacher.trial_price != null && teacher.trial_price > 0 ? `(৳${teacher.trial_price})` : "(ফ্রি)"}
+                </p>
+              )}
 
               <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                 <Detail icon={<GraduationCap className="h-4 w-4" />} label="শিক্ষাগত যোগ্যতা" value={[teacher.education, teacher.institution].filter(Boolean).join(", ") || "—"} />
@@ -135,6 +146,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
             {canInteract && profile ? (
               <>
                 {!blocked && <RequestSheet teacherId={teacher.id} teacherName={name} tuitions={openTuitions.map((t) => ({ id: t.id, title: t.title }))} />}
+                {!blocked && teacher.trial_available && <TrialRequestButton teacherId={teacher.id} price={teacher.trial_price ?? null} />}
                 {!blocked && <MessageButton otherId={teacher.id} />}
                 <FavoriteButton teacherId={teacher.id} initiallySaved={saved} />
                 {!blocked && <ContactRequestButton teacherId={teacher.id} initialStatus={contact?.status ?? "none"} />}
@@ -221,6 +233,22 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           )}
         </CardContent>
       </Card>
+
+      {similar.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">এই শিক্ষকের মতো আরও</h2>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {similar.map((t) => (
+              <TeacherCard
+                key={t.id}
+                teacher={t}
+                canSave={canInteract}
+                initiallySaved={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

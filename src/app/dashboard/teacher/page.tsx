@@ -10,6 +10,7 @@ import { listReceivedContactRequests } from "@/lib/data/contact";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
 import { listMyStudents } from "@/lib/data/students";
 import { getTeacherAnalytics } from "@/lib/data/growth";
+import { listTrialRequests } from "@/lib/data/features";
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
@@ -22,6 +23,7 @@ import { RequestRow } from "@/components/shared/request-row";
 import { ContactRequestActions } from "@/features/contact/contact-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
+import { TrialRequestActions } from "@/features/features-actions-ui2";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "শিক্ষক ড্যাশবোর্ড" };
@@ -51,6 +53,10 @@ export default async function TeacherDashboardPage() {
 
   const myStudents = (await listMyStudents(profile.id)).data ?? [];
   const analytics = (await getTeacherAnalytics(profile.id)).data ?? null;
+
+  const trialRequests = (await listTrialRequests(profile.id)).data ?? [];
+  const trialSenders = (await getProfilesPublic(trialRequests.map((t) => t.sender_id))).data ?? [];
+  const trialSenderMap = new Map(trialSenders.map((p) => [p.id, p]));
 
   const onboardingSteps = [
     { label: "প্রোফাইল পূরণ করুন", done: completion.percent >= 60, href: "/profile" },
@@ -175,6 +181,35 @@ export default async function TeacherDashboardPage() {
                       </div>
                     </div>
                     <ContactRequestActions requestId={c.id} />
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {trialRequests.length > 0 && (
+        <Card className="mt-6">
+          <CardContent className="p-5">
+            <h2 className="text-base font-semibold text-slate-900">Trial class request ({trialRequests.length})</h2>
+            <div className="mt-3 divide-y divide-slate-100">
+              {trialRequests.map((t) => {
+                const sender = trialSenderMap.get(t.sender_id);
+                const senderName = sender?.display_name || sender?.full_name || "শিক্ষার্থী";
+                return (
+                  <div key={t.id} className="flex items-center justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-800">{senderName}</p>
+                      <p className="truncate text-xs text-slate-400">
+                        {t.message || formatDate(t.created_at)}
+                      </p>
+                    </div>
+                    {t.status === "pending" ? (
+                      <TrialRequestActions requestId={t.id} />
+                    ) : (
+                      <Badge variant={t.status === "accepted" ? "success" : "danger"}>{t.status}</Badge>
+                    )}
                   </div>
                 );
               })}

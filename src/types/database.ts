@@ -1,7 +1,9 @@
 import {
   type AccountStatus,
   type AppNotification,
+  type BatchMember,
   type Block,
+  type BlogPost,
   type CoachingCenter,
   type CoachingCourse,
   type ContactRequest,
@@ -19,6 +21,7 @@ import {
   type Session,
   type StudentProfile,
   type TeacherProfile,
+  type TrialRequest,
   type Tuition,
   type TuitionRequest,
   type TuitionStatus,
@@ -107,6 +110,8 @@ export interface Database {
           rating_avg?: number;
           review_count?: number;
           profile_views?: number;
+          trial_available?: boolean;
+          trial_price?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -149,6 +154,9 @@ export interface Database {
           is_featured?: boolean;
           featured_until?: string | null;
           meeting_link?: string | null;
+          is_batch?: boolean;
+          batch_size?: number | null;
+          seats_filled?: number;
           status?: TuitionStatus;
           created_at?: string;
           updated_at?: string;
@@ -302,6 +310,7 @@ export interface Database {
           schedule_change?: boolean;
           review_received?: boolean;
           verification_update?: boolean;
+          email_notify?: boolean;
           updated_at?: string;
         };
         Update: Partial<Omit<NotificationPreferences, "user_id" | "updated_at"> & { updated_at?: string }>;
@@ -410,6 +419,49 @@ export interface Database {
         }>;
         Relationships: [];
       };
+      batch_members: {
+        Row: BatchMember;
+        Insert: {
+          id?: string;
+          tuition_id: string;
+          student_id: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<BatchMember, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      trial_requests: {
+        Row: TrialRequest;
+        Insert: {
+          id?: string;
+          tuition_id?: string | null;
+          sender_id: string;
+          teacher_id: string;
+          message?: string | null;
+          status?: TrialRequest["status"];
+          created_at?: string;
+          responded_at?: string | null;
+        };
+        Update: Partial<Omit<TrialRequest, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      blog_posts: {
+        Row: BlogPost;
+        Insert: {
+          id?: string;
+          author_id?: string | null;
+          title: string;
+          slug: string;
+          excerpt?: string | null;
+          content: string;
+          category?: string;
+          published?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<BlogPost, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -499,6 +551,9 @@ export interface Database {
         Returns: Json;
       };
       toggle_own_account: { Args: { p_active: boolean }; Returns: undefined };
+      top_teachers: { Args: { p_district?: string | null; p_limit?: number | null }; Returns: Json };
+      recommend_teachers: { Args: { p_teacher_id: string; p_limit?: number | null }; Returns: Json };
+      admin_analytics: { Args: Record<PropertyKey, never>; Returns: Json };
     };
     Enums: {
       user_role: UserRole;

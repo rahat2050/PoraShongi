@@ -6,6 +6,8 @@ const items = [
   { href: "/admin", label: "ওভারভিউ" },
   { href: "/admin/users", label: "ব্যবহারকারী" },
   { href: "/admin/reports", label: "রিপোর্ট" },
+  { href: "/admin/analytics", label: "Analytics" },
+  { href: "/admin/blog/new", label: "নতুন ব্লগ" },
 ];
 
 export const dynamic = "force-dynamic";

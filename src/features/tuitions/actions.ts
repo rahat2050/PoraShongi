@@ -19,6 +19,8 @@ export interface TuitionFormInput {
   preferredDays?: string[];
   preferredTime?: string;
   requirements?: string;
+  isBatch?: boolean;
+  batchSize?: number | null;
 }
 
 async function guardianLinkedStudent(profileId: string): Promise<string | null> {
@@ -59,6 +61,8 @@ export async function createTuition(
       preferred_days: parsed.data.preferredDays ?? null,
       preferred_time: parsed.data.preferredTime || null,
       requirements: parsed.data.requirements || null,
+      is_batch: Boolean(input.isBatch),
+      batch_size: input.isBatch ? input.batchSize ?? null : null,
       status: "open",
     })
     .select("id")

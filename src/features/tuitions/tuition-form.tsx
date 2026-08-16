@@ -45,6 +45,8 @@ export function TuitionForm({ tuition }: { tuition?: Tuition | null }) {
   const [preferredDays, setPreferredDays] = useState<string[]>(initial.preferredDays);
   const [preferredTime, setPreferredTime] = useState(initial.preferredTime);
   const [requirements, setRequirements] = useState(initial.requirements);
+  const [isBatch, setIsBatch] = useState(false);
+  const [batchSize, setBatchSize] = useState("");
 
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -65,6 +67,8 @@ export function TuitionForm({ tuition }: { tuition?: Tuition | null }) {
       preferredDays,
       preferredTime: preferredTime || undefined,
       requirements: requirements || undefined,
+      isBatch,
+      batchSize: isBatch && batchSize ? Number(batchSize) : null,
     };
 
     setPending(true);
@@ -134,6 +138,20 @@ export function TuitionForm({ tuition }: { tuition?: Tuition | null }) {
           {TEACHING_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
         </Select>
       </FormField>
+
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
+          <input type="checkbox" checked={isBatch} onChange={(e) => setIsBatch(e.target.checked)} className="h-4 w-4 rounded border-slate-300 accent-brand-600" />
+          এটা Batch tuition (একসাথে একাধিক শিক্ষার্থী)
+        </label>
+        {isBatch && (
+          <div className="mt-3">
+            <FormField label="সর্বোচ্চ শিক্ষার্থী (সিট)" hint="২–২০০">
+              <Input type="number" min={2} max={200} placeholder="যেমন: ১০" value={batchSize} onChange={(e) => setBatchSize(e.target.value)} />
+            </FormField>
+          </div>
+        )}
+      </div>
 
       <FormField label="পছন্দের দিন">
         <CheckboxGroup options={WEEK_DAYS} selected={preferredDays} onChange={setPreferredDays} columns={4} />

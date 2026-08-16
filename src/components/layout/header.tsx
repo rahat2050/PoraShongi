@@ -2,12 +2,14 @@ import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { AuthArea } from "@/components/layout/auth-area";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { LanguageToggle } from "@/components/shared/language-toggle";
 
 const navLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন" },
   { href: "/tuitions", label: "Tuition" },
-  { href: "/coaching", label: "Coaching" },
-  { href: "/#how", label: "কীভাবে কাজ করে" },
+  { href: "/leaderboard", label: "সেরা শিক্ষক" },
+  { href: "/blog", label: "ব্লগ" },
 ];
 
 export function Header() {
@@ -22,7 +24,9 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <ThemeToggle />
+          <LanguageToggle />
           <div className="hidden md:block">
             <AuthArea />
           </div>

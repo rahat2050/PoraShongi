@@ -17,6 +17,9 @@ export function Footer() {
               <ul className="mt-2 space-y-2">
                 <li><Link href="/teachers" className="hover:text-brand-700">শিক্ষক খুঁজুন</Link></li>
                 <li><Link href="/tuitions" className="hover:text-brand-700">Tuition দেখুন</Link></li>
+                <li><Link href="/leaderboard" className="hover:text-brand-700">সেরা শিক্ষক</Link></li>
+                <li><Link href="/blog" className="hover:text-brand-700">ব্লগ</Link></li>
+                <li><Link href="/coaching" className="hover:text-brand-700">Coaching</Link></li>
               </ul>
             </div>
             <div>

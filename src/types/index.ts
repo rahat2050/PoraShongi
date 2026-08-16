@@ -65,6 +65,8 @@ export type TeacherProfile = {
   rating_avg: number;
   review_count: number;
   profile_views: number;
+  trial_available: boolean;
+  trial_price: number;
   created_at: string;
   updated_at: string;
 };
@@ -101,6 +103,9 @@ export type Tuition = {
   is_featured: boolean;
   featured_until: string | null;
   meeting_link: string | null;
+  is_batch: boolean;
+  batch_size: number | null;
+  seats_filled: number;
   status: TuitionStatus;
   created_at: string;
   updated_at: string;
@@ -297,6 +302,70 @@ export type EducationResource = {
   created_at: string;
 };
 
+export type BatchMember = {
+  id: string;
+  tuition_id: string;
+  student_id: string;
+  created_at: string;
+};
+
+export type TrialRequest = {
+  id: string;
+  tuition_id: string | null;
+  sender_id: string;
+  teacher_id: string;
+  message: string | null;
+  status: "pending" | "accepted" | "rejected";
+  created_at: string;
+  responded_at: string | null;
+};
+
+export type BlogPost = {
+  id: string;
+  author_id: string | null;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  category: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LeaderboardTeacher = {
+  id: string;
+  full_name: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+  district: string | null;
+  area: string | null;
+  is_premium: boolean;
+  verification_status: VerificationStatus;
+  subjects: string[] | null;
+  classes_taught: string[] | null;
+  experience_years: number | null;
+  rating_avg: number | null;
+  review_count: number | null;
+  completed_tuitions: number;
+  leaderboard_score: number;
+};
+
+export type AdminAnalytics = {
+  users: number;
+  teachers: number;
+  students: number;
+  guardians: number;
+  tuitions: number;
+  open_tuitions: number;
+  requests: number;
+  accepted: number;
+  reviews: number;
+  match_rate: number;
+  top_subjects: { subject: string; c: number }[];
+  top_districts: { district: string; c: number }[];
+};
+
 /** Teacher search result (search_teachers RPC)। */
 export type TeacherPublic = {
   id: string;
@@ -353,6 +422,8 @@ export type TeacherDetail = {
   rating_avg: number | null;
   review_count: number | null;
   profile_views?: number;
+  trial_available?: boolean;
+  trial_price?: number | null;
   created_at: string;
 };
 
@@ -393,6 +464,9 @@ export type TuitionPublic = {
   is_featured?: boolean;
   featured_until?: string | null;
   meeting_link?: string | null;
+  is_batch?: boolean;
+  batch_size?: number | null;
+  seats_filled?: number;
   status: TuitionStatus;
   created_at: string;
   poster_id: string;
