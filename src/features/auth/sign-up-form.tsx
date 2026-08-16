@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -17,6 +18,7 @@ interface SignUpFieldErrors {
   email?: string;
   password?: string;
   confirm?: string;
+  terms?: string;
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +31,7 @@ export function SignUpForm() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<SignUpFieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,6 +47,7 @@ export function SignUpForm() {
     if (!EMAIL_PATTERN.test(normalizedEmail)) nextErrors.email = "সঠিক ইমেইল ঠিকানা লিখুন।";
     if (password.length < 8) nextErrors.password = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।";
     if (password !== confirm) nextErrors.confirm = "পাসওয়ার্ড দুটো মিলছে না।";
+    if (!acceptedTerms) nextErrors.terms = "অ্যাকাউন্ট তৈরি করতে নীতি ও শর্তে সম্মতি দিন।";
 
     setFieldErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -69,6 +73,8 @@ export function SignUpForm() {
         data: {
           full_name: fullName.trim(),
           role,
+          terms_accepted_at: new Date().toISOString(),
+          terms_version: "2026-08-16",
           ...(referralCode.trim() ? { referral_code: referralCode.trim().toUpperCase() } : {}),
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
@@ -211,6 +217,27 @@ export function SignUpForm() {
           aria-describedby={fieldErrors.confirm ? "confirm-error" : undefined}
         />
       </FormField>
+
+      <div>
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-slate-700 dark:text-slate-200">
+          <input
+            type="checkbox"
+            name="acceptedTerms"
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            required
+            aria-invalid={Boolean(fieldErrors.terms)}
+            aria-describedby={fieldErrors.terms ? "terms-error" : undefined}
+            className="mt-1 h-5 w-5 shrink-0 rounded border-slate-300 accent-brand-600"
+          />
+          <span>
+            আমি <Link href="/terms" className="font-medium text-brand-700 underline dark:text-brand-300">শর্তাবলি</Link>,{" "}
+            <Link href="/privacy" className="font-medium text-brand-700 underline dark:text-brand-300">গোপনীয়তা নীতি</Link> ও{" "}
+            <Link href="/safety" className="font-medium text-brand-700 underline dark:text-brand-300">নিরাপত্তা নির্দেশিকা</Link> পড়েছি এবং সম্মত। আমার বয়স ১৮ বছরের কম হলে অভিভাবকের অনুমতি আছে।
+          </span>
+        </label>
+        {fieldErrors.terms && <p id="terms-error" className="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400" role="alert">{fieldErrors.terms}</p>}
+      </div>
 
       <Button type="submit" className="w-full" loading={loading}>
         অ্যাকাউন্ট তৈরি করুন
