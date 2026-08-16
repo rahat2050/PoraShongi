@@ -24,6 +24,7 @@ import { ContactRequestActions } from "@/features/contact/contact-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
 import { TrialRequestActions } from "@/features/features-actions-ui2";
+import { DashboardNav } from "@/components/shared/dashboard-nav";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "শিক্ষক ড্যাশবোর্ড" };
@@ -72,6 +73,10 @@ export default async function TeacherDashboardPage() {
           <p className="mt-1 text-slate-500">আপনার tuition ও request manage করুন।</p>
         </div>
         <Badge variant="brand">{ROLE_LABELS.teacher.bn} · {ROLE_LABELS.teacher.en}</Badge>
+      </div>
+
+      <div className="mt-5">
+        <DashboardNav active="/dashboard" />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">

@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ToastProvider } from "@/components/ui/toast";
 import { SettingsProvider } from "@/lib/settings";
+import { BackToTop } from "@/components/shared/back-to-top";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Header />
             <main className="flex flex-1 flex-col">{children}</main>
             <Footer />
+            <BackToTop />
           </ToastProvider>
         </SettingsProvider>
       </body>

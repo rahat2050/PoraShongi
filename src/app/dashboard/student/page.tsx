@@ -21,6 +21,7 @@ import { MatchBadge } from "@/components/shared/match-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
+import { DashboardNav } from "@/components/shared/dashboard-nav";
 
 export const metadata: Metadata = { title: "শিক্ষার্থী ড্যাশবোর্ড" };
 
@@ -66,6 +67,10 @@ export default async function StudentDashboardPage() {
           {profile.verification_status === "verified" && <Badge variant="success">Verified Student</Badge>}
           <Badge variant="brand">{ROLE_LABELS.student.bn} · {ROLE_LABELS.student.en}</Badge>
         </div>
+      </div>
+
+      <div className="mt-5">
+        <DashboardNav active="/dashboard" />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">

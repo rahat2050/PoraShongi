@@ -19,6 +19,7 @@ import { RequestRow } from "@/components/shared/request-row";
 import { MatchBadge } from "@/components/shared/match-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
+import { DashboardNav } from "@/components/shared/dashboard-nav";
 
 export const metadata: Metadata = { title: "অভিভাবক ড্যাশবোর্ড" };
 
@@ -57,6 +58,10 @@ export default async function GuardianDashboardPage() {
           <p className="mt-1 text-slate-500">আপনার সন্তানের tuition journey manage করুন।</p>
         </div>
         <Badge variant="brand">{ROLE_LABELS.guardian.bn} · {ROLE_LABELS.guardian.en}</Badge>
+      </div>
+
+      <div className="mt-5">
+        <DashboardNav active="/dashboard" />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
