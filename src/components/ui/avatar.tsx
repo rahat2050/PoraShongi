@@ -21,8 +21,8 @@ export function Avatar({
   size?: keyof typeof sizeClasses;
   className?: string;
 }) {
-  const [failed, setFailed] = useState(false);
-  const showImage = src && !failed;
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showImage = Boolean(src && failedSrc !== src);
 
   return (
     <span
@@ -35,10 +35,12 @@ export function Avatar({
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={src}
+          src={src ?? undefined}
           alt={name ?? "Avatar"}
           className="h-full w-full object-cover"
-          onError={() => setFailed(true)}
+          referrerPolicy="no-referrer"
+          decoding="async"
+          onError={() => setFailedSrc(src ?? null)}
         />
       ) : (
         <span aria-hidden>{getInitials(name)}</span>

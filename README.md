@@ -66,15 +66,15 @@ SUPABASE_SERVICE_ROLE_KEY=server-only-key-if-required
 
 `SUPABASE_SERVICE_ROLE_KEY` কখনো browser variable বা Git repository-তে রাখবেন না।
 
-### Cloudinary (optional)
+### External profile photos
 
-Unsigned upload preset ব্যবহার করলে Cloudinary dashboard-এ server-side restrictions দিন:
+PoraSathi কোনো profile image file upload বা store করে না। ব্যবহারকারী Google Drive, Dropbox অথবা অন্য public HTTPS host-এ ছবি রেখে share/direct link দেন; database-এ শুধু URL text সংরক্ষিত হয়।
 
-- Folder: `porasathi/profiles`
-- Allowed formats: JPG, PNG, WebP
-- Maximum file size: 5 MB
-- Moderation enabled where available
-- Storage/bandwidth quota alerts enabled
+- Google Drive file-এর sharing অবশ্যই `Anyone with the link` করতে হবে।
+- Google Drive share links স্বয়ংক্রিয়ভাবে renderable thumbnail URL-এ রূপান্তর হয়।
+- Dropbox share links স্বয়ংক্রিয়ভাবে raw-image mode ব্যবহার করে।
+- শুধু public HTTPS URL গ্রহণ করা হয়; localhost/private-network URL প্রত্যাখ্যান করা হয়।
+- External image request-এ browser referrer পাঠায় না এবং image load ব্যর্থ হলে initials fallback দেখা যায়।
 
 ## Quality checks
 

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { source as axeSource } from "axe-core";
+import { normalizeProfileImageUrl } from "../../src/lib/profile-image-url";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -123,6 +124,39 @@ test("homepage action cards all lead to real product routes", async ({ page, req
   await expect(page).toHaveURL(/\/teachers\?verified=1$/);
 });
 
+test("external profile image links normalize safely without file storage", () => {
+  const drive = normalizeProfileImageUrl("https://drive.google.com/file/d/1AbCdEfGhIjKlMnOp/view?usp=sharing");
+  expect(drive).toEqual({
+    ok: true,
+    url: "https://drive.google.com/thumbnail?id=1AbCdEfGhIjKlMnOp&sz=w1000",
+    provider: "google-drive",
+  });
+
+  const dropbox = normalizeProfileImageUrl("https://www.dropbox.com/scl/fi/photo/avatar.jpg?dl=0&rlkey=abc");
+  expect(dropbox.ok).toBe(true);
+  if (dropbox.ok) {
+    expect(dropbox.provider).toBe("dropbox");
+    expect(dropbox.url).toContain("raw=1");
+    expect(dropbox.url).not.toContain("dl=0");
+  }
+
+  const direct = normalizeProfileImageUrl("https://images.example.com/profile/photo.webp#preview");
+  expect(direct).toEqual({
+    ok: true,
+    url: "https://images.example.com/profile/photo.webp",
+    provider: "external",
+  });
+
+  for (const unsafe of [
+    "http://images.example.com/avatar.jpg",
+    "javascript:alert(1)",
+    "https://localhost/avatar.jpg",
+    "https://192.168.1.2/avatar.jpg",
+  ]) {
+    expect(normalizeProfileImageUrl(unsafe).ok, unsafe).toBe(false);
+  }
+});
+
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {
   await page.goto("/register?ref=ps-check-123");
   await expect(page.locator("#referralCode")).toHaveValue("PSCHECK123");
@@ -139,6 +173,8 @@ test("SEO, PWA and security endpoints are production-safe", async ({ request }) 
   expect(home.status()).toBe(200);
   const headers = home.headers();
   expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["content-security-policy"]).toContain("img-src 'self' data: blob: https:");
+  expect(headers["content-security-policy"]).not.toContain("api.cloudinary.com");
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
   expect(headers["x-powered-by"]).toBeUndefined();

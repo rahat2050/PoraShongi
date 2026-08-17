@@ -45,9 +45,9 @@ export default async function ProfilePage() {
         <ProfileCompletion percent={completion.percent} missing={completion.missing} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6">
         <Card>
-          <CardHeader><CardTitle>মৌলিক তথ্য</CardTitle></CardHeader>
+          <CardHeader><CardTitle>মৌলিক তথ্য ও প্রোফাইল ছবি</CardTitle></CardHeader>
           <CardContent><BaseProfileForm profile={profile} /></CardContent>
         </Card>
 
