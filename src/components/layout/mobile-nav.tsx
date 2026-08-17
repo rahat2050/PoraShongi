@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -28,6 +29,7 @@ import type { LucideIcon } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/toast";
 import { ROLE_LABELS, type UserRole } from "@/lib/auth/roles";
+import { type AdminLevel } from "@/lib/auth/admin-access";
 
 interface MobileSession {
   authenticated: boolean;
@@ -36,7 +38,7 @@ interface MobileSession {
     email: string | null;
     name: string | null;
     role: string | null;
-    superAdmin: boolean;
+    adminLevel?: AdminLevel;
     accountStatus: string | null;
   };
 }
@@ -140,7 +142,7 @@ export function MobileNav() {
         {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
       </button>
 
-      {open && (
+      {open && createPortal(
         <div id="mobile-navigation-panel" className="fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto border-t border-slate-200 bg-slate-50 px-4 py-4 shadow-2xl dark:border-slate-700 dark:bg-slate-950">
           <div className="mx-auto max-w-md space-y-5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {loading ? (
@@ -154,7 +156,7 @@ export function MobileNav() {
                     <p className="truncate text-xs text-slate-500 dark:text-slate-400">{session.user.email}</p>
                     <div className="mt-1 flex flex-wrap gap-1.5 text-xs font-medium text-brand-800 dark:text-brand-300">
                       {role && <span>{ROLE_LABELS[role].bn}</span>}
-                      {session.user.superAdmin && <span>· সুপার অ্যাডমিন</span>}
+                      {session.user.adminLevel === "super_admin" && <span>· সুপার অ্যাডমিন</span>}
                     </div>
                   </div>
                 </div>
@@ -172,8 +174,14 @@ export function MobileNav() {
                 <div className="grid grid-cols-2 gap-2">
                   {commonUserLinks.map((item) => <MenuLink key={item.href} {...item} onNavigate={() => setOpen(false)} />)}
                   {roleLinks.map((item) => <MenuLink key={item.href} {...item} onNavigate={() => setOpen(false)} />)}
-                  {(session.user.superAdmin || role === "admin") && (
-                    <MenuLink href="/admin" label="সুপার অ্যাডমিন" icon={ShieldCheck} accent onNavigate={() => setOpen(false)} />
+                  {session.user.adminLevel && (
+                    <MenuLink
+                      href="/admin"
+                      label={session.user.adminLevel === "super_admin" ? "সুপার অ্যাডমিন" : "অ্যাডমিন প্যানেল"}
+                      icon={ShieldCheck}
+                      accent
+                      onNavigate={() => setOpen(false)}
+                    />
                   )}
                 </div>
               </section>
@@ -196,7 +204,8 @@ export function MobileNav() {
               </button>
             )}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

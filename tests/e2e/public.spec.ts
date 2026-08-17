@@ -116,6 +116,66 @@ test("mobile user menu exposes important anonymous actions", async ({ page }, te
   await expect(panel.getByRole("link", { name: "শিক্ষক খুঁজুন" })).toBeVisible();
   await expect(panel.getByRole("link", { name: "টিউশন খুঁজুন" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "লগ আউট" })).toHaveCount(0);
+
+  const panelBox = await panel.boundingBox();
+  const viewport = page.viewportSize();
+  expect(panelBox).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  expect(panelBox!.height).toBeGreaterThan(viewport!.height - 80);
+});
+
+test("normal account menu never exposes admin identity or controls", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
+
+  await page.route("**/api/session", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({
+      authenticated: true,
+      user: {
+        id: "00000000-0000-4000-8000-000000000001",
+        email: "teacher@example.com",
+        name: "সাধারণ শিক্ষক",
+        role: "teacher",
+        accountStatus: "active",
+      },
+      unreadNotifications: 0,
+    }),
+  }));
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "মেনু খুলুন" }).click();
+  const panel = page.locator("#mobile-navigation-panel");
+  await expect(panel.getByText("সাধারণ শিক্ষক", { exact: true })).toBeVisible();
+  await expect(panel.locator('a[href="/admin"]')).toHaveCount(0);
+  await expect(panel.getByText(/সুপার অ্যাডমিন/)).toHaveCount(0);
+});
+
+test("super admin controls remain visible only with the server capability", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
+
+  await page.route("**/api/session", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({
+      authenticated: true,
+      user: {
+        id: "00000000-0000-4000-8000-000000000002",
+        email: "owner@example.com",
+        name: "প্ল্যাটফর্ম মালিক",
+        role: "teacher",
+        adminLevel: "super_admin",
+        accountStatus: "active",
+      },
+      unreadNotifications: 0,
+    }),
+  }));
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "মেনু খুলুন" }).click();
+  const panel = page.locator("#mobile-navigation-panel");
+  await expect(panel.getByText("প্ল্যাটফর্ম মালিক", { exact: true })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "সুপার অ্যাডমিন" })).toHaveAttribute("href", "/admin");
 });
 
 test("mobile navigation does not overlap the visible back-to-top button", async ({ page }, testInfo) => {
