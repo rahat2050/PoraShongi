@@ -89,6 +89,8 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
   if (!teacher) notFound();
 
   const name = teacher.display_name || teacher.full_name || "শিক্ষক";
+  const teacherLocation = [teacher.area, teacher.district].filter(Boolean).join(", ")
+    || (teacher.teaching_mode === "online" || teacher.teaching_mode === "both" ? "অনলাইন" : "এলাকা দেওয়া হয়নি");
 
   const user = await getCurrentUser();
   const profile = user ? await getCurrentProfile() : null;
@@ -193,7 +195,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
               <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                 <Detail icon={<GraduationCap className="h-4 w-4" />} label="শিক্ষাগত যোগ্যতা" value={[teacher.education, teacher.institution].filter(Boolean).join(", ") || "—"} />
                 <Detail icon={<Briefcase className="h-4 w-4" />} label="অভিজ্ঞতা" value={teacher.experience_years != null ? `${teacher.experience_years} বছর` : "—"} />
-                <Detail icon={<MapPin className="h-4 w-4" />} label="এলাকা" value={[teacher.area, teacher.district].filter(Boolean).join(", ") || "—"} />
+                <Detail icon={<MapPin className="h-4 w-4" />} label="এলাকা" value={teacherLocation} />
                 <Detail icon={<Wallet className="h-4 w-4" />} label="প্রত্যাশিত ফি" value={formatTaka(teacher.expected_salary)} />
                 <Detail icon={<CalendarDays className="h-4 w-4" />} label="মোড" value={modeLabel(teacher.teaching_mode)} />
               </dl>
