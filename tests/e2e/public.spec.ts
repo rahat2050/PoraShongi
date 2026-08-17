@@ -105,6 +105,19 @@ test("SEO, PWA and security endpoints are production-safe", async ({ request }) 
   }
 });
 
+test("mobile user menu exposes important anonymous actions", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "মেনু খুলুন" }).click();
+  const panel = page.locator("#mobile-navigation-panel");
+  await expect(panel.getByRole("link", { name: "লগইন" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "অ্যাকাউন্ট খুলুন" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "শিক্ষক খুঁজুন" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "টিউশন খুঁজুন" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "লগ আউট" })).toHaveCount(0);
+});
+
 test("mobile navigation does not overlap the visible back-to-top button", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
 
