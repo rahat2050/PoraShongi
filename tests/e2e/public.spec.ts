@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { source as axeSource } from "axe-core";
 import { normalizeProfileImageUrl } from "../../src/lib/profile-image-url";
+import { buildRatingBreakdown } from "../../src/lib/ratings";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -155,6 +156,21 @@ test("external profile image links normalize safely without file storage", () =>
   ]) {
     expect(normalizeProfileImageUrl(unsafe).ok, unsafe).toBe(false);
   }
+});
+
+test("teacher rating breakdown uses only valid published values", () => {
+  expect(buildRatingBreakdown([
+    { rating: 5, verified: true },
+    { rating: 5, verified: true },
+    { rating: 4, verified: true },
+    { rating: 2, verified: false },
+    { rating: 9, verified: true },
+  ])).toEqual({
+    sampleSize: 4,
+    verifiedCount: 3,
+    counts: { 1: 0, 2: 1, 3: 0, 4: 1, 5: 2 },
+    percentages: { 1: 0, 2: 25, 3: 0, 4: 25, 5: 50 },
+  });
 });
 
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {

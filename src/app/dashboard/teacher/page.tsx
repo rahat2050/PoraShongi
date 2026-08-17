@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Inbox, ScrollText, Users } from "lucide-react";
+import { Inbox, ScrollText, Star, Users } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { getRoleProfileRow, computeProfileCompletion } from "@/lib/data/profiles";
 import { listAcceptedTuitionsForTeacher } from "@/lib/data/tuitions";
@@ -97,10 +97,16 @@ export default async function TeacherDashboardPage() {
           <ProfileCompletion percent={completion.percent} missing={completion.missing} />
           <OnboardingChecklist steps={onboardingSteps} />
         </div>
-        <div className="grid gap-4 sm:grid-cols-3 lg:col-span-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">
           <StatCard label="গৃহীত টিউশন" value={tuitionList.length} icon={<ScrollText className="h-5 w-5" aria-hidden />} href="/dashboard/schedule" />
           <StatCard label="অপেক্ষমাণ অনুরোধ" value={pendingCount} icon={<Inbox className="h-5 w-5" aria-hidden />} href="/dashboard/requests" />
           <StatCard label="প্রোফাইল ভিউ" value={analytics?.profile_views ?? 0} icon={<Users className="h-5 w-5" aria-hidden />} />
+          <StatCard
+            label="রেটিং ও রিভিউ"
+            value={analytics && analytics.review_count > 0 ? `${analytics.rating_avg}/5` : "নতুন"}
+            icon={<Star className="h-5 w-5" aria-hidden />}
+            href={isPublicReady ? `/teachers/${profile.id}#ratings` : "/profile"}
+          />
         </div>
       </div>
 

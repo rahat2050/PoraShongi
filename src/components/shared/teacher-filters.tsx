@@ -140,6 +140,7 @@ export function TeacherFilters({
           <FilterField label="রেটিং" htmlFor="teacher-rating">
             <Select id="teacher-rating" name="minRating" defaultValue={current.minRating ?? ""}>
               <option value="">যেকোনো রেটিং</option>
+              <option value="3">৩+ স্টার</option>
               <option value="4">৪+ স্টার</option>
               <option value="4.5">৪.৫+ স্টার</option>
             </Select>

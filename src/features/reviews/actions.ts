@@ -1,42 +1,85 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
 import { type Report } from "@/types/index";
 
+const reviewInputSchema = z.object({
+  teacherId: z.string().uuid("শিক্ষকের পরিচয় সঠিক নয়।"),
+  rating: z.number().int().min(1).max(5),
+  body: z.string().trim().max(2000, "রিভিউ সর্বোচ্চ ২০০০ অক্ষরের হতে পারে।").optional(),
+});
+
 export async function submitReview(input: {
   teacherId: string;
-  tuitionId?: string | null;
   rating: number;
   body?: string;
-}): Promise<ActionResult> {
+}): Promise<ActionResult<{ updated: boolean }>> {
   const profile = await requireProfile();
   if (profile.role !== "student" && profile.role !== "guardian") {
-    return failure("শুধু শিক্ষার্থী/অভিভাবক রিভিউ দিতে পারবেন।");
+    return failure("শুধু শিক্ষার্থী বা অভিভাবক রেটিং দিতে পারবেন।");
   }
-  const rating = Math.round(input.rating);
-  if (rating < 1 || rating > 5) return failure("রেটিং ১–৫ এর মধ্যে হতে হবে।");
+
+  const parsed = reviewInputSchema.safeParse({ ...input, rating: Math.round(input.rating) });
+  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "রেটিং সঠিক নয়।");
 
   const supabase = await createClient();
-  const { error } = await supabase.from("reviews").insert({
-    teacher_id: input.teacherId,
-    reviewer_id: profile.id,
-    tuition_id: input.tuitionId ?? null,
-    rating,
-    body: input.body?.trim() || null,
-  });
+  const { data: interaction, error: interactionError } = await supabase
+    .from("tuition_requests")
+    .select("tuition_id")
+    .eq("teacher_id", parsed.data.teacherId)
+    .eq("status", "accepted")
+    .or(`sender_id.eq.${profile.id},student_id.eq.${profile.id}`)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (interactionError) return failure(interactionError.message);
+  if (!interaction) return failure("শিক্ষকের সঙ্গে গৃহীত টিউশন থাকলেই রেটিং দেওয়া যাবে।");
+
+  const { data: existing, error: existingError } = await supabase
+    .from("reviews")
+    .select("id,status")
+    .eq("reviewer_id", profile.id)
+    .eq("teacher_id", parsed.data.teacherId)
+    .maybeSingle();
+  if (existingError) return failure(existingError.message);
+  if (existing && existing.status !== "published") {
+    return failure("এই রিভিউটি মডারেশনে আছে, তাই এখন সম্পাদনা করা যাবে না।");
+  }
+
+  const reviewValues = {
+    tuition_id: interaction.tuition_id,
+    rating: parsed.data.rating,
+    body: parsed.data.body || null,
+  };
+  const { error } = existing
+    ? await supabase
+        .from("reviews")
+        .update({ ...reviewValues, updated_at: new Date().toISOString() })
+        .eq("id", existing.id)
+        .eq("reviewer_id", profile.id)
+    : await supabase.from("reviews").insert({
+        teacher_id: parsed.data.teacherId,
+        reviewer_id: profile.id,
+        ...reviewValues,
+      });
 
   if (error) {
-    if (error.code === "23505") return failure("আপনি আগেই রিভিউ দিয়েছেন।");
-    if (error.message.includes("accepted")) return failure("accept হওয়া tuition-এর পরই রিভিউ দেওয়া যাবে।");
+    if (error.code === "23505") return failure("আপনি আগেই রেটিং দিয়েছেন—পেজ রিফ্রেশ করে সম্পাদনা করুন।");
+    if (error.message.toLowerCase().includes("accepted")) return failure("গৃহীত টিউশনের পরই রেটিং দেওয়া যাবে।");
     return failure(error.message);
   }
 
-  revalidatePath(`/teachers/${input.teacherId}`);
+  revalidatePath(`/teachers/${parsed.data.teacherId}`);
+  revalidatePath("/teachers");
+  revalidatePath("/leaderboard");
+  revalidatePath("/");
   revalidatePath("/dashboard");
-  return success();
+  return success({ updated: Boolean(existing) });
 }
 
 export async function submitReport(input: {
