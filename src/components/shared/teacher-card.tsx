@@ -18,7 +18,10 @@ export function TeacherCard({
 }) {
   const name = teacher.display_name || teacher.full_name || "শিক্ষক";
   const distance = formatDistance(teacher.distance_km);
-  const location = distance ?? [teacher.area, teacher.district].filter(Boolean).join(", ");
+  const profileLocation = [teacher.area, teacher.district].filter(Boolean).join(", ");
+  const location = distance ?? (
+    profileLocation || (teacher.teaching_mode === "online" || teacher.teaching_mode === "both" ? "অনলাইন" : "")
+  );
 
   return (
     <Card className="transition-shadow hover:shadow-md">

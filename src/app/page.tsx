@@ -185,7 +185,7 @@ export default async function Home() {
       />
       <HomeTeacherSection
         title="নতুন যোগ দেওয়া শিক্ষক"
-        description="সম্প্রতি প্রকাশিত যাচাইকৃত শিক্ষক প্রোফাইল।"
+        description="সম্প্রতি সম্পূর্ণ করে প্রকাশ করা শিক্ষক প্রোফাইল।"
         teachers={recentTeachers}
       />
 
