@@ -32,13 +32,14 @@ import { TrialRequestButton } from "@/features/features-actions-ui";
 import { recommendTeachers } from "@/lib/data/features";
 import { TeacherCard } from "@/components/shared/teacher-card";
 import { buttonStyles } from "@/components/ui/button";
-import { formatTaka, modeLabel } from "@/lib/utils";
+import { formatTaka, isUuid, modeLabel } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
 
 const getTeacher = cache((id: string) => getPublicTeacher(id));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
+  if (!isUuid(id)) notFound();
   const result = await getTeacher(id);
   const teacher = result.data;
 
@@ -83,6 +84,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function TeacherProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!isUuid(id)) notFound();
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 

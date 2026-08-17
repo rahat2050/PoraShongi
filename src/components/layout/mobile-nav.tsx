@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  BookOpen,
   CalendarDays,
   Compass,
   Heart,
@@ -14,6 +15,7 @@ import {
   LogIn,
   LogOut,
   MessageSquare,
+  School,
   ScrollText,
   Send,
   Settings,
@@ -47,6 +49,8 @@ const publicLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন", icon: Compass },
   { href: "/tuitions", label: "টিউশন খুঁজুন", icon: ScrollText },
   { href: "/leaderboard", label: "সেরা শিক্ষক", icon: Trophy },
+  { href: "/blog", label: "শিক্ষা ব্লগ", icon: BookOpen },
+  { href: "/coaching", label: "কোচিং সেন্টার", icon: School },
   { href: "/#how", label: "কীভাবে কাজ করে", icon: Sparkles },
   { href: "/safety", label: "নিরাপত্তা", icon: ShieldCheck },
   { href: "/contact", label: "সহায়তা", icon: LifeBuoy },

@@ -3,6 +3,7 @@ import { source as axeSource } from "axe-core";
 import { normalizeProfileImageUrl } from "../../src/lib/profile-image-url";
 import { buildRatingBreakdown } from "../../src/lib/ratings";
 import { isMessageWithinRetention, MESSAGE_RETENTION_HOURS } from "../../src/lib/message-retention";
+import { createBlogSlug } from "../../src/lib/blog";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -174,6 +175,12 @@ test("teacher rating breakdown uses only valid published values", () => {
   });
 });
 
+test("blog slugs cannot create broken nested routes", () => {
+  expect(createBlogSlug("SSC Math / ৫টি Tips?!")).toBe("ssc-math-৫টি-tips");
+  expect(createBlogSlug("  পড়াশোনার   কৌশল  ")).toBe("পড়াশোনার-কৌশল");
+  expect(createBlogSlug("///")).toBe("");
+});
+
 test("chat messages use a strict 48-hour retention window", () => {
   const now = Date.parse("2026-08-18T12:00:00.000Z");
   expect(MESSAGE_RETENTION_HOURS).toBe(48);
@@ -200,6 +207,25 @@ test("login keeps a safe encoded return destination", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "আবার স্বাগতম" })).toBeVisible();
 });
 
+test("missing dynamic records return real HTTP 404 responses", async ({ request }) => {
+  for (const path of [
+    "/teachers/not-a-valid-id",
+    "/tuitions/not-a-valid-id",
+    "/coaching/not-a-valid-id",
+    "/blog/definitely-missing",
+  ]) {
+    expect((await request.get(path)).status(), path).toBe(404);
+  }
+});
+
+test("teacher and admin blog author links resolve to the protected editor", async ({ page }) => {
+  await page.goto("/blog/new");
+  await expect(page).toHaveURL(/\/login\?next=%2Fblog%2Fnew$/);
+
+  await page.goto("/admin/blog/new");
+  await expect(page).toHaveURL(/\/login\?next=%2Fblog%2Fnew$/);
+});
+
 test("SEO, PWA and security endpoints are production-safe", async ({ request }) => {
   const home = await request.get("/");
   expect(home.status()).toBe(200);
@@ -217,7 +243,21 @@ test("SEO, PWA and security endpoints are production-safe", async ({ request }) 
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   expect(sitemap).toContain("https://porasathi.rahatahmed.site/");
+  expect(sitemap).toContain("https://porasathi.rahatahmed.site/blog");
+  expect(sitemap).toContain("https://porasathi.rahatahmed.site/coaching");
   expect(sitemap).not.toContain("localhost");
+
+  const health = await request.get("/api/health");
+  expect([200, 503]).toContain(health.status());
+  const healthBody = await health.json();
+  expect(healthBody.database.check).toBe("site_stats");
+  if (healthBody.supabaseEnvConfigured) {
+    expect(health.status()).toBe(200);
+    expect(healthBody.database).toMatchObject({ reachable: true, status: 200 });
+  } else {
+    expect(health.status()).toBe(503);
+    expect(healthBody.status).toBe("degraded");
+  }
 
   for (const path of ["/manifest.webmanifest", "/sw.js", "/offline.html", "/.well-known/security.txt"]) {
     expect((await request.get(path)).status()).toBe(200);
@@ -234,6 +274,8 @@ test("mobile user menu exposes important anonymous actions", async ({ page }, te
   await expect(panel.getByRole("link", { name: "অ্যাকাউন্ট খুলুন" })).toBeVisible();
   await expect(panel.getByRole("link", { name: "শিক্ষক খুঁজুন" })).toBeVisible();
   await expect(panel.getByRole("link", { name: "টিউশন খুঁজুন" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "শিক্ষা ব্লগ" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "কোচিং সেন্টার" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "লগ আউট" })).toHaveCount(0);
 
   const panelBox = await panel.boundingBox();

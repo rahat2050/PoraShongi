@@ -2,23 +2,29 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, BookOpen, MapPin, Phone } from "lucide-react";
-import { listCoachingCenters, listCoachingCourses } from "@/lib/data/ecosystem";
+import { getCoachingCenter, listCoachingCourses } from "@/lib/data/ecosystem";
+import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatTaka } from "@/lib/utils";
+import { CoachingCourseForm } from "@/features/ecosystem/course-form";
+import { formatTaka, isUuid } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Coaching Center" };
 export const dynamic = "force-dynamic";
 
 export default async function CoachingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!isUuid(id)) notFound();
 
-  // center খুঁজি (list থেকে — ছোট data-র জন্য আলাদা RPC বানাইনি)
-  const all = (await listCoachingCenters()).data ?? [];
-  const center = all.find((c) => c.id === id);
+  const center = (await getCoachingCenter(id)).data;
   if (!center) notFound();
 
-  const courses = (await listCoachingCourses(center.id)).data ?? [];
+  const [coursesResult, profile] = await Promise.all([
+    listCoachingCourses(center.id),
+    getCurrentProfile(),
+  ]);
+  const courses = coursesResult.data ?? [];
+  const canManage = profile?.id === center.owner_id;
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">
@@ -55,7 +61,12 @@ export default async function CoachingDetailPage({ params }: { params: Promise<{
       </Card>
 
       <Card className="mt-6">
-        <CardHeader><CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-brand-600" aria-hidden /> কোর্স ({courses.length})</CardTitle></CardHeader>
+        <CardHeader>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-brand-600" aria-hidden /> কোর্স ({courses.length})</CardTitle>
+            {canManage && <CoachingCourseForm centerId={center.id} />}
+          </div>
+        </CardHeader>
         <CardContent>
           {courses.length === 0 ? (
             <p className="text-sm text-slate-400">কোনো কোর্স যোগ করা হয়নি।</p>

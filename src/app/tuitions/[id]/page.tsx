@@ -20,7 +20,7 @@ import { isTuitionSaved } from "@/lib/data/saved-tuitions";
 import { JoinBatchButton } from "@/features/features-actions-ui";
 import { isBatchMember } from "@/lib/data/features";
 import { buttonStyles } from "@/components/ui/button";
-import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
+import { formatDate, formatTaka, isUuid, modeLabel } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 
 export default async function TuitionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!isUuid(id)) notFound();
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile, requireRole } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
+import { BLOG_CATEGORIES, createBlogSlug } from "@/lib/blog";
 
 /** Student batch tuition-এ join করে। */
 export async function joinBatch(tuitionId: string): Promise<ActionResult> {
@@ -122,7 +123,7 @@ export async function respondTrialRequest(
   return success();
 }
 
-/** Admin blog post তৈরি করে। */
+/** Teacher/admin একটি নিরাপদ public blog post তৈরি করে। */
 export async function createBlogPost(input: {
   title: string;
   slug: string;
@@ -133,9 +134,12 @@ export async function createBlogPost(input: {
   const profile = await requireRole(["admin", "teacher"]);
 
   const title = input.title.trim();
-  const slug = input.slug.trim().toLowerCase().replace(/\s+/g, "-");
-  if (title.length < 3 || slug.length < 3) return failure("টাইটেল ও slug দিন।");
-  if (input.content.trim().length < 10) return failure("কনটেন্ট লিখুন।");
+  const slug = createBlogSlug(input.slug || title);
+  if (title.length < 3 || title.length > 160 || slug.length < 3) return failure("সঠিক টাইটেল ও slug দিন।");
+  if (!BLOG_CATEGORIES.includes(input.category as (typeof BLOG_CATEGORIES)[number])) return failure("সঠিক ক্যাটাগরি বাছুন।");
+  if (input.content.trim().length < 10 || input.content.trim().length > 20_000) return failure("কনটেন্ট ১০–২০,০০০ অক্ষরের মধ্যে লিখুন।");
+  const excerpt = input.excerpt?.trim() || null;
+  if (excerpt && excerpt.length > 500) return failure("সংক্ষিপ্ত বর্ণনা সর্বোচ্চ ৫০০ অক্ষরের হতে পারে।");
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -144,7 +148,7 @@ export async function createBlogPost(input: {
       author_id: profile.id,
       title,
       slug,
-      excerpt: input.excerpt?.trim() || null,
+      excerpt,
       content: input.content.trim(),
       category: input.category,
       published: true,
