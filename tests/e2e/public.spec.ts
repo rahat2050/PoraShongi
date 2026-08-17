@@ -62,6 +62,16 @@ test("required auth forms are blocked before any Supabase request", async ({ pag
   expect(supabaseRequests).toBe(0);
 });
 
+test("homepage quick search builds teacher filters without login", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#quick-class").selectOption("Class 8");
+  await page.locator("#quick-subject").selectOption("Mathematics");
+  await page.locator("#quick-district").selectOption("Dhaka");
+  await page.locator("#quick-mode").selectOption("online");
+  await page.locator('form[aria-label="দ্রুত শিক্ষক খুঁজুন"] button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/teachers\?class=Class(?:\+|%20)8&subject=Mathematics&district=Dhaka&mode=online/);
+});
+
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {
   await page.goto("/register?ref=ps-check-123");
   await expect(page.locator("#referralCode")).toHaveValue("PSCHECK123");

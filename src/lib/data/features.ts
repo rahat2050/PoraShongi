@@ -9,12 +9,29 @@ import {
   type TrialRequest,
 } from "@/types/index";
 
+export interface PopularSubjectStat {
+  subject: string;
+  count: number;
+}
+
+export interface PopularClassStat {
+  class_level: string;
+  count: number;
+}
+
 export interface SiteStats {
   teachers: number;
   students: number;
+  active_users: number;
+  verified_teachers: number;
   open_tuitions: number;
+  successful_connections: number;
+  completed_tuitions: number;
   reviews: number;
   districts: number;
+  areas_covered: number;
+  popular_subjects: PopularSubjectStat[];
+  popular_classes: PopularClassStat[];
 }
 
 export async function homeFeed(): Promise<DataResult<HomeFeed>> {
