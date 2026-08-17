@@ -490,6 +490,9 @@ begin
 end;
 $$;
 
+revoke all on function public.admin_analytics() from public;
+grant execute on function public.admin_analytics() to authenticated;
+
 -- ---------------------------------------------------------------------------
 -- Contact-request ownership and transition integrity
 -- ---------------------------------------------------------------------------
