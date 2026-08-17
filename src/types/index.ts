@@ -23,6 +23,7 @@ export type Profile = {
   education_verified: boolean;
   identity_verified: boolean;
   trusted_tutor: boolean;
+  is_super_admin: boolean;
   referral_code: string | null;
   is_premium: boolean;
   premium_until: string | null;

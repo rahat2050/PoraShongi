@@ -18,11 +18,18 @@ export async function GET() {
     return NextResponse.json({ authenticated: false }, { headers: noStoreHeaders });
   }
 
-  const { count } = await supabase
-    .from("notifications")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("read", false);
+  const [{ count }, { data: profile }] = await Promise.all([
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false),
+    supabase
+      .from("profiles")
+      .select("role,is_super_admin,account_status")
+      .eq("id", user.id)
+      .maybeSingle(),
+  ]);
 
   return NextResponse.json(
     {
@@ -31,6 +38,9 @@ export async function GET() {
         id: user.id,
         email: user.email ?? null,
         name: typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null,
+        role: profile?.role ?? null,
+        superAdmin: profile?.is_super_admin ?? false,
+        accountStatus: profile?.account_status ?? null,
       },
       unreadNotifications: count ?? 0,
     },

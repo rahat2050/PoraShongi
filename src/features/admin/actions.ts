@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireRole } from "@/lib/auth/server-auth";
+import { requireAdmin } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
 import { type VerificationStatus } from "@/types/index";
 
@@ -12,7 +12,7 @@ export async function adminSetVerification(
   userId: string,
   status: VerificationStatus,
 ): Promise<ActionResult> {
-  await requireRole(["admin"]);
+  await requireAdmin();
   if (!VERIFICATION_STATUSES.includes(status)) return failure("সঠিক ভেরিফিকেশন স্ট্যাটাস দিন।");
 
   const supabase = await createClient();
@@ -36,17 +36,17 @@ export async function adminSetAccountStatus(
   userId: string,
   status: "active" | "suspended" | "deleted",
 ): Promise<ActionResult> {
-  const admin = await requireRole(["admin"]);
+  const admin = await requireAdmin();
   if (userId === admin.id) return failure("নিজের অ্যাডমিন অ্যাকাউন্টের স্ট্যাটাস পরিবর্তন করা যাবে না।");
 
   const supabase = await createClient();
   const { data: target } = await supabase
     .from("profiles")
-    .select("id,role,account_status")
+    .select("id,role,is_super_admin,account_status")
     .eq("id", userId)
     .maybeSingle();
   if (!target) return failure("ব্যবহারকারী পাওয়া যায়নি।");
-  if (target.role === "admin") return failure("এই প্যানেল থেকে অন্য অ্যাডমিন অ্যাকাউন্ট পরিবর্তন করা যাবে না।");
+  if (target.role === "admin" || target.is_super_admin) return failure("অ্যাডমিন বা সুপার অ্যাডমিন অ্যাকাউন্ট এখানে পরিবর্তন করা যাবে না।");
   if (target.account_status === status) return success();
 
   const { data, error } = await supabase
@@ -54,6 +54,7 @@ export async function adminSetAccountStatus(
     .update({ account_status: status })
     .eq("id", userId)
     .neq("role", "admin")
+    .eq("is_super_admin", false)
     .select("id")
     .maybeSingle();
   if (error) return failure(error.message);
@@ -75,7 +76,7 @@ export async function adminResolveReport(
   reportId: string,
   status: "investigating" | "resolved" | "dismissed",
 ): Promise<ActionResult> {
-  await requireRole(["admin"]);
+  await requireAdmin();
   const supabase = await createClient();
   const { data: existing } = await supabase
     .from("reports")
@@ -110,7 +111,7 @@ export async function adminSetPremium(
   teacherId: string,
   premium: boolean,
 ): Promise<ActionResult> {
-  await requireRole(["admin"]);
+  await requireAdmin();
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")

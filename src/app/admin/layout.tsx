@@ -18,13 +18,16 @@ export const dynamic = "force-dynamic";
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
-  if (profile.role !== "admin") redirect("/dashboard");
+  if (profile.role !== "admin" && !profile.is_super_admin) redirect("/dashboard");
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">অ্যাডমিন প্যানেল</h1>
-        <p className="mt-1 text-slate-500">প্ল্যাটফর্ম পরিচালনা — শুধু অ্যাডমিন।</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-900">{profile.is_super_admin ? "সুপার অ্যাডমিন প্যানেল" : "অ্যাডমিন প্যানেল"}</h1>
+          {profile.is_super_admin && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950/60 dark:text-amber-200">সম্পূর্ণ নিয়ন্ত্রণ</span>}
+        </div>
+        <p className="mt-1 text-slate-500">ব্যবহারকারী, রিপোর্ট, ভেরিফিকেশন, পরিসংখ্যান ও অডিট পরিচালনা করুন।</p>
       </div>
       <nav className="mb-8 flex flex-wrap gap-2" aria-label="অ্যাডমিন">
         {items.map((item) => (

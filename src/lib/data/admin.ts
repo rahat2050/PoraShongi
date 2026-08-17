@@ -21,7 +21,7 @@ export async function adminListProfiles(
 
   const base = db
     .from("profiles")
-    .select("id,role,full_name,display_name,avatar_url,district,area,gender,is_minor,guardian_consent,phone_verified,education_verified,identity_verified,trusted_tutor,is_premium,premium_until,account_status,verification_status,created_at,updated_at", { count: "exact" });
+    .select("id,role,full_name,display_name,avatar_url,district,area,gender,is_minor,guardian_consent,phone_verified,education_verified,identity_verified,trusted_tutor,is_super_admin,is_premium,premium_until,account_status,verification_status,created_at,updated_at", { count: "exact" });
 
   const query = role ? base.eq("role", role) : base;
   const { data, count, error } = await query
