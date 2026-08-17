@@ -24,6 +24,7 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
   const [area, setArea] = useState(profile.area ?? "");
   const [gender, setGender] = useState(profile.gender ?? "");
   const [isMinor, setIsMinor] = useState(profile.is_minor ?? false);
+  const [guardianConsent, setGuardianConsent] = useState(profile.guardian_consent ?? false);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url ?? "");
 
   const [saving, setSaving] = useState(false);
@@ -55,6 +56,7 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
       area: area || undefined,
       gender: gender || undefined,
       isMinor,
+      guardianConsent,
       avatarUrl: avatarUrl || undefined,
     });
     setSaving(false);
@@ -119,7 +121,22 @@ export function BaseProfileForm({ profile }: { profile: Profile }) {
         )}
       </div>
 
-      <div className="flex justify-end border-t border-slate-100 pt-5">
+      {profile.role === "student" && (
+        <FormField label="অভিভাবকের সঙ্গে লিংক" hint="চালু করলে একজন নিবন্ধিত অভিভাবক আপনাকে তার অ্যাকাউন্টের সঙ্গে যুক্ত করতে পারবেন। যেকোনো সময় বন্ধ করা যাবে।">
+          <label className="flex min-h-11 items-center gap-3 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:text-slate-200">
+            <input
+              type="checkbox"
+              name="guardianConsent"
+              checked={guardianConsent}
+              onChange={(event) => setGuardianConsent(event.target.checked)}
+              className="h-5 w-5 shrink-0 rounded border-slate-300 accent-brand-700"
+            />
+            অভিভাবক লিংক করার অনুমতি দিচ্ছি
+          </label>
+        </FormField>
+      )}
+
+      <div className="flex justify-end border-t border-slate-100 pt-5 dark:border-slate-700">
         <Button type="submit" loading={saving}>সেভ করুন</Button>
       </div>
     </form>

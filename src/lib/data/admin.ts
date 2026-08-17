@@ -1,7 +1,7 @@
 import "server-only";
 import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
 import { type UserRole } from "@/lib/auth/roles";
-import { type Profile, type Report } from "@/types/index";
+import { type AdminAuditLog, type Profile, type Report } from "@/types/index";
 
 export interface Paged<T> {
   rows: T[];
@@ -21,7 +21,7 @@ export async function adminListProfiles(
 
   const base = db
     .from("profiles")
-    .select("id,role,full_name,display_name,avatar_url,district,area,gender,is_minor,phone_verified,education_verified,identity_verified,trusted_tutor,account_status,verification_status,created_at", { count: "exact" });
+    .select("id,role,full_name,display_name,avatar_url,district,area,gender,is_minor,guardian_consent,phone_verified,education_verified,identity_verified,trusted_tutor,is_premium,premium_until,account_status,verification_status,created_at,updated_at", { count: "exact" });
 
   const query = role ? base.eq("role", role) : base;
   const { data, count, error } = await query
@@ -54,6 +54,18 @@ export async function adminListReports(
   return ok({ rows: (data ?? []) as Report[], total: count ?? 0 });
 }
 
+export async function adminListAuditLogs(limit = 30): Promise<DataResult<AdminAuditLog[]>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db
+    .from("admin_audit_log")
+    .select("id,admin_id,action,target_type,target_id,details,created_at")
+    .order("created_at", { ascending: false })
+    .limit(Math.min(Math.max(limit, 1), 100));
+  if (error) return fail(error.message);
+  return ok((data ?? []) as AdminAuditLog[]);
+}
+
 export async function adminStats(): Promise<
   DataResult<{ users: number; teachers: number; students: number; guardians: number; openReports: number }>
 > {
@@ -67,6 +79,9 @@ export async function adminStats(): Promise<
     db.from("profiles").select("id", { count: "exact", head: true }).eq("role", "guardian"),
     db.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
   ]);
+
+  const queryError = users.error || teachers.error || students.error || guardians.error || reports.error;
+  if (queryError) return fail(queryError.message);
 
   return ok({
     users: users.count ?? 0,

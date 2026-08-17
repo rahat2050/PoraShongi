@@ -37,9 +37,14 @@ export async function requireUser(): Promise<User> {
   return user;
 }
 
-export async function requireProfile(): Promise<Profile> {
+export async function requireProfile(
+  options: { allowInactive?: boolean } = {},
+): Promise<Profile> {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (!options.allowInactive && profile.account_status !== "active") {
+    redirect("/account?inactive=1");
+  }
   return profile;
 }
 

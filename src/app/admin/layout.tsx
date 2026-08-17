@@ -7,7 +7,8 @@ const items = [
   { href: "/admin", label: "ওভারভিউ" },
   { href: "/admin/users", label: "ব্যবহারকারী" },
   { href: "/admin/reports", label: "রিপোর্ট" },
-  { href: "/admin/analytics", label: "Analytics" },
+  { href: "/admin/audit", label: "অডিট লগ" },
+  { href: "/admin/analytics", label: "পরিসংখ্যান" },
   { href: "/admin/blog/new", label: "নতুন ব্লগ" },
 ];
 
@@ -27,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </div>
       <nav className="mb-8 flex flex-wrap gap-2" aria-label="অ্যাডমিন">
         {items.map((item) => (
-          <Link key={item.href} href={item.href} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-brand-400 hover:text-brand-700">
+          <Link key={item.href} href={item.href} className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:border-brand-500 hover:text-brand-800 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:text-brand-300">
             {item.label}
           </Link>
         ))}

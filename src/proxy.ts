@@ -47,6 +47,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  if (user && isProtected && pathname !== "/account") {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("account_status")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile && profile.account_status !== "active") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/account";
+      redirectUrl.search = "";
+      redirectUrl.searchParams.set("inactive", profile.account_status);
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
   return supabaseResponse;
 }
 

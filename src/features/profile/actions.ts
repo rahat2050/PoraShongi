@@ -17,6 +17,7 @@ export async function updateBaseProfile(input: {
   area?: string;
   gender?: string;
   isMinor?: boolean;
+  guardianConsent?: boolean;
   avatarUrl?: string;
 }): Promise<ActionResult> {
   const profile = await requireProfile();
@@ -34,7 +35,8 @@ export async function updateBaseProfile(input: {
       area: parsed.data.area || null,
       gender: parsed.data.gender || null,
       is_minor: Boolean(parsed.data.isMinor),
-      avatar_url: input.avatarUrl || null,
+      guardian_consent: profile.role === "student" ? Boolean(parsed.data.guardianConsent) : false,
+      avatar_url: parsed.data.avatarUrl || null,
     })
     .eq("id", profile.id);
 
@@ -116,6 +118,18 @@ export async function updateGuardianProfile(input: unknown): Promise<ActionResul
   if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "Invalid input.");
 
   const supabase = await createClient();
+  if (parsed.data.linkedStudentId) {
+    const { data: student } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", parsed.data.linkedStudentId)
+      .eq("role", "student")
+      .eq("account_status", "active")
+      .eq("guardian_consent", true)
+      .maybeSingle();
+    if (!student) return failure("শিক্ষার্থী অভিভাবক লিংক করার অনুমতি দেননি।");
+  }
+
   const { error } = await supabase
     .from("guardian_profiles")
     .update({

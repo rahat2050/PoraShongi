@@ -219,6 +219,16 @@ export type TeacherReputation = {
   avg_response_hours: number | null;
 };
 
+export type AdminAuditLog = {
+  id: string;
+  admin_id: string;
+  action: string;
+  target_type: string;
+  target_id: string | null;
+  details: Record<string, unknown>;
+  created_at: string;
+};
+
 export type Report = {
   id: string;
   reporter_id: string;

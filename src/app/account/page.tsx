@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
 import { AccountStatusToggle } from "@/features/account/account-status-toggle";
 import { ChangePasswordForm } from "@/features/account/change-password-form";
 
@@ -31,12 +32,24 @@ export default async function AccountPage() {
           <CardTitle>অ্যাকাউন্ট স্ট্যাটাস</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-slate-600">
-            {profile.account_status === "deleted"
-              ? "আপনার অ্যাকাউন্ট এখন নিষ্ক্রিয় — প্রোফাইল কেউ দেখতে পাবে না।"
-              : "আপনার অ্যাকাউন্ট সক্রিয়। চাইলে যেকোনো সময় নিষ্ক্রিয় করতে পারবেন (তথ্য মুছবে না)।"}
-          </p>
-          <AccountStatusToggle current={profile.account_status === "deleted" ? "deleted" : "active"} />
+          {profile.account_status === "suspended" ? (
+            <Alert variant="danger" title="অ্যাকাউন্ট স্থগিত">
+              নিরাপত্তা বা নীতিমালা পর্যালোচনার কারণে অ্যাকাউন্টটি স্থগিত আছে। পুনর্বিবেচনার জন্য hello@porasathi.com-এ যোগাযোগ করুন।
+            </Alert>
+          ) : profile.account_status === "pending" ? (
+            <Alert variant="warning" title="অ্যাকাউন্ট পর্যালোচনাধীন">
+              পর্যালোচনা শেষ না হওয়া পর্যন্ত কিছু ফিচার ব্যবহার করা যাবে না।
+            </Alert>
+          ) : (
+            <>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                {profile.account_status === "deleted"
+                  ? "আপনার অ্যাকাউন্ট এখন নিষ্ক্রিয়—প্রোফাইল কেউ দেখতে পাবে না।"
+                  : "আপনার অ্যাকাউন্ট সক্রিয়। চাইলে যেকোনো সময় নিষ্ক্রিয় করতে পারবেন; তথ্য মুছে যাবে না।"}
+              </p>
+              <AccountStatusToggle current={profile.account_status === "deleted" ? "deleted" : "active"} />
+            </>
+          )}
         </CardContent>
       </Card>
 
