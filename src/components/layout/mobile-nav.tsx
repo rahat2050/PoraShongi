@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 
 const links = [
   { href: "/leaderboard", label: "সেরা শিক্ষক" },
+  { href: "/#how", label: "কীভাবে কাজ করে" },
   { href: "/safety", label: "নিরাপত্তা নির্দেশিকা" },
   { href: "/verification", label: "ভেরিফিকেশন সম্পর্কে" },
   { href: "/contact", label: "যোগাযোগ ও সহায়তা" },
