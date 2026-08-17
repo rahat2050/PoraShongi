@@ -382,6 +382,8 @@ export type AdminAnalytics = {
 
 export type HomeFeed = {
   teachers: TeacherPublic[];
+  featured_teachers: TeacherPublic[];
+  recent_teachers: TeacherPublic[];
   tuitions: TuitionPublic[];
 };
 
@@ -411,6 +413,7 @@ export type TeacherPublic = {
   rating_avg: number | null;
   review_count: number | null;
   distance_km: number | null;
+  created_at?: string;
 };
 
 /** get_public_teacher RPC (আরও detail)। */

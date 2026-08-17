@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Star, Users } from "lucide-react";
+import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { homeFeed, siteStats } from "@/lib/data/features";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { QuickTeacherSearch } from "@/components/home/quick-teacher-search";
+import { HomeTeacherSection } from "@/components/home/home-teacher-section";
+import type { HomeFeed } from "@/types/index";
 
 const roles = [
   { icon: GraduationCap, title: "শিক্ষার্থী", desc: "ক্লাস, বিষয়, এলাকা ও প্রয়োজন অনুযায়ী যোগ্য শিক্ষক খুঁজুন।" },
@@ -26,17 +28,30 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 export const revalidate = 300;
 
 export default async function Home() {
-  // Live feed — Supabase configure থাকলে top teachers + recent tuition দেখায়
-  let feed: { teachers: import("@/types/index").TeacherPublic[]; tuitions: import("@/types/index").TuitionPublic[] } = {
+  const emptyFeed: HomeFeed = {
     teachers: [],
+    featured_teachers: [],
+    recent_teachers: [],
     tuitions: [],
   };
+  let feed = emptyFeed;
   let stats: import("@/lib/data/features").SiteStats | null = null;
   if (isSupabaseConfigured()) {
     const [feedRes, statsRes] = await Promise.all([homeFeed(), siteStats()]);
-    feed = feedRes.data ?? { teachers: [], tuitions: [] };
+    const value = feedRes.data;
+    feed = {
+      teachers: value?.teachers ?? [],
+      featured_teachers: value?.featured_teachers ?? [],
+      recent_teachers: value?.recent_teachers ?? [],
+      tuitions: [],
+    };
     stats = statsRes.data;
   }
+
+  const featuredIds = new Set(feed.featured_teachers.map((teacher) => teacher.id));
+  const topTeachers = feed.teachers.filter((teacher) => !featuredIds.has(teacher.id));
+  const shownIds = new Set([...featuredIds, ...topTeachers.map((teacher) => teacher.id)]);
+  const recentTeachers = feed.recent_teachers.filter((teacher) => !shownIds.has(teacher.id));
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -89,22 +104,26 @@ export default async function Home() {
               ফ্রিতে যুক্ত হোন
             </Link>
           </div>
-          <p className="mt-7 inline-flex items-center gap-2 text-sm text-slate-500">
+          <p className="mt-7 inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-300">
             <MapPin className="h-4 w-4" aria-hidden />
-            বাংলাদেশের যেকোনো এলাকা থেকে — কাছের শিক্ষক খুঁজুন
+            বাংলাদেশের যেকোনো এলাকা থেকে—ক্লাস, বিষয় ও মাধ্যম অনুযায়ী শিক্ষক খুঁজুন
           </p>
 
+          <QuickTeacherSearch />
+
           {stats && (
-            <div className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="mx-auto mt-10 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6" aria-label="লাইভ প্ল্যাটফর্ম পরিসংখ্যান">
               {[
-                { value: stats.teachers, label: "শিক্ষক" },
-                { value: stats.students, label: "শিক্ষার্থী" },
-                { value: stats.open_tuitions, label: "খোলা টিউশন" },
-                { value: stats.districts, label: "জেলা" },
-              ].map((s) => (
-                <div key={s.label} className="rounded-2xl border border-brand-100 bg-white/70 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
-                  <p className="text-2xl font-extrabold text-brand-700">{s.value}</p>
-                  <p className="text-xs text-slate-500">{s.label}</p>
+                { value: stats.students ?? 0, label: "শিক্ষার্থী" },
+                { value: stats.teachers ?? 0, label: "শিক্ষক" },
+                { value: stats.verified_teachers ?? 0, label: "যাচাইকৃত শিক্ষক" },
+                { value: stats.successful_connections ?? 0, label: "সফল সংযোগ" },
+                { value: stats.open_tuitions ?? 0, label: "সক্রিয় টিউশন" },
+                { value: stats.districts ?? 0, label: "জেলা কভারেজ" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-brand-100 bg-white/80 px-3 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
+                  <p className="text-2xl font-extrabold text-brand-800 dark:text-brand-300">{item.value}</p>
+                  <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-300">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -123,7 +142,7 @@ export default async function Home() {
             {roles.map((role) => (
               <Card key={role.title} className="transition-shadow hover:shadow-md">
                 <CardHeader>
-                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 dark:bg-brand-950/70 dark:text-brand-300">
                     <role.icon className="h-6 w-6" aria-hidden />
                   </div>
                   <CardTitle>{role.title}</CardTitle>
@@ -135,38 +154,46 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Live: সেরা শিক্ষক */}
-      {feed.teachers.length > 0 && (
-        <section className="bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-slate-900">সেরা শিক্ষক</h2>
-              <Link href="/leaderboard" className="text-sm font-medium text-brand-700 hover:underline">সব দেখুন →</Link>
-            </div>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {feed.teachers.slice(0, 6).map((t) => {
-                const name = t.display_name || t.full_name || "শিক্ষক";
-                return (
-                  <Link key={t.id} href={`/teachers/${t.id}`} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md">
-                    <Avatar src={t.avatar_url} name={name} size="lg" />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <p className="truncate text-sm font-semibold text-slate-800">{name}</p>
-                        {t.is_premium && <Badge variant="accent">★</Badge>}
-                      </div>
-                      <p className="truncate text-xs text-slate-500">{t.subjects?.slice(0, 3).join(", ") || "শিক্ষক"}</p>
-                      <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-400">
-                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden />
-                        {t.review_count ? `${t.rating_avg} (${t.review_count})` : "নতুন"}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+      {stats && ((stats.popular_subjects?.length ?? 0) > 0 || (stats.popular_classes?.length ?? 0) > 0) && (
+        <section className="border-y border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-2">
+            <DiscoveryLinks
+              title="জনপ্রিয় বিষয়"
+              items={(stats.popular_subjects ?? []).map((item) => ({
+                label: item.subject,
+                count: item.count,
+                href: `/teachers?subject=${encodeURIComponent(item.subject)}`,
+              }))}
+            />
+            <DiscoveryLinks
+              title="জনপ্রিয় ক্লাস"
+              items={(stats.popular_classes ?? []).map((item) => ({
+                label: item.class_level,
+                count: item.count,
+                href: `/teachers?class=${encodeURIComponent(item.class_level)}`,
+              }))}
+            />
           </div>
         </section>
       )}
+
+      <HomeTeacherSection
+        title="ফিচার্ড শিক্ষক"
+        description="যাচাইকৃত ও বর্তমানে ফিচার্ড শিক্ষক।"
+        teachers={feed.featured_teachers}
+      />
+      <HomeTeacherSection
+        title="সেরা রেটিংয়ের শিক্ষক"
+        description="যাচাইকৃত রিভিউ ও রেটিং অনুযায়ী নির্বাচিত শিক্ষক।"
+        teachers={topTeachers}
+        viewAllHref="/leaderboard"
+        tone="muted"
+      />
+      <HomeTeacherSection
+        title="নতুন যোগ দেওয়া শিক্ষক"
+        description="সম্প্রতি প্রকাশিত যাচাইকৃত শিক্ষক প্রোফাইল।"
+        teachers={recentTeachers}
+      />
 
       {/* How it works */}
       <section id="how" className="bg-white dark:bg-slate-900">
@@ -204,5 +231,31 @@ export default async function Home() {
         </div>
       </section>
     </>
+  );
+}
+function DiscoveryLinks({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<{ label: string; count: number; href: string }>;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition-colors hover:border-brand-500 hover:text-brand-800 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-brand-400 dark:hover:text-brand-300"
+          >
+            {item.label}
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-700 dark:text-slate-300">{item.count}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
