@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BadgeCheck, GraduationCap, Handshake, MapPinned, ScrollText, Users } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, BadgeCheck, GraduationCap, Handshake, MapPinned, ScrollText, Users } from "lucide-react";
 
 export type LiveStatItem = {
   key: "students" | "teachers" | "connections" | "tuitions" | "verified" | "districts";
   label: string;
   value: number;
+  href: string;
+  actionLabel: string;
 };
 
 const ICONS = {
@@ -57,13 +60,23 @@ export function LiveStatsSection({ items }: { items: LiveStatItem[] }) {
           {items.map((item) => {
             const Icon = ICONS[item.key];
             return (
-              <div key={item.key} className="rounded-2xl border border-brand-100 bg-white p-4 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
-                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 dark:bg-brand-950/70 dark:text-brand-300">
+              <Link
+                key={item.key}
+                href={item.href}
+                data-home-action={`stat-${item.key}`}
+                className="group flex min-h-56 flex-col rounded-2xl border border-brand-100 bg-white p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-600"
+                aria-label={`${item.label}: ${item.value}। ${item.actionLabel}`}
+              >
+                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 transition-colors group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950/70 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
                 <AnimatedNumber value={item.value} active={visible} label={item.label} />
                 <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-300">{item.label}</p>
-              </div>
+                <span className="mt-auto inline-flex items-center justify-center gap-1 pt-4 text-[11px] font-semibold leading-tight text-brand-800 dark:text-brand-300">
+                  {item.actionLabel}
+                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                </span>
+              </Link>
             );
           })}
         </div>

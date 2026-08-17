@@ -72,6 +72,44 @@ test("homepage quick search builds teacher filters without login", async ({ page
   await expect(page).toHaveURL(/\/teachers\?class=Class(?:\+|%20)8&subject=Mathematics&district=Dhaka&mode=online/);
 });
 
+test("homepage action cards all lead to real product routes", async ({ page, request }) => {
+  await page.goto("/");
+
+  const actions = page.locator("a[data-home-action]");
+  await expect(actions).toHaveCount(13);
+
+  const expectedHrefs: Record<string, string> = {
+    "role-student": "/teachers",
+    "role-guardian": "/teachers",
+    "role-teacher": "/tuitions",
+    "stat-students": "/register",
+    "stat-teachers": "/teachers",
+    "stat-connections": "/safety",
+    "stat-tuitions": "/tuitions",
+    "stat-verified": "/teachers?verified=1",
+    "stat-districts": "/teachers",
+    "step-১": "/dashboard/tuitions/new",
+    "step-২": "/teachers",
+    "step-৩": "/teachers",
+    "step-৪": "/dashboard/schedule",
+  };
+
+  for (const [action, href] of Object.entries(expectedHrefs)) {
+    await expect(page.locator(`[data-home-action="${action}"]`)).toHaveAttribute("href", href);
+  }
+
+  for (const href of new Set(Object.values(expectedHrefs))) {
+    const response = await request.get(href);
+    expect(response.status(), `${href} should resolve`).toBeLessThan(400);
+  }
+
+  await page.locator('[data-home-action="role-student"]').click();
+  await expect(page).toHaveURL(/\/teachers$/);
+  await page.goBack();
+  await page.locator('[data-home-action="stat-verified"]').click();
+  await expect(page).toHaveURL(/\/teachers\?verified=1$/);
+});
+
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {
   await page.goto("/register?ref=ps-check-123");
   await expect(page.locator("#referralCode")).toHaveValue("PSCHECK123");

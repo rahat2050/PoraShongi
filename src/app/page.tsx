@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, GraduationCap, MapPin, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, ArrowUpRight, GraduationCap, MapPin, ShieldCheck, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { homeFeed, siteStats } from "@/lib/data/features";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -13,17 +13,62 @@ import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stat
 import type { HomeFeed } from "@/types/index";
 
 const roles = [
-  { icon: GraduationCap, title: "শিক্ষার্থী", desc: "ক্লাস, বিষয়, এলাকা ও প্রয়োজন অনুযায়ী যোগ্য শিক্ষক খুঁজুন।" },
-  { icon: Users, title: "অভিভাবক", desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং টিউশনের অগ্রগতি পরিচালনা করুন।" },
-  { icon: ShieldCheck, title: "শিক্ষক", desc: "নিজের প্রোফাইল তৈরি করুন, শিক্ষার্থী খুঁজুন এবং সময়সূচি পরিচালনা করুন।" },
-];
+  {
+    key: "student",
+    icon: GraduationCap,
+    title: "শিক্ষার্থী",
+    desc: "ক্লাস, বিষয়, এলাকা ও প্রয়োজন অনুযায়ী যোগ্য শিক্ষক খুঁজুন।",
+    href: "/teachers",
+    cta: "শিক্ষক দেখুন",
+  },
+  {
+    key: "guardian",
+    icon: Users,
+    title: "অভিভাবক",
+    desc: "সন্তানের জন্য শিক্ষক খুঁজুন এবং টিউশনের অগ্রগতি পরিচালনা করুন।",
+    href: "/teachers",
+    cta: "সন্তানের জন্য খুঁজুন",
+  },
+  {
+    key: "teacher",
+    icon: ShieldCheck,
+    title: "শিক্ষক",
+    desc: "নিজের প্রোফাইল তৈরি করুন, শিক্ষার্থী খুঁজুন এবং সময়সূচি পরিচালনা করুন।",
+    href: "/tuitions",
+    cta: "টিউশন সুযোগ দেখুন",
+  },
+] as const;
 
 const steps = [
-  { n: "১", title: "প্রয়োজন জানান", desc: "ক্লাস, বিষয়, এলাকা ও বাজেট লিখুন।" },
-  { n: "২", title: "মিল দেখুন", desc: "আপনার প্রয়োজনের সঙ্গে সবচেয়ে বেশি মিলে এমন শিক্ষক দেখুন।" },
-  { n: "৩", title: "অনুরোধ পাঠান", desc: "পছন্দের শিক্ষককে টিউশনের অনুরোধ পাঠান।" },
-  { n: "৪", title: "শেখা শুরু করুন", desc: "অনুরোধ গ্রহণ হলে সময় ঠিক করুন, উপস্থিতি রাখুন ও রিভিউ দিন।" },
-];
+  {
+    n: "১",
+    title: "প্রয়োজন জানান",
+    desc: "ক্লাস, বিষয়, এলাকা ও বাজেট লিখুন।",
+    href: "/dashboard/tuitions/new",
+    cta: "টিউশন পোস্ট করুন",
+  },
+  {
+    n: "২",
+    title: "মিল দেখুন",
+    desc: "আপনার প্রয়োজনের সঙ্গে সবচেয়ে বেশি মিলে এমন শিক্ষক দেখুন।",
+    href: "/teachers",
+    cta: "ম্যাচ দেখুন",
+  },
+  {
+    n: "৩",
+    title: "অনুরোধ পাঠান",
+    desc: "পছন্দের শিক্ষককে টিউশনের অনুরোধ পাঠান।",
+    href: "/teachers",
+    cta: "শিক্ষক বাছুন",
+  },
+  {
+    n: "৪",
+    title: "শেখা শুরু করুন",
+    desc: "অনুরোধ গ্রহণ হলে সময় ঠিক করুন, উপস্থিতি রাখুন ও রিভিউ দিন।",
+    href: "/dashboard/schedule",
+    cta: "সময়সূচি খুলুন",
+  },
+] as const;
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 export const revalidate = 300;
@@ -54,12 +99,12 @@ export default async function Home() {
   const shownIds = new Set([...featuredIds, ...topTeachers.map((teacher) => teacher.id)]);
   const recentTeachers = feed.recent_teachers.filter((teacher) => !shownIds.has(teacher.id));
   const liveStats: LiveStatItem[] = [
-    { key: "students", label: "সংযুক্ত শিক্ষার্থী", value: stats?.students ?? 0 },
-    { key: "teachers", label: "নিবন্ধিত শিক্ষক", value: stats?.teachers ?? 0 },
-    { key: "connections", label: "সফল সংযোগ", value: stats?.successful_connections ?? 0 },
-    { key: "tuitions", label: "সক্রিয় টিউশন", value: stats?.open_tuitions ?? 0 },
-    { key: "verified", label: "যাচাইকৃত শিক্ষক", value: stats?.verified_teachers ?? 0 },
-    { key: "districts", label: "জেলা কভারেজ", value: stats?.districts ?? 0 },
+    { key: "students", label: "সংযুক্ত শিক্ষার্থী", value: stats?.students ?? 0, href: "/register", actionLabel: "শিক্ষার্থী হিসেবে যুক্ত হোন" },
+    { key: "teachers", label: "নিবন্ধিত শিক্ষক", value: stats?.teachers ?? 0, href: "/teachers", actionLabel: "শিক্ষক দেখুন" },
+    { key: "connections", label: "সফল সংযোগ", value: stats?.successful_connections ?? 0, href: "/safety", actionLabel: "নিরাপদ সংযোগ জানুন" },
+    { key: "tuitions", label: "সক্রিয় টিউশন", value: stats?.open_tuitions ?? 0, href: "/tuitions", actionLabel: "টিউশন দেখুন" },
+    { key: "verified", label: "যাচাইকৃত শিক্ষক", value: stats?.verified_teachers ?? 0, href: "/teachers?verified=1", actionLabel: "যাচাইকৃত শিক্ষক দেখুন" },
+    { key: "districts", label: "জেলা কভারেজ", value: stats?.districts ?? 0, href: "/teachers", actionLabel: "এলাকাভিত্তিক খুঁজুন" },
   ];
 
   const structuredData = {
@@ -132,15 +177,28 @@ export default async function Home() {
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {roles.map((role) => (
-              <Card key={role.title} className="transition-shadow hover:shadow-md">
-                <CardHeader>
-                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 dark:bg-brand-950/70 dark:text-brand-300">
-                    <role.icon className="h-6 w-6" aria-hidden />
-                  </div>
-                  <CardTitle>{role.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-slate-600">{role.desc}</CardContent>
-              </Card>
+              <Link
+                key={role.key}
+                href={role.href}
+                data-home-action={`role-${role.key}`}
+                className="group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
+                aria-label={`${role.title}: ${role.cta}`}
+              >
+                <Card className="flex h-full flex-col overflow-hidden transition-all group-hover:-translate-y-1 group-hover:border-brand-300 group-hover:shadow-lg dark:group-hover:border-brand-600">
+                  <CardHeader>
+                    <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 transition-colors group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950/70 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white">
+                      <role.icon className="h-6 w-6" aria-hidden />
+                    </div>
+                    <CardTitle className="transition-colors group-hover:text-brand-800 dark:group-hover:text-brand-300">{role.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col text-sm text-slate-600 dark:text-slate-300">
+                    <p>{role.desc}</p>
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-5 font-semibold text-brand-800 dark:text-brand-300">
+                      {role.cta} <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
@@ -198,13 +256,22 @@ export default async function Home() {
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
-              <div key={step.n} className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 dark:border-slate-700 dark:bg-slate-800">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 font-bold text-white">
+              <Link
+                key={step.n}
+                href={step.href}
+                data-home-action={`step-${step.n}`}
+                className="group flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-slate-50/50 p-6 transition-all hover:-translate-y-1 hover:border-brand-300 hover:bg-white hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-600 dark:hover:bg-slate-800/80"
+                aria-label={`${step.title}: ${step.cta}`}
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 font-bold text-white transition-transform group-hover:scale-110">
                   {step.n}
                 </div>
-                <h3 className="mt-4 font-semibold text-slate-900">{step.title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{step.desc}</p>
-              </div>
+                <h3 className="mt-4 font-semibold text-slate-900 transition-colors group-hover:text-brand-800 dark:text-slate-100 dark:group-hover:text-brand-300">{step.title}</h3>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{step.desc}</p>
+                <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-800 dark:text-brand-300">
+                  {step.cta} <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                </span>
+              </Link>
             ))}
           </div>
         </div>
