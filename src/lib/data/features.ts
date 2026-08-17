@@ -95,6 +95,22 @@ export async function getBlogPost(slug: string): Promise<DataResult<BlogPost | n
   return ok((data as BlogPost | null) ?? null);
 }
 
+export async function isBatchMember(
+  tuitionId: string,
+  studentId: string,
+): Promise<DataResult<boolean>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db
+    .from("batch_members")
+    .select("id")
+    .eq("tuition_id", tuitionId)
+    .eq("student_id", studentId)
+    .maybeSingle();
+  if (error) return fail(error.message);
+  return ok(Boolean(data));
+}
+
 export async function listTrialRequests(
   teacherId: string,
 ): Promise<DataResult<TrialRequest[]>> {

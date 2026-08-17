@@ -5,7 +5,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/co
 
 export const metadata: Metadata = { title: "অ্যাকাউন্ট তৈরি করুন" };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ref?: string }>;
+}) {
+  const { ref } = await searchParams;
+  const referralCode = typeof ref === "string" ? ref.replace(/[^a-zA-Z0-9]/g, "").slice(0, 32) : "";
+
   return (
     <Card>
       <CardHeader>
@@ -13,7 +20,7 @@ export default function RegisterPage() {
         <CardDescription>শিক্ষার্থী, অভিভাবক বা শিক্ষক হিসেবে যুক্ত হোন।</CardDescription>
       </CardHeader>
       <CardContent>
-        <SignUpForm />
+        <SignUpForm initialReferralCode={referralCode} />
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-slate-500">

@@ -18,6 +18,7 @@ import { MeetingLinkForm } from "@/features/tuitions/meeting-link-form";
 import { SaveTuitionButton } from "@/components/shared/save-tuition-button";
 import { isTuitionSaved } from "@/lib/data/saved-tuitions";
 import { JoinBatchButton } from "@/features/features-actions-ui";
+import { isBatchMember } from "@/lib/data/features";
 import { buttonStyles } from "@/components/ui/button";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
@@ -58,6 +59,9 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
   const canViewMeeting = canManageMeeting || isTuitionStudent;
   const tuitionSaved = profile?.role === "teacher"
     ? (await isTuitionSaved(profile.id, tuition.id)).data ?? false
+    : false;
+  const batchJoined = profile?.role === "student" && tuition.is_batch
+    ? (await isBatchMember(tuition.id, profile.id)).data ?? false
     : false;
 
   let matches: { total: number; results: import("@/types/index").TeacherMatch[] } | null = null;
@@ -128,6 +132,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
               <JoinBatchButton
                 tuitionId={tuition.id}
                 seatsLeft={tuition.batch_size ? (tuition.batch_size - (tuition.seats_filled ?? 0)) : 0}
+                initiallyJoined={batchJoined}
               />
             )}
           </div>
