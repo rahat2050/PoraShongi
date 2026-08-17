@@ -1,6 +1,7 @@
 import "server-only";
 import { getDb, ok, fail, type DataResult } from "@/lib/data/client";
 import { getProfilesPublic } from "@/lib/data/profiles-public";
+import { MESSAGE_RETENTION_MS } from "@/lib/message-retention";
 import { type Conversation, type Message, type ProfilePublic } from "@/types/index";
 
 export type ConversationDisplay = {
@@ -31,9 +32,15 @@ export async function listConversations(
   );
   const conversationIds = conversations.map((c) => c.id);
 
+  const retentionCutoff = new Date(Date.now() - MESSAGE_RETENTION_MS).toISOString();
   const [profiles, messagesRes] = await Promise.all([
     getProfilesPublic(otherIds),
-    db.from("messages").select("*").in("conversation_id", conversationIds).order("created_at", { ascending: false }),
+    db
+      .from("messages")
+      .select("*")
+      .in("conversation_id", conversationIds)
+      .gte("created_at", retentionCutoff)
+      .order("created_at", { ascending: false }),
   ]);
 
   const profileMap = new Map((profiles.data ?? []).map((p) => [p.id, p]));
@@ -86,10 +93,12 @@ export async function listMessages(
   const db = await getDb();
   if (!db) return fail("Supabase is not configured.");
 
+  const retentionCutoff = new Date(Date.now() - MESSAGE_RETENTION_MS).toISOString();
   const { data, error } = await db
     .from("messages")
     .select("*")
     .eq("conversation_id", conversationId)
+    .gte("created_at", retentionCutoff)
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) return fail(error.message);
