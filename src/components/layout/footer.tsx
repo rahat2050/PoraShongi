@@ -11,7 +11,7 @@ export function Footer() {
       <div className="pointer-events-none absolute -left-32 top-0 h-72 w-72 rounded-full bg-brand-700/15 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" aria-hidden />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+      <div className="relative mx-auto max-w-7xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-12 sm:px-6 md:py-16">
         <div className="mb-12 flex flex-col gap-6 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
             <p className="text-sm font-bold text-white">সাহায্য বা নিরাপত্তা নিয়ে প্রশ্ন আছে?</p>
@@ -65,7 +65,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-300 sm:flex-row sm:items-center sm:justify-between">
+        <div data-footer-bottom className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {siteConfig.brandName} ({siteConfig.brandNameBangla})</p>
           <p>Discover → Match → Connect → Manage → Trust</p>
         </div>

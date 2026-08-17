@@ -305,6 +305,26 @@ test("mobile navigation does not overlap the visible back-to-top button", async 
   expect(overlap).toBe(false);
 });
 
+test("mobile footer content stays above the fixed bottom navigation", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
+
+  await page.goto("/privacy");
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  await page.waitForFunction(() => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1);
+
+  const clearance = await page.evaluate(() => {
+    const footerBottom = document.querySelector("[data-footer-bottom]");
+    const bottomNav = document.querySelector('nav[aria-label="মোবাইল নেভিগেশন"]');
+    if (!footerBottom || !bottomNav) return -1;
+    return bottomNav.getBoundingClientRect().top - footerBottom.getBoundingClientRect().bottom;
+  });
+
+  expect(clearance).toBeGreaterThanOrEqual(16);
+});
+
 test("public pages do not overflow horizontally", async ({ page }) => {
   for (const path of ["/", "/login", "/register", "/privacy", "/teachers"]) {
     await page.goto(path);

@@ -47,8 +47,8 @@ export function ConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" onClick={onCancel}>
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="alertdialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-sm" onClick={onCancel}>
+      <div className="max-h-[calc(100dvh-5rem)] w-full max-w-sm overflow-y-auto overscroll-contain rounded-2xl bg-white p-6 shadow-xl sm:max-h-[calc(100vh-2rem)] dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="alertdialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId}>
         <h2 id={titleId} className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
         <p id={descriptionId} className="mt-1.5 text-sm text-slate-500 dark:text-slate-300">{message}</p>
         <div className="mt-5 flex justify-end gap-2">
