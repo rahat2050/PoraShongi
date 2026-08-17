@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Briefcase, CalendarDays, GraduationCap, MapPin, Star, Wallet } from "lucide-react";
+import { Briefcase, CalendarDays, GraduationCap, LockKeyhole, MapPin, Star, Wallet } from "lucide-react";
 import { getPublicTeacher } from "@/lib/data/teachers";
 import { listTuitionsFor } from "@/lib/data/tuitions";
 import { isFavorite } from "@/lib/data/favorites";
 import { createClient } from "@/lib/supabase/server";
-import { getTeacherReputation, getTeacherReviews, hasReviewed, hasAcceptedInteraction, isBlocked } from "@/lib/data/reviews";
+import { getAcceptedTuitionId, getOwnReview, getTeacherReputation, getTeacherReviews, isBlocked } from "@/lib/data/reviews";
 import { getContactStatus, getTeacherPhone } from "@/lib/data/contact";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -24,6 +24,8 @@ import { ContactRequestButton } from "@/components/shared/contact-request-button
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { ReviewList } from "@/components/shared/review-list";
 import { ReviewForm } from "@/components/shared/review-form";
+import { RatingStars } from "@/components/shared/rating-stars";
+import { TeacherRatingSummary } from "@/components/shared/teacher-rating-summary";
 import { VerificationTierBadge } from "@/components/shared/verification-tier";
 import { FastResponse } from "@/components/shared/fast-response";
 import { TrialRequestButton } from "@/features/features-actions-ui";
@@ -100,19 +102,21 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     ? ((await listTuitionsFor(profile.id)).data ?? []).filter((t) => t.status === "open")
     : [];
 
-  const [savedRes, reputation, reviews, reviewedRes, interactionRes, blockedRes, contactRes] = await Promise.all([
+  const [savedRes, reputation, reviews, ownReviewRes, acceptedTuitionRes, blockedRes, contactRes] = await Promise.all([
     canInteract && profile ? isFavorite(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
     getTeacherReputation(teacher.id),
-    getTeacherReviews(teacher.id, 1, 6),
-    canInteract && profile ? hasReviewed(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
-    canInteract && profile ? hasAcceptedInteraction(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
+    getTeacherReviews(teacher.id, 1, 50),
+    canInteract && profile ? getOwnReview(profile.id, teacher.id) : Promise.resolve({ data: null, error: null }),
+    canInteract && profile ? getAcceptedTuitionId(profile.id, teacher.id) : Promise.resolve({ data: null, error: null }),
     canInteract && profile ? isBlocked(profile.id, teacher.id) : Promise.resolve({ data: false, error: null }),
     canInteract && profile ? getContactStatus(profile.id, teacher.id) : Promise.resolve({ data: null, error: null }),
   ]);
 
   const saved = savedRes.data ?? false;
   const reviewData = reviews.data;
-  const canReview = (interactionRes.data ?? false) && !(reviewedRes.data ?? false);
+  const publishedReviews = reviewData?.results ?? [];
+  const ownReview = ownReviewRes.data ?? null;
+  const canRate = Boolean(acceptedTuitionRes.data) && (!ownReview || ownReview.status === "published");
   const blocked = blockedRes.data ?? false;
   const tier = reputation.data?.tier ?? "unverified";
   const contact = contactRes.data ?? null;
@@ -169,12 +173,19 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
                 {teacher.is_premium && <Badge variant="accent">★ Premium</Badge>}
               </div>
               <p className="mt-1 text-slate-600">{teacher.headline || "টিউশন শিক্ষক"}</p>
-              {teacher.review_count ? (
-                <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden />
-                  {teacher.rating_avg} · {teacher.review_count} রিভিউ
-                </p>
-              ) : null}
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {(teacher.review_count ?? 0) > 0 ? (
+                  <>
+                    <RatingStars rating={teacher.rating_avg ?? 0} size="sm" />
+                    <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{teacher.rating_avg ?? 0}/৫</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">· {teacher.review_count ?? 0} রিভিউ</span>
+                  </>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+                    <Star className="h-4 w-4 text-slate-300 dark:text-slate-600" aria-hidden /> এখনো রেটিং নেই
+                  </span>
+                )}
+              </div>
               {reputation.data && (
                 <div className="mt-1 space-y-0.5">
                   <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -287,24 +298,61 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
         </Card>
       </div>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>রিভিউ ({reviewData?.total ?? 0})</CardTitle>
+      <Card id="ratings" className="mt-6 scroll-mt-24 overflow-hidden">
+        <CardHeader className="bg-slate-50/80 dark:bg-slate-900/50">
+          <CardTitle>শিক্ষক রেটিং ও রিভিউ</CardTitle>
+          <p className="text-sm text-slate-600 dark:text-slate-300">শুধু গৃহীত টিউশন অভিজ্ঞতা থেকে ১–৫ স্টার রেটিং প্রকাশ করা যায়।</p>
         </CardHeader>
-        <CardContent>
-          {canReview && profile && (
-            <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <h3 className="text-sm font-semibold text-slate-800">এই শিক্ষককে রেট করুন</h3>
-              <div className="mt-3">
-                <ReviewForm teacherId={teacher.id} />
+        <CardContent className="space-y-6">
+          <TeacherRatingSummary
+            average={reputation.data?.rating_avg ?? teacher.rating_avg ?? 0}
+            total={reviewData?.total ?? teacher.review_count ?? 0}
+            reviews={publishedReviews}
+          />
+
+          {canRate && profile && (
+            <div className="rounded-2xl border border-brand-200 bg-brand-50/60 p-4 sm:p-5 dark:border-brand-800 dark:bg-brand-950/30">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{ownReview ? "আপনার রেটিং সম্পাদনা করুন" : "এই শিক্ষককে রেট করুন"}</h3>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">আপনার সৎ অভিজ্ঞতা অন্য শিক্ষার্থী ও অভিভাবককে সিদ্ধান্ত নিতে সাহায্য করবে।</p>
+              <div className="mt-4">
+                <ReviewForm teacherId={teacher.id} existingReview={ownReview} />
               </div>
             </div>
           )}
-          {reviewData && reviewData.results.length > 0 ? (
-            <ReviewList reviews={reviewData.results} />
-          ) : (
-            <p className="text-sm text-slate-400">এখনো কোনো রিভিউ নেই।</p>
+
+          {!profile && (
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-900/60">
+              <p className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden /> গৃহীত টিউশন থাকলে লগইন করে এই শিক্ষককে রেট করতে পারবেন।
+              </p>
+              <Link href={`/login?next=${encodeURIComponent(`/teachers/${teacher.id}#ratings`)}`} className={buttonStyles({ variant: "outline", size: "sm" })}>লগইন করুন</Link>
+            </div>
           )}
+
+          {profile && !canInteract && (
+            <p className="flex items-start gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+              <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden /> শুধু শিক্ষার্থী বা অভিভাবক তাদের গৃহীত টিউশন অভিজ্ঞতা রেট করতে পারেন।
+            </p>
+          )}
+
+          {canInteract && profile && !acceptedTuitionRes.data && !ownReview && (
+            <p className="flex items-start gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+              <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden /> এই শিক্ষকের সঙ্গে আপনার কোনো গৃহীত টিউশন নেই। অনুরোধ গ্রহণ হলে রেটিং দিতে পারবেন।
+            </p>
+          )}
+
+          {ownReview && ownReview.status !== "published" && (
+            <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">আপনার আগের রিভিউটি বর্তমানে মডারেশনে আছে।</p>
+          )}
+
+          {reviews.error ? (
+            <p className="text-sm text-red-600 dark:text-red-400">রিভিউ লোড করা যায়নি।</p>
+          ) : publishedReviews.length > 0 ? (
+            <div>
+              <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">প্রকাশিত অভিজ্ঞতা</h3>
+              <ReviewList reviews={publishedReviews} />
+            </div>
+          ) : null}
         </CardContent>
       </Card>
 

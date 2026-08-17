@@ -1,6 +1,7 @@
 import "server-only";
 import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
 import {
+  type Review,
   type ReviewPublic,
   type SearchResponse,
   type TeacherReputation,
@@ -32,37 +33,39 @@ export async function getTeacherReviews(
   return ok(asJson<SearchResponse<ReviewPublic>>(data));
 }
 
-export async function hasReviewed(
+export async function getOwnReview(
   userId: string,
   teacherId: string,
-): Promise<DataResult<boolean>> {
+): Promise<DataResult<Review | null>> {
   const db = await getDb();
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("reviews")
-    .select("id")
+    .select("*")
     .eq("reviewer_id", userId)
     .eq("teacher_id", teacherId)
     .maybeSingle();
   if (error) return fail(error.message);
-  return ok(Boolean(data));
+  return ok(data ?? null);
 }
 
-export async function hasAcceptedInteraction(
+export async function getAcceptedTuitionId(
   userId: string,
   teacherId: string,
-): Promise<DataResult<boolean>> {
+): Promise<DataResult<string | null>> {
   const db = await getDb();
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("tuition_requests")
-    .select("id")
+    .select("tuition_id")
     .eq("teacher_id", teacherId)
     .eq("status", "accepted")
     .or(`sender_id.eq.${userId},student_id.eq.${userId}`)
-    .limit(1);
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
   if (error) return fail(error.message);
-  return ok((data?.length ?? 0) > 0);
+  return ok(data?.tuition_id ?? null);
 }
 
 export async function isBlocked(
