@@ -91,7 +91,10 @@ export default async function AdminUsersPage({
                         <div className="flex items-center gap-3">
                           <Avatar src={p.avatar_url} name={p.full_name ?? p.display_name} size="sm" />
                           <div>
-                            <p className="font-medium text-slate-800">{p.full_name ?? p.display_name ?? "—"}</p>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <p className="font-medium text-slate-800">{p.full_name ?? p.display_name ?? "—"}</p>
+                              {p.is_super_admin && <Badge variant="accent">সুপার অ্যাডমিন</Badge>}
+                            </div>
                             <p className="text-xs text-slate-400">{p.id.slice(0, 8)}…</p>
                           </div>
                         </div>
@@ -103,7 +106,7 @@ export default async function AdminUsersPage({
                         <div className="flex items-center justify-end gap-2">
                           {p.role === "teacher" && <AdminPremiumToggle teacherId={p.id} premium={p.is_premium} />}
                           {(p.role === "teacher" || p.role === "student") && p.verification_status !== "verified" && <AdminVerifyButtons teacherId={p.id} />}
-                          {p.role !== "admin" && <AdminAccountButtons userId={p.id} status={p.account_status} />}
+                          {p.role !== "admin" && !p.is_super_admin && <AdminAccountButtons userId={p.id} status={p.account_status} />}
                         </div>
                       </td>
                     </tr>

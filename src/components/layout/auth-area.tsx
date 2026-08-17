@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, LogOut, MessageSquare, Settings, User as UserIcon } from "lucide-react";
+import { Bell, LogOut, MessageSquare, Settings, ShieldCheck, User as UserIcon } from "lucide-react";
 import { buttonStyles } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar } from "@/components/ui/avatar";
@@ -11,7 +11,14 @@ import { useToast } from "@/components/ui/toast";
 
 interface SessionSummary {
   authenticated: boolean;
-  user?: { id: string; email: string | null; name: string | null };
+  user?: {
+    id: string;
+    email: string | null;
+    name: string | null;
+    role: string | null;
+    superAdmin: boolean;
+    accountStatus: string | null;
+  };
   unreadNotifications?: number;
 }
 
@@ -134,6 +141,9 @@ function UserMenu({
               {user.email && <p className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</p>}
             </div>
             <MenuItem icon={<UserIcon className="h-4 w-4" />} label="ড্যাশবোর্ড" onClick={() => { setOpen(false); router.push("/dashboard"); }} />
+            {(user.superAdmin || user.role === "admin") && (
+              <MenuItem icon={<ShieldCheck className="h-4 w-4" />} label="সুপার অ্যাডমিন প্যানেল" onClick={() => { setOpen(false); router.push("/admin"); }} />
+            )}
             <MenuItem icon={<Settings className="h-4 w-4" />} label="প্রোফাইল ও সেটিংস" onClick={() => { setOpen(false); router.push("/profile"); }} />
             <MenuItem icon={<Settings className="h-4 w-4" />} label="অ্যাকাউন্ট" onClick={() => { setOpen(false); router.push("/account"); }} />
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-700" />

@@ -53,3 +53,9 @@ export async function requireRole(roles: readonly UserRole[]): Promise<Profile> 
   if (!roles.includes(profile.role)) redirect("/dashboard");
   return profile;
 }
+
+export async function requireAdmin(): Promise<Profile> {
+  const profile = await requireProfile();
+  if (profile.role !== "admin" && !profile.is_super_admin) redirect("/dashboard");
+  return profile;
+}
