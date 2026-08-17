@@ -55,8 +55,8 @@ export function RequestSheet({
       </Button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-4 backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="request-dialog-title">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
+          <div className="max-h-[calc(100dvh-5rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-2xl bg-white p-6 shadow-xl sm:max-h-[calc(100vh-2rem)] dark:bg-slate-800" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="request-dialog-title">
             <h2 id="request-dialog-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">টিউশনের অনুরোধ পাঠান</h2>
             <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-300">{teacherName}-কে অনুরোধ পাঠান</p>
 
