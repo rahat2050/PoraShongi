@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
+import { type Message } from "@/types/index";
 
 export async function startConversation(
   otherId: string,
@@ -46,22 +47,25 @@ export async function startConversation(
 export async function sendMessage(
   conversationId: string,
   body: string,
-): Promise<ActionResult> {
+): Promise<ActionResult<Message>> {
   const profile = await requireProfile();
   const trimmed = body.trim();
   if (!trimmed || trimmed.length > 2000) return failure("বার্তা ১–২০০০ অক্ষরের মধ্যে হতে হবে।");
 
   const supabase = await createClient();
-  const { error } = await supabase.from("messages").insert({
-    conversation_id: conversationId,
-    sender_id: profile.id,
-    body: trimmed,
-  });
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      conversation_id: conversationId,
+      sender_id: profile.id,
+      body: trimmed,
+    })
+    .select("*")
+    .single();
 
   if (error) return failure(error.message);
-  revalidatePath(`/messages/${conversationId}`);
   revalidatePath("/messages");
-  return success();
+  return success(data);
 }
 
 export async function markConversationRead(conversationId: string): Promise<ActionResult> {

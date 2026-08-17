@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { source as axeSource } from "axe-core";
 import { normalizeProfileImageUrl } from "../../src/lib/profile-image-url";
 import { buildRatingBreakdown } from "../../src/lib/ratings";
+import { isMessageWithinRetention, MESSAGE_RETENTION_HOURS } from "../../src/lib/message-retention";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -171,6 +172,21 @@ test("teacher rating breakdown uses only valid published values", () => {
     counts: { 1: 0, 2: 1, 3: 0, 4: 1, 5: 2 },
     percentages: { 1: 0, 2: 25, 3: 0, 4: 25, 5: 50 },
   });
+});
+
+test("chat messages use a strict 48-hour retention window", () => {
+  const now = Date.parse("2026-08-18T12:00:00.000Z");
+  expect(MESSAGE_RETENTION_HOURS).toBe(48);
+  expect(isMessageWithinRetention("2026-08-16T12:00:01.000Z", now)).toBe(true);
+  expect(isMessageWithinRetention("2026-08-16T11:59:59.000Z", now)).toBe(false);
+  expect(isMessageWithinRetention("not-a-date", now)).toBe(false);
+});
+
+test("message retention policy is visible to users", async ({ page }) => {
+  for (const path of ["/privacy", "/terms"]) {
+    await page.goto(path);
+    await expect(page.getByText(/৪৮ ঘণ্টা/).first()).toBeVisible();
+  }
 });
 
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {

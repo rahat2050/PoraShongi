@@ -42,7 +42,7 @@ SQL Editor দিয়ে করলে `supabase/migrations`-এর ফাই�
 3. `0015_public_content_read.sql`
 4. `0016_profile_publication.sql`
 
-Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। আগে database backup নিন।
+Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। ৪৮ ঘণ্টার message auto-delete চালু করতে `0025_message_retention.sql`-ও প্রয়োগ করা বাধ্যতামূলক। আগে database backup নিন।
 
 ### 3. Run
 
@@ -75,6 +75,17 @@ PoraSathi কোনো profile image file upload বা store করে না�
 - Dropbox share links স্বয়ংক্রিয়ভাবে raw-image mode ব্যবহার করে।
 - শুধু public HTTPS URL গ্রহণ করা হয়; localhost/private-network URL প্রত্যাখ্যান করা হয়।
 - External image request-এ browser referrer পাঠায় না এবং image load ব্যর্থ হলে initials fallback দেখা যায়।
+
+### Realtime chat and 48-hour retention
+
+`0025_message_retention.sql` প্রয়োগ করলে chat message ৪৮ ঘণ্টা পর Supabase থেকে মুছে যায়। Migration-টি:
+
+- `created_at` retention index যোগ করে;
+- প্রতি message insert-এর পরে indexed cleanup চালায়;
+- hosted Supabase-এ `pg_cron` পাওয়া গেলে hourly cleanup schedule করে;
+- cleanup-এর পরে conversation-এর `last_message_at` ঠিক করে।
+
+UI পুরোনো message fetch করে না এবং Realtime subscription ব্যবহার করে; ২০-সেকেন্ডের full-page polling আর প্রয়োজন হয় না। গুরুত্বপূর্ণ তথ্য chat history-এর বাইরে সংরক্ষণ করতে ব্যবহারকারীকে জানানো হয়।
 
 ## Quality checks
 

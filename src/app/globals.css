@@ -39,6 +39,24 @@
   100% { background-position: 400px 0; }
 }
 
+@keyframes page-enter {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@keyframes message-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-page-enter {
+  animation: page-enter 220ms ease-out both;
+}
+
+.animate-message-in {
+  animation: message-in 180ms ease-out both;
+}
+
 html {
   scroll-behavior: smooth;
 }
