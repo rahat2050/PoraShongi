@@ -42,7 +42,7 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={`flex min-h-14 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[11px] font-medium transition-colors ${
-                active ? "text-brand-700 dark:text-brand-300" : "text-slate-500 dark:text-slate-400"
+                active ? "text-brand-700 dark:text-brand-300" : "text-slate-600 dark:text-slate-300"
               }`}
             >
               <item.icon className="h-5 w-5" aria-hidden />

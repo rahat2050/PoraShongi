@@ -78,6 +78,19 @@ test("homepage action cards all lead to real product routes", async ({ page, req
   const actions = page.locator("a[data-home-action]");
   await expect(actions).toHaveCount(13);
 
+  const journeyLinks = page.locator("a[data-journey-step]");
+  await expect(journeyLinks).toHaveCount(5);
+  const expectedJourneyHrefs: Record<string, string> = {
+    discover: "/teachers",
+    match: "/teachers?sort=relevance",
+    connect: "/teachers",
+    manage: "/dashboard/schedule",
+    trust: "/safety",
+  };
+  for (const [step, href] of Object.entries(expectedJourneyHrefs)) {
+    await expect(page.locator(`[data-journey-step="${step}"]`)).toHaveAttribute("href", href);
+  }
+
   const expectedHrefs: Record<string, string> = {
     "role-student": "/teachers",
     "role-guardian": "/teachers",
@@ -98,7 +111,7 @@ test("homepage action cards all lead to real product routes", async ({ page, req
     await expect(page.locator(`[data-home-action="${action}"]`)).toHaveAttribute("href", href);
   }
 
-  for (const href of new Set(Object.values(expectedHrefs))) {
+  for (const href of new Set([...Object.values(expectedHrefs), ...Object.values(expectedJourneyHrefs)])) {
     const response = await request.get(href);
     expect(response.status(), `${href} should resolve`).toBeLessThan(400);
   }
