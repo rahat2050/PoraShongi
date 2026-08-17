@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Gift } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
+import { getSiteUrl } from "@/config/site";
 import { getReferralInfo } from "@/lib/data/growth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
@@ -15,6 +16,9 @@ export default async function ReferralsPage() {
   if (!profile) redirect("/login");
 
   const info = await getReferralInfo(profile.id);
+  const referralUrl = info.data?.code
+    ? `${getSiteUrl()}/register?ref=${encodeURIComponent(info.data.code)}`
+    : "";
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
@@ -22,7 +26,7 @@ export default async function ReferralsPage() {
         <Gift className="h-6 w-6 text-brand-600" aria-hidden />
         <div>
           <h1 className="text-2xl font-bold text-slate-900">রেফারেল</h1>
-          <p className="mt-1 text-slate-500">বন্ধুদের invite করুন।</p>
+          <p className="mt-1 text-slate-500">বন্ধুদের আমন্ত্রণ জানান।</p>
         </div>
       </div>
 
@@ -31,19 +35,19 @@ export default async function ReferralsPage() {
         <CardContent className="space-y-4">
           {info.data?.code ? (
             <>
-              <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-700">
                 <span className="font-mono text-lg font-bold tracking-widest text-brand-700">{info.data.code}</span>
-                <CopyCode code={info.data.code} />
+                <CopyCode code={info.data.code} referralUrl={referralUrl} />
               </div>
               <Alert variant="info">
-                বন্ধু এই কোড দিয়ে রেজিস্টার করলে তারা যুক্ত হবে আর আপনিও পয়েন্ট পাবেন (ভবিষ্যতে reward)।
+                বন্ধু এই লিংক দিয়ে নিবন্ধন করলে রেফারেলটি আপনার অ্যাকাউন্টে গণনা হবে। কোনো আর্থিক পুরস্কারের প্রতিশ্রুতি দেওয়া হচ্ছে না।
               </Alert>
               <p className="text-sm text-slate-500">
                 এখন পর্যন্ত <span className="font-semibold text-slate-800">{info.data.count}</span> জন আপনার কোড দিয়ে যুক্ত হয়েছে।
               </p>
             </>
           ) : (
-            <Alert variant="warning">কোড পাওয়া যায়নি — profile তৈরি হয়েছে কিনা দেখুন।</Alert>
+            <Alert variant="warning">কোড পাওয়া যায়নি—প্রোফাইল তৈরি হয়েছে কি না দেখুন।</Alert>
           )}
         </CardContent>
       </Card>

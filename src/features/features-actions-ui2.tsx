@@ -16,7 +16,7 @@ export function TrialRequestActions({ requestId }: { requestId: string }) {
     startTransition(async () => {
       const result = await respondTrialRequest(requestId, decision);
       if (result.ok) {
-        toast(decision === "accepted" ? "Trial মঞ্জুর" : "Trial বাতিল", decision === "accepted" ? "success" : "danger");
+        toast(decision === "accepted" ? "ট্রায়াল মঞ্জুর" : "ট্রায়াল বাতিল", decision === "accepted" ? "success" : "danger");
         router.refresh();
       } else {
         toast(result.error, "danger");

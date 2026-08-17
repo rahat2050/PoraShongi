@@ -23,14 +23,14 @@ interface SignUpFieldErrors {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function SignUpForm() {
+export function SignUpForm({ initialReferralCode = "" }: { initialReferralCode?: string }) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [referralCode, setReferralCode] = useState("");
+  const [referralCode, setReferralCode] = useState(initialReferralCode.trim().toUpperCase().slice(0, 32));
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<SignUpFieldErrors>({});
   const [error, setError] = useState<string | null>(null);
