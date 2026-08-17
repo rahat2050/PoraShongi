@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/shared/stat-card";
 import { Users, GraduationCap, ScrollText, Send, Star, Percent } from "lucide-react";
 
-export const metadata: Metadata = { title: "অ্যাডমিন — Analytics" };
+export const metadata: Metadata = { title: "অ্যাডমিন — পরিসংখ্যান" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminAnalyticsPage() {
@@ -13,7 +13,7 @@ export default async function AdminAnalyticsPage() {
   const a = result.data;
 
   if (!a) {
-    return <Card><CardContent className="p-6 text-sm text-red-600">{result.error ?? "Analytics লোড হয়নি।"}</CardContent></Card>;
+    return <Card><CardContent className="p-6 text-sm text-red-600">{result.error ?? "পরিসংখ্যান লোড হয়নি।"}</CardContent></Card>;
   }
 
   const maxSubject = Math.max(1, ...a.top_subjects.map((s) => s.c));
@@ -22,11 +22,11 @@ export default async function AdminAnalyticsPage() {
   return (
     <div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard label="মোট user" value={a.users} icon={<Users className="h-5 w-5" aria-hidden />} />
+        <StatCard label="মোট ব্যবহারকারী" value={a.users} icon={<Users className="h-5 w-5" aria-hidden />} />
         <StatCard label="শিক্ষক" value={a.teachers} icon={<GraduationCap className="h-5 w-5" aria-hidden />} />
         <StatCard label="শিক্ষার্থী" value={a.students} icon={<Users className="h-5 w-5" aria-hidden />} />
-        <StatCard label="Tuition" value={a.tuitions} icon={<ScrollText className="h-5 w-5" aria-hidden />} />
-        <StatCard label="Request" value={a.requests} icon={<Send className="h-5 w-5" aria-hidden />} />
+        <StatCard label="টিউশন" value={a.tuitions} icon={<ScrollText className="h-5 w-5" aria-hidden />} />
+        <StatCard label="অনুরোধ" value={a.requests} icon={<Send className="h-5 w-5" aria-hidden />} />
         <StatCard label="রিভিউ" value={a.reviews} icon={<Star className="h-5 w-5" aria-hidden />} />
       </div>
 
@@ -34,7 +34,7 @@ export default async function AdminAnalyticsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Percent className="h-5 w-5 text-brand-600" aria-hidden />
-            Match rate: {a.match_rate}% ({a.accepted}/{a.requests} accepted)
+            মিলের হার: {a.match_rate}% ({a.accepted}/{a.requests} গৃহীত)
           </CardTitle>
         </CardHeader>
       </Card>
@@ -85,7 +85,7 @@ export default async function AdminAnalyticsPage() {
 
       <p className="mt-6 flex items-center gap-2 text-xs text-slate-400">
         <BarChart3 className="h-4 w-4" aria-hidden />
-        সব হিসাব existing ডাটা থেকে — কোনো নতুন ডাটা write হয় না (Supabase free বাঁচাতে)।
+        সব হিসাব বিদ্যমান তথ্য থেকে হিসাব করা হয়েছে; অতিরিক্ত তথ্য সংরক্ষণ করা হয় না।
       </p>
     </div>
   );

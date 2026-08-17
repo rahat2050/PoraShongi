@@ -9,6 +9,8 @@ export const baseProfileSchema = z.object({
   area: z.string().trim().max(80).optional().or(z.literal("")),
   gender: z.string().optional().or(z.literal("")),
   isMinor: z.boolean().optional(),
+  guardianConsent: z.boolean().optional(),
+  avatarUrl: z.string().trim().url("সঠিক ছবির URL দিন।").max(500).optional().or(z.literal("")),
 });
 
 export const studentProfileSchema = z.object({

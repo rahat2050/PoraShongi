@@ -10,7 +10,7 @@ export async function sendContactRequest(
 ): Promise<ActionResult<{ status: "pending" | "accepted" | "rejected" }>> {
   const profile = await requireProfile();
   if (profile.role !== "student" && profile.role !== "guardian") {
-    return failure("শুধু শিক্ষার্থী/অভিভাবক যোগাযোগ চাইতে পারবেন।");
+    return failure("শুধু শিক্ষার্থী বা অভিভাবক যোগাযোগের অনুরোধ করতে পারবেন।");
   }
 
   const supabase = await createClient();
@@ -44,7 +44,7 @@ export async function respondContactRequest(
   decision: "accepted" | "rejected",
 ): Promise<ActionResult> {
   const profile = await requireProfile();
-  if (profile.role !== "teacher") return failure("শুধু শিক্ষক respond করতে পারবেন।");
+  if (profile.role !== "teacher") return failure("শুধু শিক্ষক যোগাযোগের অনুরোধের উত্তর দিতে পারবেন।");
 
   const supabase = await createClient();
   const { data: existing } = await supabase
@@ -54,15 +54,19 @@ export async function respondContactRequest(
     .maybeSingle();
 
   if (!existing || existing.teacher_id !== profile.id) {
-    return failure("শুধু নিজের অনুরোধ respond করতে পারবেন।");
+    return failure("শুধু নিজের কাছে আসা অনুরোধের উত্তর দিতে পারবেন।");
   }
   if (existing.status !== "pending") return failure("এই অনুরোধের উত্তর দেওয়া হয়েছে।");
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("contact_requests")
     .update({ status: decision })
-    .eq("id", requestId);
+    .eq("id", requestId)
+    .eq("status", "pending")
+    .select("id")
+    .maybeSingle();
   if (error) return failure(error.message);
+  if (!data) return failure("অনুরোধটি অন্য কেউ আপডেট করেছে। পেজ রিফ্রেশ করুন।");
 
   revalidatePath("/dashboard/requests");
   return success();

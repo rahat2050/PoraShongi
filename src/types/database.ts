@@ -1,5 +1,6 @@
 import {
   type AccountStatus,
+  type AdminAuditLog,
   type AppNotification,
   type BatchMember,
   type Block,
@@ -269,6 +270,20 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Omit<Review, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      admin_audit_log: {
+        Row: AdminAuditLog;
+        Insert: {
+          id?: string;
+          admin_id: string;
+          action: string;
+          target_type: string;
+          target_id?: string | null;
+          details?: Json;
+          created_at?: string;
+        };
+        Update: never;
         Relationships: [];
       };
       reports: {

@@ -14,6 +14,18 @@ export const metadata: Metadata = { title: "অ্যাডমিন — ব্�
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 20;
+const ACCOUNT_LABELS: Record<string, string> = {
+  active: "সক্রিয়",
+  suspended: "স্থগিত",
+  pending: "অপেক্ষমাণ",
+  deleted: "নিষ্ক্রিয়",
+};
+const VERIFICATION_LABELS: Record<string, string> = {
+  unverified: "অযাচাইকৃত",
+  pending: "পর্যালোচনাধীন",
+  verified: "যাচাইকৃত",
+  rejected: "প্রত্যাখ্যাত",
+};
 
 export default async function AdminUsersPage({
   searchParams,
@@ -43,8 +55,8 @@ export default async function AdminUsersPage({
           <a
             key={f.label}
             href={`/admin/users${buildQueryString({ role: f.value })}`}
-            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-              (role ?? undefined) === f.value ? "border-brand-600 bg-brand-600 text-white" : "border-slate-300 bg-white text-slate-600 hover:border-brand-400"
+            className={`inline-flex min-h-11 items-center rounded-lg border px-3 text-sm font-medium transition-colors ${
+              (role ?? undefined) === f.value ? "border-brand-600 bg-brand-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-brand-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
             }`}
           >
             {f.label}
@@ -66,10 +78,10 @@ export default async function AdminUsersPage({
                 <thead className="border-b border-slate-200 text-xs font-medium uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-4 py-3">ব্যবহারকারী</th>
-                    <th className="px-4 py-3">Role</th>
-                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">ভূমিকা</th>
+                    <th className="px-4 py-3">অবস্থা</th>
                     <th className="px-4 py-3">ভেরিফিকেশন</th>
-                    <th className="px-4 py-3 text-right">Action</th>
+                    <th className="px-4 py-3 text-right">কার্যক্রম</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -85,8 +97,8 @@ export default async function AdminUsersPage({
                         </div>
                       </td>
                       <td className="px-4 py-3 text-slate-600">{ROLE_LABELS[p.role].bn}</td>
-                      <td className="px-4 py-3"><Badge variant={p.account_status === "active" ? "success" : "danger"}>{p.account_status}</Badge></td>
-                      <td className="px-4 py-3"><Badge variant={p.verification_status === "verified" ? "success" : "default"}>{p.verification_status}</Badge></td>
+                      <td className="px-4 py-3"><Badge variant={p.account_status === "active" ? "success" : "danger"}>{ACCOUNT_LABELS[p.account_status] ?? p.account_status}</Badge></td>
+                      <td className="px-4 py-3"><Badge variant={p.verification_status === "verified" ? "success" : "default"}>{VERIFICATION_LABELS[p.verification_status] ?? p.verification_status}</Badge></td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">
                           {p.role === "teacher" && <AdminPremiumToggle teacherId={p.id} premium={p.is_premium} />}

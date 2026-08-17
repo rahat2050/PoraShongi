@@ -18,6 +18,17 @@ const STATUS_VARIANT: Record<string, BadgeVariant> = {
   resolved: "success",
   dismissed: "default",
 };
+const STATUS_LABELS: Record<string, string> = { open: "খোলা", investigating: "তদন্তে", resolved: "সমাধান", dismissed: "খারিজ" };
+const TARGET_LABELS: Record<string, string> = { teacher: "শিক্ষক", student: "শিক্ষার্থী", guardian: "অভিভাবক", tuition: "টিউশন", review: "রিভিউ", conversation: "কথোপকথন" };
+const CATEGORY_LABELS: Record<string, string> = {
+  fake_profile: "ভুয়া প্রোফাইল",
+  harassment: "হয়রানি",
+  inappropriate: "অশোভন আচরণ",
+  scam: "প্রতারণা",
+  spam: "স্প্যাম",
+  safety_concern: "নিরাপত্তা উদ্বেগ",
+  other: "অন্যান্য",
+};
 
 export default async function AdminReportsPage({
   searchParams,
@@ -48,8 +59,8 @@ export default async function AdminReportsPage({
           <a
             key={f.label}
             href={`/admin/reports${buildQueryString({ status: f.value })}`}
-            className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-              (status ?? undefined) === f.value ? "border-brand-600 bg-brand-600 text-white" : "border-slate-300 bg-white text-slate-600 hover:border-brand-400"
+            className={`inline-flex min-h-11 items-center rounded-lg border px-3 text-sm font-medium transition-colors ${
+              (status ?? undefined) === f.value ? "border-brand-600 bg-brand-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-brand-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
             }`}
           >
             {f.label}
@@ -73,16 +84,16 @@ export default async function AdminReportsPage({
                   <div key={r.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="capitalize">{r.target_type}</Badge>
-                        <Badge variant="outline">{r.category.replace("_", " ")}</Badge>
-                        <Badge variant={STATUS_VARIANT[r.status] ?? "default"}>{r.status}</Badge>
+                        <Badge variant="outline" className="capitalize">{TARGET_LABELS[r.target_type] ?? r.target_type}</Badge>
+                        <Badge variant="outline">{CATEGORY_LABELS[r.category] ?? r.category}</Badge>
+                        <Badge variant={STATUS_VARIANT[r.status] ?? "default"}>{STATUS_LABELS[r.status] ?? r.status}</Badge>
                       </div>
                       {r.details && <p className="mt-1.5 text-sm text-slate-600">{r.details}</p>}
                       <p className="mt-1 text-xs text-slate-400">
                         রিপোর্টার: {reporter?.display_name || reporter?.full_name || "—"} · {formatDate(r.created_at)}
                       </p>
                     </div>
-                    <AdminReportButtons reportId={r.id} />
+                    <AdminReportButtons reportId={r.id} status={r.status} />
                   </div>
                 );
               })}
