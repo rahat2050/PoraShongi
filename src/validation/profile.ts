@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeProfileImageUrl } from "@/lib/profile-image-url";
 
 const optionalText = (max: number) =>
   z.string().trim().max(max).optional().or(z.literal("")).transform((v) => v || null);
@@ -10,7 +11,15 @@ export const baseProfileSchema = z.object({
   gender: z.string().optional().or(z.literal("")),
   isMinor: z.boolean().optional(),
   guardianConsent: z.boolean().optional(),
-  avatarUrl: z.string().trim().url("সঠিক ছবির URL দিন।").max(500).optional().or(z.literal("")),
+  avatarUrl: z.string().trim().optional().transform((value, ctx) => {
+    if (!value) return "";
+    const result = normalizeProfileImageUrl(value);
+    if (!result.ok) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: result.error });
+      return z.NEVER;
+    }
+    return result.url;
+  }),
 });
 
 export const studentProfileSchema = z.object({
