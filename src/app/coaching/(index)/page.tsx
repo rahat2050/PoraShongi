@@ -13,7 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 export const metadata: Metadata = {
   title: "কোচিং সেন্টার",
   description: "PoraSathi-তে প্রকাশিত কোচিং সেন্টার খুঁজুন।",
-  robots: { index: false, follow: true },
+  alternates: { canonical: "/coaching" },
 };
 export const dynamic = "force-dynamic";
 

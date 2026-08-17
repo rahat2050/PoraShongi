@@ -14,7 +14,7 @@ import { formatDate } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "ব্লগ — পড়াশোনার টিপস",
   description: "PoraSathi শিক্ষা ব্লগে প্রকাশিত পড়াশোনার টিপস ও গাইড।",
-  robots: { index: false, follow: true },
+  alternates: { canonical: "/blog" },
 };
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export default async function BlogPage() {
           </div>
         </div>
         {canWrite && (
-          <Link href="/admin/blog/new" className={buttonStyles({ size: "sm" })}>নতুন পোস্ট</Link>
+          <Link href="/blog/new" className={buttonStyles({ size: "sm" })}>নতুন পোস্ট</Link>
         )}
       </div>
 

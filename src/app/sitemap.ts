@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { searchTeachers } from "@/lib/data/teachers";
+import { listBlogPosts } from "@/lib/data/features";
+import { listCoachingCenters } from "@/lib/data/ecosystem";
 
 export const revalidate = 3600;
 
@@ -12,6 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/teachers`, changeFrequency: "daily", priority: 0.9 },
     { url: `${base}/leaderboard`, changeFrequency: "daily", priority: 0.7 },
+    { url: `${base}/blog`, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${base}/coaching`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${base}/safety`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/verification`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
@@ -20,6 +24,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   if (!isSupabaseConfigured()) return entries;
+
+  const [postsResult, centersResult] = await Promise.all([
+    listBlogPosts(100),
+    listCoachingCenters(),
+  ]);
+  for (const post of postsResult.data ?? []) {
+    entries.push({
+      url: `${base}/blog/${encodeURIComponent(post.slug)}`,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    });
+  }
+  for (const center of centersResult.data ?? []) {
+    entries.push({
+      url: `${base}/coaching/${center.id}`,
+      changeFrequency: "weekly",
+      priority: 0.5,
+    });
+  }
 
   const pageSize = 50;
   let page = 1;

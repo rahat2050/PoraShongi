@@ -52,10 +52,10 @@ export function BlogForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <FormField label="টাইটেল" required>
-        <Input placeholder="যেমন: SSC Math-এ ভালো করার ৫টা টিপস" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input placeholder="যেমন: SSC Math-এ ভালো করার ৫টা টিপস" value={title} onChange={(e) => setTitle(e.target.value)} minLength={3} maxLength={160} required />
       </FormField>
       <FormField label="Slug (লিংকের জন্য)" hint="খালি রাখলে টাইটেল থেকে বানাবে">
-        <Input placeholder="ssc-math-tips" value={slug} onChange={(e) => setSlug(e.target.value)} />
+        <Input placeholder="ssc-math-tips" value={slug} onChange={(e) => setSlug(e.target.value)} maxLength={120} />
       </FormField>
       <FormField label="ক্যাটাগরি">
         <Select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -63,10 +63,10 @@ export function BlogForm() {
         </Select>
       </FormField>
       <FormField label="সংক্ষিপ্ত বর্ণনা (excerpt)">
-        <Input placeholder="এক লাইনে পোস্টের সারমর্ম…" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
+        <Input placeholder="এক লাইনে পোস্টের সারমর্ম…" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} maxLength={500} />
       </FormField>
       <FormField label="কনটেন্ট" required>
-        <Textarea rows={8} placeholder="পুরো লেখা এখানে…" value={content} onChange={(e) => setContent(e.target.value)} />
+        <Textarea rows={8} placeholder="পুরো লেখা এখানে…" value={content} onChange={(e) => setContent(e.target.value)} minLength={10} maxLength={20000} required />
       </FormField>
       <div className="flex justify-end">
         <Button type="submit" loading={pending}>প্রকাশ করুন</Button>

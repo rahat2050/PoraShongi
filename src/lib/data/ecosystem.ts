@@ -20,6 +20,20 @@ export async function listCoachingCenters(
   return ok((data ?? []) as CoachingCenter[]);
 }
 
+export async function getCoachingCenter(
+  centerId: string,
+): Promise<DataResult<CoachingCenter | null>> {
+  const db = getPublicDb(300);
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db
+    .from("coaching_centers")
+    .select("id,owner_id,name,description,district,area,contact,website,verified,created_at,updated_at")
+    .eq("id", centerId)
+    .maybeSingle();
+  if (error) return fail(error.message);
+  return ok((data as CoachingCenter | null) ?? null);
+}
+
 export async function listEducationResources(
   subject?: string,
 ): Promise<DataResult<EducationResource[]>> {

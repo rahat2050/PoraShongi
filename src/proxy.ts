@@ -36,6 +36,13 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+  if (pathname === "/admin/blog/new") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/blog/new";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
+
   const isProtected = PROTECTED_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );

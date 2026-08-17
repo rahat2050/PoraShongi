@@ -8,7 +8,7 @@ const items = [
   { href: "/admin/reports", label: "রিপোর্ট" },
   { href: "/admin/audit", label: "অডিট লগ" },
   { href: "/admin/analytics", label: "পরিসংখ্যান" },
-  { href: "/admin/blog/new", label: "নতুন ব্লগ" },
+  { href: "/blog/new", label: "নতুন ব্লগ" },
 ];
 
 export const metadata: Metadata = { robots: { index: false, follow: false, nocache: true } };

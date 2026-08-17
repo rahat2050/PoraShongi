@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -6,26 +7,26 @@ import { getBlogPost } from "@/lib/data/features";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { formatDate } from "@/lib/utils";
+import { getSiteUrl } from "@/config/site";
 
 export const dynamic = "force-dynamic";
 
+const getPost = cache((slug: string) => getBlogPost(slug));
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  try {
-    const post = (await getBlogPost(slug)).data;
-    if (!post) return { title: "ব্লগ" };
-    return {
-      title: post.title,
-      description: post.excerpt ?? post.title,
-    };
-  } catch {
-    return { title: "ব্লগ" };
-  }
+  const post = (await getPost(slug)).data;
+  if (!post) notFound();
+  return {
+    title: post.title,
+    description: post.excerpt ?? post.title,
+    alternates: { canonical: `/blog/${post.slug}` },
+  };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = (await getBlogPost(slug)).data;
+  const post = (await getPost(slug)).data;
   if (!post) notFound();
 
   return (
@@ -44,7 +45,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
             <p className="text-xs text-slate-400">শেয়ার করুন:</p>
             <ShareButtons
-              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`}
+              url={`${getSiteUrl()}/blog/${post.slug}`}
               title={post.title}
             />
           </div>

@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
   // Keep dynamic metadata in the initial <head>. This also ensures a missing
   // profile can return its real 404 status before response headers are sent.
   htmlLimitedBots: /.*/,
+  async redirects() {
+    return [
+      { source: "/admin/blog/new", destination: "/blog/new", permanent: false },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
