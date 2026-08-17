@@ -113,6 +113,7 @@ test("mobile navigation does not overlap the visible back-to-top button", async 
   const button = page.getByRole("button", { name: "উপরে যান" });
   await expect(button).toBeVisible();
   await expect(button).toHaveClass(/translate-y-0/);
+  await page.waitForTimeout(250); // wait for the CSS transform transition to settle
 
   const overlap = await page.evaluate(() => {
     const backToTop = [...document.querySelectorAll("button")].find(

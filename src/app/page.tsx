@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuickTeacherSearch } from "@/components/home/quick-teacher-search";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
+import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
 import type { HomeFeed } from "@/types/index";
 
 const roles = [
@@ -52,6 +53,14 @@ export default async function Home() {
   const topTeachers = feed.teachers.filter((teacher) => !featuredIds.has(teacher.id));
   const shownIds = new Set([...featuredIds, ...topTeachers.map((teacher) => teacher.id)]);
   const recentTeachers = feed.recent_teachers.filter((teacher) => !shownIds.has(teacher.id));
+  const liveStats: LiveStatItem[] = [
+    { key: "students", label: "সংযুক্ত শিক্ষার্থী", value: stats?.students ?? 0 },
+    { key: "teachers", label: "নিবন্ধিত শিক্ষক", value: stats?.teachers ?? 0 },
+    { key: "connections", label: "সফল সংযোগ", value: stats?.successful_connections ?? 0 },
+    { key: "tuitions", label: "সক্রিয় টিউশন", value: stats?.open_tuitions ?? 0 },
+    { key: "verified", label: "যাচাইকৃত শিক্ষক", value: stats?.verified_teachers ?? 0 },
+    { key: "districts", label: "জেলা কভারেজ", value: stats?.districts ?? 0 },
+  ];
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -111,23 +120,6 @@ export default async function Home() {
 
           <QuickTeacherSearch />
 
-          {stats && (
-            <div className="mx-auto mt-10 grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6" aria-label="লাইভ প্ল্যাটফর্ম পরিসংখ্যান">
-              {[
-                { value: stats.students ?? 0, label: "শিক্ষার্থী" },
-                { value: stats.teachers ?? 0, label: "শিক্ষক" },
-                { value: stats.verified_teachers ?? 0, label: "যাচাইকৃত শিক্ষক" },
-                { value: stats.successful_connections ?? 0, label: "সফল সংযোগ" },
-                { value: stats.open_tuitions ?? 0, label: "সক্রিয় টিউশন" },
-                { value: stats.districts ?? 0, label: "জেলা কভারেজ" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-brand-100 bg-white/80 px-3 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
-                  <p className="text-2xl font-extrabold text-brand-800 dark:text-brand-300">{item.value}</p>
-                  <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-300">{item.label}</p>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
@@ -153,6 +145,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <LiveStatsSection items={liveStats} />
 
       {stats && ((stats.popular_subjects?.length ?? 0) > 0 || (stats.popular_classes?.length ?? 0) > 0) && (
         <section className="border-y border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950">
