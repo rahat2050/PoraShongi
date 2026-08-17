@@ -5,6 +5,7 @@ import { type User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { type UserRole } from "@/lib/auth/roles";
+import { hasAdminAccess } from "@/lib/auth/admin-access";
 import { type Profile } from "@/types/index";
 
 export const getCurrentUser = cache(async (): Promise<User | null> => {
@@ -56,6 +57,6 @@ export async function requireRole(roles: readonly UserRole[]): Promise<Profile> 
 
 export async function requireAdmin(): Promise<Profile> {
   const profile = await requireProfile();
-  if (profile.role !== "admin" && !profile.is_super_admin) redirect("/dashboard");
+  if (!hasAdminAccess(profile.role, profile.is_super_admin)) redirect("/dashboard");
   return profile;
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getCurrentProfile } from "@/lib/auth/server-auth";
+import { requireAdmin } from "@/lib/auth/server-auth";
 
 const items = [
   { href: "/admin", label: "ওভারভিউ" },
@@ -16,9 +15,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false, nocac
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const profile = await getCurrentProfile();
-  if (!profile) redirect("/login");
-  if (profile.role !== "admin" && !profile.is_super_admin) redirect("/dashboard");
+  const profile = await requireAdmin();
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">

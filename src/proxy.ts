@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseAnonKey, getSupabaseUrl, isSupabaseConfigured } from "@/lib/env";
+import { hasAdminAccess } from "@/lib/auth/admin-access";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/admin", "/messages", "/account"];
 
@@ -50,7 +51,7 @@ export async function proxy(request: NextRequest) {
   if (user && isProtected && pathname !== "/account") {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("account_status")
+      .select("account_status,role,is_super_admin")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -59,6 +60,17 @@ export async function proxy(request: NextRequest) {
       redirectUrl.pathname = "/account";
       redirectUrl.search = "";
       redirectUrl.searchParams.set("inactive", profile.account_status);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    if (
+      profile
+      && (pathname === "/admin" || pathname.startsWith("/admin/"))
+      && !hasAdminAccess(profile.role, profile.is_super_admin)
+    ) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      redirectUrl.search = "";
       return NextResponse.redirect(redirectUrl);
     }
   }

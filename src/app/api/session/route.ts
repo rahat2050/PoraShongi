@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import { getAdminLevel } from "@/lib/auth/admin-access";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,8 @@ export async function GET() {
       .maybeSingle(),
   ]);
 
+  const adminLevel = getAdminLevel(profile?.role, profile?.is_super_admin);
+
   return NextResponse.json(
     {
       authenticated: true,
@@ -39,8 +42,9 @@ export async function GET() {
         email: user.email ?? null,
         name: typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null,
         role: profile?.role ?? null,
-        superAdmin: profile?.is_super_admin ?? false,
         accountStatus: profile?.account_status ?? null,
+        // Omit privileged capability metadata entirely for normal accounts.
+        ...(adminLevel ? { adminLevel } : {}),
       },
       unreadNotifications: count ?? 0,
     },
