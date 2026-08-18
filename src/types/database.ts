@@ -563,6 +563,7 @@ export interface Database {
       get_teacher_phone: { Args: { p_teacher_id: string }; Returns: string };
       cleanup_old_notifications: { Args: { p_days?: number | null }; Returns: number };
       cleanup_expired_messages: { Args: Record<PropertyKey, never>; Returns: number };
+      permanently_delete_own_account: { Args: { p_confirmation: string }; Returns: undefined };
       record_profile_view: { Args: { p_teacher_id: string }; Returns: undefined };
       is_premium_active: { Args: { p_profile_id: string }; Returns: boolean };
       match_tuitions_for_teacher_rpc: {

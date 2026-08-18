@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { Download, ShieldCheck, Trash2 } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { AccountStatusToggle } from "@/features/account/account-status-toggle";
 import { ChangePasswordForm } from "@/features/account/change-password-form";
+import { buttonStyles } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "প্রাইভেসি ও অ্যাকাউন্ট",
@@ -61,6 +63,11 @@ export default async function AccountPage() {
           <ChangePasswordForm />
         </CardContent>
       </Card>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Card><CardContent className="p-5"><Download className="h-5 w-5 text-brand-700"/><h2 className="mt-2 font-semibold">নিজের ডেটা Export</h2><p className="mt-1 text-sm text-slate-500">JSON বা CSV সরাসরি download করুন।</p><Link href="/account/export" className={buttonStyles({variant:"outline",size:"sm",className:"mt-4"})}>Export</Link></CardContent></Card>
+        <Card><CardContent className="p-5"><Trash2 className="h-5 w-5 text-red-600"/><h2 className="mt-2 font-semibold">Permanent Delete</h2><p className="mt-1 text-sm text-slate-500">Private data ও login স্থায়ীভাবে সরান।</p><Link href="/account/delete" className={buttonStyles({variant:"danger",size:"sm",className:"mt-4"})}>Delete options</Link></CardContent></Card>
+      </div>
 
       <Card className="mt-6">
         <CardHeader>

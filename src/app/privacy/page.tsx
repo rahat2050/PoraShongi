@@ -39,7 +39,7 @@ export default function PrivacyPage() {
       </ContentSection>
 
       <ContentSection title="তথ্য সংরক্ষণ ও আপনার অধিকার">
-        <p>Chat message-এর মূল লেখা পাঠানোর ৪৮ ঘণ্টা পর Supabase থেকে স্বয়ংক্রিয়ভাবে মুছে যায়। কথোপকথনের অংশগ্রহণকারী সম্পর্ক, নিরাপত্তা রিপোর্ট এবং আইনগতভাবে প্রয়োজনীয় সীমিত metadata বেশি সময় রাখা হতে পারে। অন্য সেবা-তথ্য নিরাপত্তা, বিরোধ নিষ্পত্তি ও আইনগত প্রয়োজন অনুযায়ী রাখা হয়। অ্যাকাউন্ট থেকে তথ্য সংশোধন বা নিষ্ক্রিয় করতে পারেন। তথ্যের কপি, সংশোধন বা স্থায়ী মুছে ফেলার অনুরোধের জন্য hello@porasathi.com-এ লিখুন। পরিচয় যাচাই প্রয়োজন হতে পারে।</p>
+        <p>Chat message-এর মূল লেখা পাঠানোর ৪৮ ঘণ্টা পর Supabase থেকে স্বয়ংক্রিয়ভাবে মুছে যায়। কথোপকথনের অংশগ্রহণকারী সম্পর্ক, নিরাপত্তা রিপোর্ট এবং আইনগতভাবে প্রয়োজনীয় সীমিত metadata বেশি সময় রাখা হতে পারে। অন্য সেবা-তথ্য নিরাপত্তা, বিরোধ নিষ্পত্তি ও আইনগত প্রয়োজন অনুযায়ী রাখা হয়। অ্যাকাউন্ট থেকে তথ্য সংশোধন/নিষ্ক্রিয়, JSON/CSV export এবং confirmation-gated permanent deletion করা যায়। Export-এ message body থাকে না। Permanent deletion private data সরায়; অন্য পক্ষের tuition/review integrity রক্ষায় minimal anonymous “Deleted User” shell থাকতে পারে। সহায়তার জন্য hello@porasathi.com-এ লিখুন।</p>
       </ContentSection>
 
       <ContentSection title="অপ্রাপ্তবয়স্ক ব্যবহারকারী">

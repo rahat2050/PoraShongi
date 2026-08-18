@@ -197,6 +197,14 @@ test("message retention policy is visible to users", async ({ page }) => {
   }
 });
 
+test("account export and deletion routes are protected", async ({ page, request }) => {
+  for (const path of ["/account/export", "/account/delete"]) {
+    await page.goto(path);
+    await expect(page).toHaveURL(/\/login/);
+  }
+  expect((await request.get("/api/account/export")).status()).toBe(401);
+});
+
 test("resource creation route is protected", async ({ page }) => {
   await page.goto("/dashboard/resources/new");
   if (new URL(page.url()).pathname === "/dashboard/resources/new") await expect(page.getByText("Supabase সেটআপ প্রয়োজন")).toBeVisible();
