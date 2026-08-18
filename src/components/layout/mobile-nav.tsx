@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  Bookmark,
   BookOpen,
   CalendarDays,
   Compass,
@@ -121,6 +122,7 @@ export function MobileNav() {
   const roleLinks = role === "teacher"
     ? [
         { href: "/tuitions", label: "টিউশন সুযোগ", icon: ScrollText },
+        { href: "/dashboard/saved-tuitions", label: "সেভ করা টিউশন", icon: Bookmark },
         { href: "/dashboard/requests", label: "প্রাপ্ত অনুরোধ", icon: Send },
         { href: "/dashboard/schedule", label: "সময়সূচি", icon: CalendarDays },
       ]

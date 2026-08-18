@@ -9,6 +9,7 @@ const items = [
   { href: "/dashboard", label: "ওভারভিউ", roles: ["student", "guardian", "teacher"] },
   { href: "/dashboard/tuitions", label: "আমার টিউশন", roles: ["student", "guardian"] },
   { href: "/tuitions", label: "টিউশন খুঁজুন", roles: ["teacher"] },
+  { href: "/dashboard/saved-tuitions", label: "সেভ করা টিউশন", roles: ["teacher"] },
   { href: "/dashboard/requests", label: "অনুরোধ", roles: ["student", "guardian", "teacher"] },
   { href: "/dashboard/schedule", label: "সময়সূচি", roles: ["student", "guardian", "teacher"] },
   { href: "/dashboard/notifications", label: "নোটিফিকেশন", roles: ["student", "guardian", "teacher"] },
