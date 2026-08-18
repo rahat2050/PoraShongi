@@ -32,3 +32,4 @@ yarn-error.log*
 /test-results/
 /playwright-report/
 /blob-report/
+/tests/e2e-auth/.auth/
