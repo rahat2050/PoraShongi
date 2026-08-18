@@ -5,8 +5,47 @@ import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
 import { type VerificationStatus } from "@/types/index";
+import { isUuid } from "@/lib/utils";
 
 const VERIFICATION_STATUSES: VerificationStatus[] = ["unverified", "pending", "verified", "rejected"];
+
+export async function adminSetTuitionFeatured(
+  tuitionId: string,
+  featured: boolean,
+): Promise<ActionResult> {
+  const adminProfile = await requireAdmin();
+  if (!isUuid(tuitionId)) return failure("টিউশন পরিচয় সঠিক নয়।");
+  const supabase = await createClient();
+  const { data: tuition, error: readError } = await supabase
+    .from("tuitions")
+    .select("id,status,is_featured,title")
+    .eq("id", tuitionId)
+    .maybeSingle();
+  if (readError) return failure(readError.message);
+  if (!tuition) return failure("টিউশন পাওয়া যায়নি।");
+  if (featured && tuition.status !== "open") return failure("শুধু খোলা টিউশন feature করা যায়।");
+
+  const { data, error } = await supabase.from("tuitions")
+    .update({ is_featured: featured, featured_until: null })
+    .eq("id", tuitionId)
+    .select("id")
+    .maybeSingle();
+  if (error) return failure(error.message);
+  if (!data) return failure("টিউশন feature করা যায়নি।");
+
+  await supabase.from("admin_audit_log").insert({
+    admin_id: adminProfile.id,
+    action: "tuition_featuring",
+    target_type: "tuition",
+    target_id: tuitionId,
+    details: { featured, title: tuition.title },
+  });
+  revalidatePath("/admin");
+  revalidatePath("/admin/tuitions");
+  revalidatePath("/tuitions");
+  revalidatePath(`/tuitions/${tuitionId}`);
+  return success();
+}
 
 export async function adminSetVerification(
   userId: string,

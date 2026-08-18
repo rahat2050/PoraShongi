@@ -196,6 +196,11 @@ test("message retention policy is visible to users", async ({ page }) => {
   }
 });
 
+test("admin tuition featuring route is protected", async ({ page }) => {
+  await page.goto("/admin/tuitions");
+  await expect(page).toHaveURL(/\/login/);
+});
+
 test("saved tuitions dashboard preserves the anonymous return destination", async ({ page }) => {
   await page.goto("/dashboard/saved-tuitions");
   if (new URL(page.url()).pathname === "/dashboard/saved-tuitions") {
