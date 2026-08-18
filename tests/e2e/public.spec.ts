@@ -32,6 +32,7 @@ const accessibilityPages = [
   ["safety", "/safety"],
   ["contact", "/contact"],
   ["resources", "/resources"],
+  ["premium", "/premium"],
 ] as const;
 
 for (const [name, path] of accessibilityPages) {
@@ -203,6 +204,13 @@ test("account export and deletion routes are protected", async ({ page, request 
     await expect(page).toHaveURL(/\/login/);
   }
   expect((await request.get("/api/account/export")).status()).toBe(401);
+});
+
+test("premium WhatsApp contact uses the approved admin number", async ({ page }) => {
+  await page.goto("/premium");
+  const link = page.getByRole("link", { name: /WhatsApp-এ যোগাযোগ করুন/ });
+  await expect(link).toHaveAttribute("href", /https:\/\/wa\.me\/8801626224878\?text=/);
+  await expect(page.getByText("01626224878")).toBeVisible();
 });
 
 test("resource creation route is protected", async ({ page }) => {

@@ -45,6 +45,7 @@ export function Footer() {
               <li><Link href="/blog" className={linkClass}>শিক্ষা ব্লগ</Link></li>
               <li><Link href="/coaching" className={linkClass}>কোচিং সেন্টার</Link></li>
               <li><Link href="/resources" className={linkClass}>শিক্ষা রিসোর্স</Link></li>
+              <li><Link href="/premium" className={linkClass}>Premium</Link></li>
             </FooterGroup>
             <FooterGroup title="বিশ্বাস ও নিরাপত্তা">
               <li><Link href="/safety" className={linkClass}>নিরাপত্তা</Link></li>
