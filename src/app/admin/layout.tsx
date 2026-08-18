@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/server-auth";
 const items = [
   { href: "/admin", label: "ওভারভিউ" },
   { href: "/admin/users", label: "ব্যবহারকারী" },
+  { href: "/admin/tuitions", label: "টিউশন" },
   { href: "/admin/reports", label: "রিপোর্ট" },
   { href: "/admin/audit", label: "অডিট লগ" },
   { href: "/admin/analytics", label: "পরিসংখ্যান" },

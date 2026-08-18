@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Sparkles } from "lucide-react";
 import { type TuitionPublic } from "@/types/index";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,9 +9,10 @@ import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
 export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; action?: React.ReactNode }) {
   const location = [tuition.area, tuition.district].filter(Boolean).join(", ");
+  const featured = Boolean(tuition.is_featured && tuition.status === "open");
 
   return (
-    <Card className="transition-shadow hover:shadow-md">
+    <Card className={`transition-all hover:shadow-md ${featured ? "border-amber-300 bg-gradient-to-br from-amber-50 to-white shadow-md ring-1 ring-amber-200 dark:border-amber-700 dark:from-amber-950/30 dark:to-slate-800 dark:ring-amber-900" : ""}`}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -19,7 +20,7 @@ export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; actio
               <Link href={`/tuitions/${tuition.id}`} className="text-base font-semibold text-slate-900 hover:text-brand-700">
                 {tuition.title}
               </Link>
-              {tuition.is_featured && <Badge variant="accent">Featured</Badge>}
+              {featured && <Badge variant="accent"><Sparkles className="h-3 w-3" aria-hidden /> Featured টিউশন</Badge>}
             </div>
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">

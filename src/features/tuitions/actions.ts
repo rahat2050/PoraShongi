@@ -245,36 +245,3 @@ export async function setMeetingLink(
   revalidatePath(`/tuitions/${tuitionId}`);
   return success();
 }
-
-/** Featured toggle — admin বা প্রিমিয়াম teacher নিজের tuition feature করতে পারে। */
-export async function toggleFeatured(
-  tuitionId: string,
-): Promise<ActionResult<{ featured: boolean }>> {
-  const profile = await requireProfile();
-  const supabase = await createClient();
-
-  const { data: existing } = await supabase
-    .from("tuitions")
-    .select("poster_id,is_featured")
-    .eq("id", tuitionId)
-    .maybeSingle();
-
-  if (!existing) return failure("Tuition পাওয়া যায়নি।");
-
-  const isOwner = existing.poster_id === profile.id;
-  const canFeature = profile.role === "admin" || (isOwner && profile.is_premium);
-  if (!canFeature) {
-    return failure("শুধু প্রিমিয়াম শিক্ষক বা অ্যাডমিন feature করতে পারবেন।");
-  }
-
-  const next = !existing.is_featured;
-  const { error } = await supabase
-    .from("tuitions")
-    .update({ is_featured: next, featured_until: next ? null : null })
-    .eq("id", tuitionId);
-  if (error) return failure(error.message);
-
-  revalidatePath(`/dashboard/tuitions/${tuitionId}`);
-  revalidatePath("/tuitions");
-  return success({ featured: next });
-}
