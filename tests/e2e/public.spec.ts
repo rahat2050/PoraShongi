@@ -31,6 +31,7 @@ const accessibilityPages = [
   ["terms", "/terms"],
   ["safety", "/safety"],
   ["contact", "/contact"],
+  ["resources", "/resources"],
 ] as const;
 
 for (const [name, path] of accessibilityPages) {
@@ -194,6 +195,12 @@ test("message retention policy is visible to users", async ({ page }) => {
     await page.goto(path);
     await expect(page.getByText(/৪৮ ঘণ্টা/).first()).toBeVisible();
   }
+});
+
+test("resource creation route is protected", async ({ page }) => {
+  await page.goto("/dashboard/resources/new");
+  if (new URL(page.url()).pathname === "/dashboard/resources/new") await expect(page.getByText("Supabase সেটআপ প্রয়োজন")).toBeVisible();
+  else await expect(page).toHaveURL(/\/login/);
 });
 
 test("admin tuition featuring route is protected", async ({ page }) => {

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, ScrollText, ShieldCheck, Sparkles, Trophy } from "lucide-react";
+import { BookOpen, Compass, ScrollText, ShieldCheck, Sparkles, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন", shortLabel: "শিক্ষক", icon: Compass },
   { href: "/tuitions", label: "টিউশন খুঁজুন", shortLabel: "টিউশন", icon: ScrollText },
   { href: "/leaderboard", label: "সেরা শিক্ষক", shortLabel: "সেরা", icon: Trophy },
+  { href: "/resources", label: "শিক্ষা রিসোর্স", shortLabel: "রিসোর্স", icon: BookOpen },
   { href: "/#how", label: "কীভাবে কাজ করে", shortLabel: "কীভাবে", icon: Sparkles, homeAnchor: true },
   { href: "/safety", label: "নিরাপত্তা", shortLabel: "নিরাপত্তা", icon: ShieldCheck },
 ] as const;
