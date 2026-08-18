@@ -10,9 +10,11 @@ import { cn } from "@/lib/utils";
 export function SaveTuitionButton({
   tuitionId,
   initiallySaved,
+  onSavedChange,
 }: {
   tuitionId: string;
   initiallySaved: boolean;
+  onSavedChange?: (saved: boolean) => void;
 }) {
   const [saved, setSaved] = useState(initiallySaved);
   const [pending, startTransition] = useTransition();
@@ -26,7 +28,8 @@ export function SaveTuitionButton({
         return;
       }
       setSaved(result.data.saved);
-      toast(result.data.saved ? "Tuition save হয়েছে" : "সেভ থেকে বাদ", "success");
+      onSavedChange?.(result.data.saved);
+      toast(result.data.saved ? "টিউশন সেভ হয়েছে" : "সেভ থেকে বাদ", "success");
     });
   }
 
@@ -44,7 +47,7 @@ export function SaveTuitionButton({
       )}
     >
       <Bookmark className={cn("h-4 w-4", saved && "fill-current")} aria-hidden />
-      {saved ? "Saved" : "Save"}
+      {saved ? "সেভ করা" : "সেভ করুন"}
     </button>
   );
 }

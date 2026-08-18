@@ -7,7 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
-export function TuitionCard({ tuition }: { tuition: TuitionPublic }) {
+export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; action?: React.ReactNode }) {
   const location = [tuition.area, tuition.district].filter(Boolean).join(", ");
 
   return (
@@ -22,7 +22,10 @@ export function TuitionCard({ tuition }: { tuition: TuitionPublic }) {
               {tuition.is_featured && <Badge variant="accent">Featured</Badge>}
             </div>
           </div>
-          <TuitionStatusBadge status={tuition.status} />
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <TuitionStatusBadge status={tuition.status} />
+            {action}
+          </div>
         </div>
 
         <div className="mt-2 flex flex-wrap gap-1.5">

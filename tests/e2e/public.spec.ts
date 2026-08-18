@@ -196,6 +196,15 @@ test("message retention policy is visible to users", async ({ page }) => {
   }
 });
 
+test("saved tuitions dashboard preserves the anonymous return destination", async ({ page }) => {
+  await page.goto("/dashboard/saved-tuitions");
+  if (new URL(page.url()).pathname === "/dashboard/saved-tuitions") {
+    await expect(page.getByText("Supabase সেটআপ প্রয়োজন")).toBeVisible();
+  } else {
+    await expect(page).toHaveURL(/\/login\?next=%2Fdashboard%2Fsaved-tuitions$/);
+  }
+});
+
 test("referral URL pre-fills a sanitized referral code", async ({ page }) => {
   await page.goto("/register?ref=ps-check-123");
   await expect(page.locator("#referralCode")).toHaveValue("PSCHECK123");
@@ -277,6 +286,7 @@ test("mobile user menu exposes important anonymous actions", async ({ page }, te
   await expect(panel.getByRole("link", { name: "শিক্ষা ব্লগ" })).toBeVisible();
   await expect(panel.getByRole("link", { name: "কোচিং সেন্টার" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "লগ আউট" })).toHaveCount(0);
+  await expect(page.locator('nav[aria-label="মোবাইল নেভিগেশন"]').getByRole("link", { name: "সেভড" })).toHaveCount(0);
 
   const panelBox = await panel.boundingBox();
   const viewport = page.viewportSize();
@@ -310,6 +320,11 @@ test("normal account menu never exposes admin identity or controls", async ({ pa
   await expect(panel.getByText("সাধারণ শিক্ষক", { exact: true })).toBeVisible();
   await expect(panel.locator('a[href="/admin"]')).toHaveCount(0);
   await expect(panel.getByText(/সুপার অ্যাডমিন/)).toHaveCount(0);
+  await expect(panel.getByRole("link", { name: "সেভ করা টিউশন" })).toHaveAttribute("href", "/dashboard/saved-tuitions");
+
+  const bottomNav = page.locator('nav[aria-label="মোবাইল নেভিগেশন"]');
+  await expect(bottomNav.getByRole("link", { name: "সেভড" })).toHaveAttribute("href", "/dashboard/saved-tuitions");
+  await expect(bottomNav.getByRole("link", { name: "খুঁজুন" })).toHaveCount(0);
 });
 
 test("super admin controls remain visible only with the server capability", async ({ page }, testInfo) => {
