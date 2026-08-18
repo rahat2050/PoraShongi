@@ -53,6 +53,18 @@ test("dark mode remains readable and updates the document theme", async ({ page 
   expect(await accessibilityViolations(page)).toEqual([]);
 });
 
+test("lightweight motion respects reduced-motion preference", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const state = await page.locator(".motion-reveal").first().evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { animation: style.animationName, opacity: style.opacity, transform: style.transform };
+  });
+  expect(state.animation).toBe("none");
+  expect(state.opacity).toBe("1");
+  expect(state.transform).toBe("none");
+});
+
 test("required auth forms are blocked before any Supabase request", async ({ page }) => {
   let supabaseRequests = 0;
   page.on("request", (request) => {

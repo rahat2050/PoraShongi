@@ -75,7 +75,7 @@ export function HeroSection() {
 
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
-          <div className="text-center lg:text-left">
+          <div className="motion-reveal text-center lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3.5 py-2 text-xs font-semibold text-brand-800 shadow-sm backdrop-blur dark:border-brand-800 dark:bg-slate-900/70 dark:text-brand-200">
               <span className="h-2 w-2 rounded-full bg-brand-500" aria-hidden />
               বাংলাদেশের টিউশন মার্কেটপ্লেস
@@ -111,7 +111,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl lg:mx-0 lg:justify-self-end">
+          <div className="motion-reveal relative mx-auto w-full max-w-xl lg:mx-0 lg:justify-self-end">
             <div className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-gradient-to-br from-brand-300/35 via-white/10 to-amber-300/30 blur-2xl dark:from-brand-700/25 dark:to-amber-600/10" aria-hidden />
             <div className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/85 p-3 shadow-[0_32px_90px_-34px_rgba(4,47,46,.45)] backdrop-blur-xl dark:border-slate-700/80 dark:bg-slate-900/85">
               <div className="flex items-center justify-between border-b border-slate-200/80 px-3 pb-3 pt-1 dark:border-slate-700">

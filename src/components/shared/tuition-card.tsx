@@ -12,7 +12,7 @@ export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; actio
   const featured = Boolean(tuition.is_featured && tuition.status === "open");
 
   return (
-    <Card className={`transition-all hover:shadow-md ${featured ? "border-amber-300 bg-gradient-to-br from-amber-50 to-white shadow-md ring-1 ring-amber-200 dark:border-amber-700 dark:from-amber-950/30 dark:to-slate-800 dark:ring-amber-900" : ""}`}>
+    <Card className={`motion-card transition-all hover:shadow-md ${featured ? "border-amber-300 bg-gradient-to-br from-amber-50 to-white shadow-md ring-1 ring-amber-200 dark:border-amber-700 dark:from-amber-950/30 dark:to-slate-800 dark:ring-amber-900" : ""}`}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
