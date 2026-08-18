@@ -1,5 +1,5 @@
 import "server-only";
-import { getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
 import { type CoachingCenter, type EducationResource } from "@/types/index";
 
 export async function listCoachingCenters(
@@ -37,7 +37,7 @@ export async function getCoachingCenter(
 export async function listEducationResources(
   subject?: string,
 ): Promise<DataResult<EducationResource[]>> {
-  const db = await getDb();
+  const db = getPublicDb(300);
   if (!db) return fail("Supabase is not configured.");
 
   let query = db

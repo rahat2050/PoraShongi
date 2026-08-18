@@ -52,6 +52,7 @@ const publicLinks = [
   { href: "/leaderboard", label: "সেরা শিক্ষক", icon: Trophy },
   { href: "/blog", label: "শিক্ষা ব্লগ", icon: BookOpen },
   { href: "/coaching", label: "কোচিং সেন্টার", icon: School },
+  { href: "/resources", label: "শিক্ষা রিসোর্স", icon: BookOpen },
   { href: "/#how", label: "কীভাবে কাজ করে", icon: Sparkles },
   { href: "/safety", label: "নিরাপত্তা", icon: ShieldCheck },
   { href: "/contact", label: "সহায়তা", icon: LifeBuoy },
