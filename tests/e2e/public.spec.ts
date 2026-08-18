@@ -90,6 +90,14 @@ test("homepage quick search builds teacher filters without login", async ({ page
   await expect(page).toHaveURL(/\/teachers\?class=Class(?:\+|%20)8&subject=Mathematics&district=Dhaka&mode=online/);
 });
 
+test("visitor homepage exposes public discovery shortcuts", async ({ page }) => {
+  await page.goto("/");
+  const expected = ["/teachers", "/leaderboard", "/resources", "/safety"];
+  const links = page.locator("a[data-visitor-action]");
+  await expect(links).toHaveCount(4);
+  for (const href of expected) await expect(page.locator(`[data-visitor-action="${href}"]`)).toHaveAttribute("href", href);
+});
+
 test("homepage action cards all lead to real product routes", async ({ page, request }) => {
   await page.goto("/");
 
@@ -392,6 +400,15 @@ test("super admin controls remain visible only with the server capability", asyn
   const panel = page.locator("#mobile-navigation-panel");
   await expect(panel.getByText("প্ল্যাটফর্ম মালিক", { exact: true })).toBeVisible();
   await expect(panel.getByRole("link", { name: "সুপার অ্যাডমিন" })).toHaveAttribute("href", "/admin");
+});
+
+test("visitor mobile CTA appears after scrolling", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"), "mobile-only regression");
+  await page.goto("/");
+  const cta = page.locator("[data-visitor-mobile-cta]");
+  await page.evaluate(() => window.scrollTo(0, 800));
+  await expect(cta).toHaveClass(/opacity-100/);
+  await expect(cta).toHaveAttribute("href", "/teachers");
 });
 
 test("mobile navigation does not overlap the visible back-to-top button", async ({ page }, testInfo) => {

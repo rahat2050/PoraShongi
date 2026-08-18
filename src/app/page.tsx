@@ -7,6 +7,8 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeroSection } from "@/components/home/hero-section";
+import { VisitorJourney } from "@/components/home/visitor-journey";
+import { VisitorMobileCta } from "@/components/home/visitor-mobile-cta";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
 import type { HomeFeed } from "@/types/index";
@@ -136,6 +138,8 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
       />
       <HeroSection />
+      <VisitorJourney />
+      <VisitorMobileCta />
 
       {/* Role-based entry points */}
       <section className="relative overflow-hidden bg-white dark:bg-slate-900" aria-labelledby="role-entry-title">
