@@ -8,7 +8,7 @@ export function QuickTeacherSearch() {
     <form
       action="/teachers"
       method="get"
-      className="mx-auto mt-12 max-w-6xl rounded-[1.75rem] border border-white/80 bg-white/90 p-2.5 text-left shadow-[0_28px_80px_-38px_rgba(4,47,46,.55)] backdrop-blur-xl sm:p-3 dark:border-slate-700/80 dark:bg-slate-900/90"
+      className="motion-reveal mx-auto mt-12 max-w-6xl rounded-[1.75rem] border border-white/80 bg-white/90 p-2.5 text-left shadow-[0_28px_80px_-38px_rgba(4,47,46,.55)] backdrop-blur-xl sm:p-3 dark:border-slate-700/80 dark:bg-slate-900/90"
       aria-label="দ্রুত শিক্ষক খুঁজুন"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 px-2 pb-3 pt-1 sm:px-3">

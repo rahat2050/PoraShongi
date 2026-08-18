@@ -49,12 +49,46 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+@keyframes motion-reveal {
+  from { transform: translateY(28px) scale(0.985); }
+  to { transform: translateY(0) scale(1); }
+}
+
 .animate-page-enter {
   animation: page-enter 220ms ease-out both;
 }
 
 .animate-message-in {
   animation: message-in 180ms ease-out both;
+}
+
+/* Zero-dependency, compositor-friendly scroll motion. Unsupported browsers
+ * keep the content fully static and visible. */
+@supports (animation-timeline: view()) {
+  .motion-reveal {
+    animation: motion-reveal 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 28%;
+  }
+}
+
+.motion-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .motion-card:hover {
+    transform: perspective(900px) translateY(-6px) rotateX(1.25deg) rotateY(-1deg);
+  }
+}
+
+.motion-glow {
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+.motion-glow:hover {
+  transform: scale(1.02);
 }
 
 html {
@@ -158,4 +192,6 @@ html:not(.dark) .text-slate-400 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .motion-reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .motion-card:hover, .motion-glow:hover { transform: none !important; }
 }

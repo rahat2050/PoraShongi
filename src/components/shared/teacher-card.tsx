@@ -24,7 +24,7 @@ export function TeacherCard({
   );
 
   return (
-    <Card className="transition-shadow hover:shadow-md">
+    <Card className="motion-card transition-shadow hover:shadow-md">
       <CardContent className="p-5">
         <div className="flex items-start gap-4">
           <Link href={`/teachers/${teacher.id}`} aria-label={`${name} দেখুন`}>

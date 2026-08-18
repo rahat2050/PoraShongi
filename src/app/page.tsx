@@ -159,7 +159,7 @@ export default async function Home() {
                 key={role.key}
                 href={role.href}
                 data-home-action={`role-${role.key}`}
-                className="group rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
+                className="motion-reveal motion-card group rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
                 aria-label={`${role.title}: ${role.cta}`}
               >
                 <Card className="relative flex min-h-80 h-full flex-col overflow-hidden rounded-[1.75rem] border-slate-200/80 bg-gradient-to-b from-white to-slate-50/80 shadow-[0_18px_50px_-34px_rgba(15,23,42,.45)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[0_28px_70px_-34px_rgba(15,118,110,.45)] dark:border-slate-700 dark:from-slate-800 dark:to-slate-900 dark:group-hover:border-brand-700">
@@ -263,7 +263,7 @@ export default async function Home() {
                   key={step.n}
                   href={step.href}
                   data-home-action={`step-${step.n}`}
-                  className="group relative flex min-h-64 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,.45)] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-300 hover:shadow-[0_26px_60px_-32px_rgba(15,118,110,.38)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
+                  className="motion-reveal motion-card group relative flex min-h-64 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,.45)] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-300 hover:shadow-[0_26px_60px_-32px_rgba(15,118,110,.38)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
                   aria-label={`${step.title}: ${step.cta}`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -288,7 +288,7 @@ export default async function Home() {
       {/* Final CTA */}
       <section className="bg-slate-50 dark:bg-slate-950">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-          <div className="relative isolate overflow-hidden rounded-[2rem] border border-brand-700/50 bg-[linear-gradient(135deg,#042f2e_0%,#115e59_58%,#0f766e_100%)] px-6 py-12 shadow-[0_30px_90px_-40px_rgba(4,47,46,.8)] sm:px-10 lg:px-14 lg:py-14">
+          <div className="motion-reveal motion-glow relative isolate overflow-hidden rounded-[2rem] border border-brand-700/50 bg-[linear-gradient(135deg,#042f2e_0%,#115e59_58%,#0f766e_100%)] px-6 py-12 shadow-[0_30px_90px_-40px_rgba(4,47,46,.8)] sm:px-10 lg:px-14 lg:py-14">
             <div className="pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
             <div className="pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
             <div className="grid items-center gap-9 lg:grid-cols-[1fr_auto]">

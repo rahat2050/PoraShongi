@@ -40,7 +40,7 @@ export function HomeTeacherSection({
               <Link
                 key={teacher.id}
                 href={`/teachers/${teacher.id}`}
-                className="group flex min-h-80 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_-36px_rgba(15,23,42,.5)] transition-all duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_26px_65px_-34px_rgba(15,118,110,.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
+                className="motion-reveal motion-card group flex min-h-80 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_-36px_rgba(15,23,42,.5)] transition-all duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_26px_65px_-34px_rgba(15,118,110,.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
                 aria-label={`${name}-এর প্রোফাইল দেখুন`}
               >
                 <div className="flex items-start gap-3">
