@@ -99,6 +99,7 @@ export default async function Home() {
   const topTeachers = feed.teachers.filter((teacher) => !featuredIds.has(teacher.id));
   const shownIds = new Set([...featuredIds, ...topTeachers.map((teacher) => teacher.id)]);
   const recentTeachers = feed.recent_teachers.filter((teacher) => !shownIds.has(teacher.id));
+  const heroTeacher = feed.featured_teachers[0] ?? feed.teachers[0] ?? feed.recent_teachers[0] ?? null;
   const liveStats: LiveStatItem[] = [
     { key: "students", label: "সংযুক্ত শিক্ষার্থী", value: stats?.students ?? 0, href: "/register", actionLabel: "শিক্ষার্থী হিসেবে যুক্ত হোন" },
     { key: "teachers", label: "নিবন্ধিত শিক্ষক", value: stats?.teachers ?? 0, href: "/teachers", actionLabel: "শিক্ষক দেখুন" },
@@ -137,7 +138,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
       />
-      <HeroSection />
+      <HeroSection teacher={heroTeacher} />
       <VisitorJourney />
       <VisitorMobileCta />
 

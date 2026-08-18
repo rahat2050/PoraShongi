@@ -54,12 +54,30 @@
   to { transform: translateY(0) scale(1); }
 }
 
+@keyframes hero-copy-enter {
+  from { transform: translate3d(0, 18px, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hero-stage-enter {
+  from { transform: translate3d(0, 24px, 0) scale(0.985); }
+  to { transform: translate3d(0, 0, 0) scale(1); }
+}
+
 .animate-page-enter {
   animation: page-enter 220ms ease-out both;
 }
 
 .animate-message-in {
   animation: message-in 180ms ease-out both;
+}
+
+.hero-copy-enter {
+  animation: hero-copy-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-stage-enter {
+  animation: hero-stage-enter 680ms 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Zero-dependency, compositor-friendly scroll motion. Unsupported browsers
@@ -89,6 +107,52 @@
 }
 .motion-glow:hover {
   transform: scale(1.02);
+}
+
+/* Hero depth stays isolated to its visual card, never to page/fixed UI wrappers. */
+.pointer-tilt {
+  --pointer-perspective: 1100px;
+  --pointer-rotate-x: 0deg;
+  --pointer-rotate-y: 0deg;
+  --pointer-scroll-y: 0px;
+  transform: perspective(var(--pointer-perspective)) translate3d(0, var(--pointer-scroll-y), 0)
+    rotateX(var(--pointer-rotate-x)) rotateY(var(--pointer-rotate-y));
+  transform-style: preserve-3d;
+  transform-origin: center;
+  backface-visibility: hidden;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pointer-tilt[data-pointer-active="true"] {
+  will-change: transform;
+  transition-duration: 100ms;
+  transition-timing-function: ease-out;
+}
+
+.hero-motion-surface {
+  transform-style: preserve-3d;
+}
+
+.pointer-tilt-layer {
+  --pointer-layer-x: 0px;
+  --pointer-layer-y: 0px;
+  --pointer-layer-z: 0px;
+  transform: translate3d(var(--pointer-layer-x), var(--pointer-layer-y), var(--pointer-layer-z));
+  backface-visibility: hidden;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pointer-tilt[data-pointer-active="true"] .pointer-tilt-layer {
+  will-change: transform;
+  transition-duration: 100ms;
+  transition-timing-function: ease-out;
+}
+
+@media (max-width: 1023px), (hover: none), (pointer: coarse) {
+  .pointer-tilt,
+  .pointer-tilt-layer {
+    transform: none;
+  }
 }
 
 html {
@@ -192,6 +256,18 @@ html:not(.dark) .text-slate-400 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .motion-reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
-  .motion-card:hover, .motion-glow:hover { transform: none !important; }
+  .motion-reveal,
+  .hero-copy-enter,
+  .hero-stage-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .motion-card:hover,
+  .motion-glow:hover,
+  .pointer-tilt,
+  .pointer-tilt-layer {
+    transform: none !important;
+    will-change: auto !important;
+  }
 }

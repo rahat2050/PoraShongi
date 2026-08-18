@@ -64,6 +64,86 @@ test("lightweight motion respects reduced-motion preference", async ({ page }) =
   expect(state.animation).toBe("none");
   expect(state.opacity).toBe("1");
   expect(state.transform).toBe("none");
+
+  const heroStage = page.locator("[data-pointer-tilt]");
+  await expect(heroStage).toHaveAttribute("data-pointer-motion", "static");
+  await expect(heroStage).toHaveCSS("transform", "none");
+});
+
+test("cinematic hero limits pointer depth to capable desktop devices", async ({ page }) => {
+  await page.goto("/");
+  const stage = page.locator("[data-pointer-tilt]");
+  await expect(stage).toHaveCount(1);
+
+  const supportsPointerMotion = await page.evaluate(() => (
+    matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1024px)").matches
+    && !matchMedia("(prefers-reduced-motion: reduce)").matches
+  ));
+
+  if (!supportsPointerMotion) {
+    await expect(stage).toHaveAttribute("data-pointer-motion", "static");
+    await expect(stage).toHaveCSS("transform", "none");
+    return;
+  }
+
+  await expect(stage).toHaveAttribute("data-pointer-motion", "enabled");
+  const box = await stage.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width * 0.85, box!.y + Math.min(box!.height * 0.2, 160));
+  await expect.poll(() => stage.evaluate((element) => (
+    getComputedStyle(element).getPropertyValue("--pointer-rotate-y").trim()
+  ))).not.toBe("0deg");
+});
+
+test("precise pointer updates cinematic hero compositor variables", async ({ browser }, testInfo) => {
+  test.skip(testInfo.project.name.startsWith("mobile"), "desktop pointer regression");
+  const context = await browser.newContext({
+    baseURL: "http://127.0.0.1:3000",
+    viewport: { width: 1280, height: 800 },
+    reducedMotion: "no-preference",
+  });
+  await context.addInitScript(() => {
+    const nativeMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = ((query: string) => {
+      const result = nativeMatchMedia(query);
+      if (query !== "(hover: hover) and (pointer: fine) and (min-width: 1024px)") return result;
+      return new Proxy(result, {
+        get(target, property) {
+          if (property === "matches") return true;
+          const value = Reflect.get(target, property, target);
+          return typeof value === "function" ? value.bind(target) : value;
+        },
+      });
+    }) as typeof window.matchMedia;
+  });
+  const page = await context.newPage();
+
+  try {
+    await page.goto("/");
+    const stage = page.locator("[data-pointer-tilt]");
+    await expect(stage).toHaveAttribute("data-pointer-motion", "enabled");
+    const box = await stage.boundingBox();
+    expect(box).not.toBeNull();
+    await page.mouse.move(box!.x + box!.width * 0.8, box!.y + Math.min(box!.height * 0.25, 160));
+    await expect.poll(() => stage.evaluate((element) => (
+      getComputedStyle(element).getPropertyValue("--pointer-rotate-y").trim()
+    ))).not.toBe("0deg");
+  } finally {
+    await context.close();
+  }
+});
+
+test("hero teacher spotlight never substitutes fabricated profile data", async ({ page }) => {
+  await page.goto("/");
+  const teacher = page.locator("[data-hero-teacher]");
+  const emptyState = page.locator("[data-hero-teacher-empty]");
+  expect(await teacher.count() + await emptyState.count()).toBe(1);
+
+  if (await teacher.count()) {
+    await expect(teacher).toHaveAttribute("href", /^\/teachers\/[0-9a-f-]+$/i);
+  } else {
+    await expect(emptyState).toContainText("প্রকাশিত শিক্ষক প্রোফাইল পাওয়া গেলে এখানে দেখা যাবে");
+  }
 });
 
 test("visitor analytics keeps private routes out and uses the Dhaka calendar day", () => {
