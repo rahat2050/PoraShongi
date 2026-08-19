@@ -9,6 +9,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
+import { VisitorTracker } from "@/components/shared/visitor-tracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <BackToTop />
             <BottomNav />
             <ServiceWorkerRegister />
+            <VisitorTracker enabled={Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)} />
           </ToastProvider>
         </SettingsProvider>
       </body>

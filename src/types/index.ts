@@ -381,6 +381,30 @@ export type AdminAnalytics = {
   top_districts: { district: string; c: number }[];
 };
 
+export type VisitorDailyStat = {
+  visit_date: string;
+  visitors: number;
+  page_views: number;
+  updated_at: string;
+};
+
+export type VisitorPeriodStat = {
+  visitors: number;
+  page_views: number;
+};
+
+export type SuperAdminVisitorAnalytics = {
+  today: VisitorPeriodStat;
+  last_7_days: VisitorPeriodStat;
+  last_30_days: VisitorPeriodStat;
+  all_time: VisitorPeriodStat;
+  daily: Array<{
+    date: string;
+    visitors: number;
+    page_views: number;
+  }>;
+};
+
 export type HomeFeed = {
   teachers: TeacherPublic[];
   featured_teachers: TeacherPublic[];

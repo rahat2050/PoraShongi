@@ -27,6 +27,7 @@ import {
   type TuitionRequest,
   type TuitionStatus,
   type VerificationStatus,
+  type VisitorDailyStat,
 } from "@/types/index";
 import { type UserRole } from "@/lib/auth/roles";
 
@@ -71,6 +72,17 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Omit<Profile, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
+      visitor_daily_stats: {
+        Row: VisitorDailyStat;
+        Insert: {
+          visit_date: string;
+          visitors?: number;
+          page_views?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<VisitorDailyStat, "visit_date">>;
         Relationships: [];
       };
       student_profiles: {
@@ -574,6 +586,8 @@ export interface Database {
       top_teachers: { Args: { p_district?: string | null; p_limit?: number | null }; Returns: Json };
       recommend_teachers: { Args: { p_teacher_id: string; p_limit?: number | null }; Returns: Json };
       admin_analytics: { Args: Record<PropertyKey, never>; Returns: Json };
+      record_site_visit: { Args: { p_is_unique?: boolean | null }; Returns: undefined };
+      super_admin_visitor_analytics: { Args: { p_days?: number | null }; Returns: Json };
       home_feed: { Args: { p_teachers?: number | null; p_tuitions?: number | null }; Returns: Json };
       site_stats: { Args: Record<PropertyKey, never>; Returns: Json };
       pending_request_count: { Args: { p_user_id: string }; Returns: number };

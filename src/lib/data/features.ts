@@ -5,6 +5,7 @@ import {
   type BlogPost,
   type HomeFeed,
   type LeaderboardTeacher,
+  type SuperAdminVisitorAnalytics,
   type TeacherPublic,
   type TrialRequest,
 } from "@/types/index";
@@ -48,6 +49,18 @@ export async function siteStats(): Promise<DataResult<SiteStats>> {
   const { data, error } = await db.rpc("site_stats");
   if (error) return fail(error.message);
   return ok(asJson<SiteStats>(data));
+}
+
+export async function superAdminVisitorAnalytics(
+  days = 14,
+): Promise<DataResult<SuperAdminVisitorAnalytics>> {
+  const db = await getDb();
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("super_admin_visitor_analytics", {
+    p_days: Math.min(Math.max(days, 7), 31),
+  });
+  if (error) return fail(error.message);
+  return ok(asJson<SuperAdminVisitorAnalytics>(data));
 }
 
 export async function topTeachers(

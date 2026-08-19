@@ -4,6 +4,7 @@ import { normalizeProfileImageUrl } from "../../src/lib/profile-image-url";
 import { buildRatingBreakdown } from "../../src/lib/ratings";
 import { isMessageWithinRetention, MESSAGE_RETENTION_HOURS } from "../../src/lib/message-retention";
 import { createBlogSlug } from "../../src/lib/blog";
+import { getDhakaDateKey, isTrackableVisitorPath } from "../../src/lib/analytics/visitor";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -63,6 +64,36 @@ test("lightweight motion respects reduced-motion preference", async ({ page }) =
   expect(state.animation).toBe("none");
   expect(state.opacity).toBe("1");
   expect(state.transform).toBe("none");
+});
+
+test("visitor analytics keeps private routes out and uses the Dhaka calendar day", () => {
+  for (const path of ["/", "/teachers", "/blog/article", "/login", "/register"]) {
+    expect(isTrackableVisitorPath(path), path).toBe(true);
+  }
+  for (const path of ["/admin", "/admin/analytics", "/dashboard", "/messages/abc", "/account", "/profile", "/api/session", "invalid"]) {
+    expect(isTrackableVisitorPath(path), path).toBe(false);
+  }
+  expect(getDhakaDateKey(new Date("2026-08-18T20:00:00.000Z"))).toBe("2026-08-19");
+});
+
+test("visitor analytics endpoint rejects cross-origin and private-route writes", async ({ request }) => {
+  const crossOrigin = await request.post("/api/analytics/visit", {
+    headers: { Origin: "https://attacker.example" },
+    data: { path: "/" },
+  });
+  expect(crossOrigin.status()).toBe(403);
+
+  const privateRoute = await request.post("/api/analytics/visit", {
+    headers: { Origin: "http://127.0.0.1:3000" },
+    data: { path: "/admin/analytics" },
+  });
+  expect(privateRoute.status()).toBe(400);
+});
+
+test("privacy policy explains aggregate visitor analytics", async ({ page }) => {
+  await page.goto("/privacy");
+  await expect(page.getByRole("heading", { name: "ভিজিটর অ্যানালিটিক্স ও কুকি" })).toBeVisible();
+  await expect(page.getByText(/IP, location, user-agent, account ID বা browsing history রাখা হয় না/)).toBeVisible();
 });
 
 test("required auth forms are blocked before any Supabase request", async ({ page }) => {

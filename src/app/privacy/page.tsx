@@ -17,7 +17,12 @@ export default function PrivacyPage() {
           <li>সেবা ব্যবহারের তথ্য: টিউশন, অনুরোধ, সময়সূচি, উপস্থিতি, রিভিউ, মেসেজ ও রিপোর্ট।</li>
           <li>ঐচ্ছিক আনুমানিক লোকেশন: কাছের ফলাফল দেখাতে latitude/longitude; এটি সরাসরি পাবলিক দেখানো হয় না।</li>
           <li>নিরাপত্তা ও কারিগরি তথ্য: সেশন, লগ, ত্রুটি ও অপব্যবহার শনাক্তকরণ সংকেত।</li>
+          <li>ভিজিটর পরিসংখ্যান: public পেজের দৈনিক মোট visitor ও page-view count; IP, location, user-agent, account ID বা browsing history রাখা হয় না।</li>
         </ContentList>
+      </ContentSection>
+
+      <ContentSection title="ভিজিটর অ্যানালিটিক্স ও কুকি">
+        <p>সাইটের ব্যবহার বোঝার জন্য PoraSathi একটি first-party HttpOnly cookie-তে শুধু Dhaka calendar date রাখে। এতে একই browser-কে একই দিনে একবার visitor হিসেবে গণনা করা যায়। Cookie-তে কোনো visitor ID বা ব্যক্তিগত তথ্য থাকে না এবং database-এ শুধু প্রতিদিনের aggregate সংখ্যা রাখা হয়। Do Not Track বা Global Privacy Control চালু থাকলে এবং automated browser থেকে এই analytics request পাঠানো হয় না।</p>
       </ContentSection>
 
       <ContentSection title="কেন তথ্য ব্যবহার করি">
@@ -39,7 +44,7 @@ export default function PrivacyPage() {
       </ContentSection>
 
       <ContentSection title="তথ্য সংরক্ষণ ও আপনার অধিকার">
-        <p>Chat message-এর মূল লেখা পাঠানোর ৪৮ ঘণ্টা পর Supabase থেকে স্বয়ংক্রিয়ভাবে মুছে যায়। কথোপকথনের অংশগ্রহণকারী সম্পর্ক, নিরাপত্তা রিপোর্ট এবং আইনগতভাবে প্রয়োজনীয় সীমিত metadata বেশি সময় রাখা হতে পারে। অন্য সেবা-তথ্য নিরাপত্তা, বিরোধ নিষ্পত্তি ও আইনগত প্রয়োজন অনুযায়ী রাখা হয়। অ্যাকাউন্ট থেকে তথ্য সংশোধন/নিষ্ক্রিয়, JSON/CSV export এবং confirmation-gated permanent deletion করা যায়। Export-এ message body থাকে না। Permanent deletion private data সরায়; অন্য পক্ষের tuition/review integrity রক্ষায় minimal anonymous “Deleted User” shell থাকতে পারে। সহায়তার জন্য hello@porasathi.com-এ লিখুন।</p>
+        <p>Chat message-এর মূল লেখা পাঠানোর ৪৮ ঘণ্টা পর Supabase থেকে স্বয়ংক্রিয়ভাবে মুছে যায়। কথোপকথনের অংশগ্রহণকারী সম্পর্ক, নিরাপত্তা রিপোর্ট এবং আইনগতভাবে প্রয়োজনীয় সীমিত metadata বেশি সময় রাখা হতে পারে। Visitor trend-এর জন্য পরিচয়বিহীন দৈনিক aggregate row রাখা হয়; এটি কোনো ব্যক্তির account বা device-এর সঙ্গে যুক্ত করা যায় না। অন্য সেবা-তথ্য নিরাপত্তা, বিরোধ নিষ্পত্তি ও আইনগত প্রয়োজন অনুযায়ী রাখা হয়। অ্যাকাউন্ট থেকে তথ্য সংশোধন/নিষ্ক্রিয়, JSON/CSV export এবং confirmation-gated permanent deletion করা যায়। Export-এ message body থাকে না। Permanent deletion private data সরায়; অন্য পক্ষের tuition/review integrity রক্ষায় minimal anonymous “Deleted User” shell থাকতে পারে। সহায়তার জন্য hello@porasathi.com-এ লিখুন।</p>
       </ContentSection>
 
       <ContentSection title="অপ্রাপ্তবয়স্ক ব্যবহারকারী">
