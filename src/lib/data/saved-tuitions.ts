@@ -64,7 +64,7 @@ export async function listSavedTuitions(
 
   const { data: tuitions, error: tuitionError } = await db
     .from("tuitions")
-    .select("id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,requirements,is_featured,featured_until,is_batch,batch_size,seats_filled,status,created_at,poster_id,student_id")
+    .select("id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,requirements,is_featured,featured_until,is_batch,batch_size,seats_filled,status,created_at,poster_id")
     .in("id", tuitionIds);
   if (tuitionError) return fail(tuitionError.message);
 

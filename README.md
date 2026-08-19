@@ -42,7 +42,7 @@ SQL Editor দিয়ে করলে `supabase/migrations`-এর ফাই�
 3. `0015_public_content_read.sql`
 4. `0016_profile_publication.sql`
 
-Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। ৪৮ ঘণ্টার message auto-delete চালু করতে `0025_message_retention.sql`-ও প্রয়োগ করা বাধ্যতামূলক। আগে database backup নিন।
+Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। ৪৮ ঘণ্টার message auto-delete চালু করতে `0025_message_retention.sql`-ও প্রয়োগ করা বাধ্যতামূলক। সিকিউরিটি হার্ডনিংয়ের জন্য `0030_security_hardening.sql` অবশ্যই প্রয়োগ করুন (meeting link/student ID লিক, review tampering, admin analytics guard, tuition state machine, message rate limit)। আগে database backup নিন।
 
 ### 3. Run
 

@@ -170,6 +170,27 @@ test("visitor analytics endpoint rejects cross-origin and private-route writes",
   expect(privateRoute.status()).toBe(400);
 });
 
+test("session API rejects malformed and cross-origin requests without crashing", async ({ request }) => {
+  const malformed = await request.post("/api/session", {
+    headers: { Origin: "::not a url::" },
+  });
+  expect(malformed.status()).toBe(403);
+
+  const crossOrigin = await request.post("/api/session", {
+    headers: { Origin: "https://attacker.example" },
+    data: {},
+  });
+  expect(crossOrigin.status()).toBe(403);
+});
+
+test("service worker uses a versioned cache with network-first static assets", async ({ request }) => {
+  const sw = await (await request.get("/sw.js")).text();
+  expect(sw).toContain('CACHE_NAME = "porasathi-v2"');
+  // Network-first for _next/static so deployments are not served stale forever.
+  const staticBlock = sw.slice(sw.indexOf("_next/static/"));
+  expect(staticBlock.indexOf("caches.match(request)")).toBeGreaterThan(staticBlock.indexOf("fetch(request)"));
+});
+
 test("privacy policy explains aggregate visitor analytics", async ({ page }) => {
   await page.goto("/privacy");
   await expect(page.getByRole("heading", { name: "ভিজিটর অ্যানালিটিক্স ও কুকি" })).toBeVisible();

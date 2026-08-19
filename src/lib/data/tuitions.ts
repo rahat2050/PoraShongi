@@ -87,9 +87,11 @@ export async function listAcceptedTuitionsForTeacher(
   return getTuitionsByIds(ids);
 }
 
-/** poster বা linked student-এর tuition list — বড় text (requirements) বাদ, data বাঁচাতে */
+/** poster বা linked student-এর tuition list — বড় text (requirements) বাদ, data বাঁচাতে।
+ *  student_id/meeting_link সরাসরি select করা যায় না (0030 column-level RLS);
+ *  প্রয়োজন হলে guarded get_public_tuition RPC ব্যবহার করুন। */
 const TUITION_LIST_COLUMNS =
-  "id,poster_id,student_id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,status,created_at,updated_at";
+  "id,poster_id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,status,created_at,updated_at";
 
 export async function listTuitionsFor(
   profileId: string,
@@ -119,9 +121,11 @@ export async function getTuitionById(
   const db = await getDb();
   if (!db) return fail("Supabase is not configured.");
 
+  // meeting_link/student_id সরাসরি select করা যায় না (0030) — owner হলে
+  // detail page-এ guarded get_public_tuition RPC সেগুলো দেয়।
   const { data, error } = await db
     .from("tuitions")
-    .select("*")
+    .select("id,poster_id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,requirements,is_featured,featured_until,is_batch,batch_size,seats_filled,status,created_at,updated_at")
     .eq("id", tuitionId)
     .maybeSingle();
   if (error) return fail(error.message);
