@@ -30,19 +30,21 @@ export async function createSession(input: {
     .maybeSingle();
   if (!accepted) return failure("এই টিউশনটি আপনার গৃহীত টিউশন নয়।");
 
-  const { data: tuition } = await supabase
-    .from("tuitions")
-    .select("student_id,status")
-    .eq("id", input.tuitionId)
-    .maybeSingle();
-  if (!tuition || tuition.status !== "assigned") {
+  const { data: tuition } = await supabase.rpc("get_public_tuition", {
+    p_tuition_id: input.tuitionId,
+  });
+  const tuitionInfo = tuition as {
+    student_id?: string | null;
+    status?: string;
+  } | null;
+  if (!tuitionInfo || tuitionInfo.status !== "assigned") {
     return failure("শুধু চলমান ও নিয়োগকৃত টিউশনের ক্লাস তৈরি করা যাবে।");
   }
 
   const { error } = await supabase.from("sessions").insert({
     tuition_id: input.tuitionId,
     teacher_id: profile.id,
-    student_id: accepted.student_id ?? tuition.student_id ?? null,
+    student_id: accepted.student_id ?? tuitionInfo.student_id ?? null,
     scheduled_at: scheduledAt.toISOString(),
     notes: input.notes?.trim() || null,
   });

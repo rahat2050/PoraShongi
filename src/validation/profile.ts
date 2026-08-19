@@ -31,11 +31,8 @@ export const studentProfileSchema = z.object({
   budget: z
     .string()
     .optional()
-    .transform((v) => {
-      if (!v || v === "") return null;
-      const n = Number(v);
-      return Number.isFinite(n) && n >= 0 ? n : null;
-    }),
+    .refine((v) => v === undefined || v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0), "সঠিক বাজেট দিন (০ বা তার বেশি)।")
+    .transform((v) => (!v || v === "" ? null : Number(v))),
   preferredDays: z.array(z.string()).optional(),
   preferredTime: optionalText(80),
   bio: optionalText(600),
@@ -52,21 +49,21 @@ export const teacherProfileSchema = z.object({
   experienceYears: z
     .string()
     .optional()
-    .transform((v) => {
-      if (!v || v === "") return null;
-      const n = Number(v);
-      return Number.isFinite(n) && n >= 0 && n <= 80 ? n : null;
-    }),
+    .refine(
+      (v) => v === undefined || v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0 && Number(v) <= 80),
+      "অভিজ্ঞতা ০–৮০ বছরের মধ্যে দিন।",
+    )
+    .transform((v) => (!v || v === "" ? null : Number(v))),
   teachingMode: z.string().min(1, "মোড বাছুন।"),
   teachingArea: optionalText(160),
   expectedSalary: z
     .string()
     .optional()
-    .transform((v) => {
-      if (!v || v === "") return null;
-      const n = Number(v);
-      return Number.isFinite(n) && n >= 0 ? n : null;
-    }),
+    .refine(
+      (v) => v === undefined || v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0),
+      "সঠিক ফি দিন (০ বা তার বেশি)।",
+    )
+    .transform((v) => (!v || v === "" ? null : Number(v))),
   availableDays: z.array(z.string()).optional(),
   availableTime: optionalText(80),
   teachingStyle: optionalText(500),

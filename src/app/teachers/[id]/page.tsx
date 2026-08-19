@@ -126,8 +126,8 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
     ? (await getTeacherPhone(teacher.id)).data
     : null;
 
-  // profile view count (নিজের ভিউ বাদ — শুধু অন্যের ভিউতে +1)
-  if (!profile || profile.id !== teacher.id) {
+  // profile view count (নিজের ভিউ বাদ — শুধু logged-in অন্যের ভিউতে +1; anon/bot নয়)
+  if (profile && profile.id !== teacher.id) {
     const supabase = await createClient();
     await supabase.rpc("record_profile_view", { p_teacher_id: teacher.id });
   }

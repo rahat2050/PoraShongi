@@ -56,8 +56,16 @@ export async function POST(request: Request) {
   const requestUrl = new URL(request.url);
   const origin = request.headers.get("origin");
 
-  if (origin && new URL(origin).host !== requestUrl.host) {
-    return NextResponse.json({ error: "Invalid origin" }, { status: 403, headers: noStoreHeaders });
+  if (origin) {
+    let originHost: string;
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      return NextResponse.json({ error: "Invalid origin" }, { status: 403, headers: noStoreHeaders });
+    }
+    if (originHost !== requestUrl.host) {
+      return NextResponse.json({ error: "Invalid origin" }, { status: 403, headers: noStoreHeaders });
+    }
   }
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ ok: true }, { headers: noStoreHeaders });

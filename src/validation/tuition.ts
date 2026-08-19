@@ -7,13 +7,13 @@ export const tuitionSchema = z.object({
   district: z.string().trim().max(80).optional().or(z.literal("")),
   area: z.string().trim().max(80).optional().or(z.literal("")),
   budget: z
-    .union([z.string().trim(), z.number().min(0)])
+    .union([z.string().trim(), z.number()])
     .optional()
-    .transform((v) => {
-      if (v === "" || v === null || v === undefined) return null;
-      const n = typeof v === "number" ? v : Number(v);
-      return Number.isFinite(n) && n >= 0 ? n : null;
-    }),
+    .refine(
+      (v) => v === undefined || v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0),
+      "সঠিক বাজেট দিন (০ বা তার বেশি)।",
+    )
+    .transform((v) => (v === undefined || v === "" ? null : Number(v))),
   budgetNegotiable: z.boolean().optional(),
   teachingMode: z.string().min(1, "মোড বাছুন।"),
   preferredDays: z.array(z.string()).optional(),

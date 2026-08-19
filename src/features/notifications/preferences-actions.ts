@@ -22,6 +22,7 @@ export async function updateNotificationPreferences(
     review_received: input.review_received,
     verification_update: input.verification_update,
     email_notify: input.email_notify ?? false,
+    updated_at: new Date().toISOString(),
   });
   if (error) return failure(error.message);
   revalidatePath("/dashboard/notifications");

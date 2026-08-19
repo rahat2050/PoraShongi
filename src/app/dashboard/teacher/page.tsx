@@ -25,7 +25,7 @@ import { RequestRow } from "@/components/shared/request-row";
 import { ContactRequestActions } from "@/features/contact/contact-actions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OnboardingChecklist } from "@/components/shared/onboarding-checklist";
-import { TrialRequestActions } from "@/features/features-actions-ui2";
+import { TrialRequestActions } from "@/features/features-actions-ui";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "শিক্ষক ড্যাশবোর্ড" };

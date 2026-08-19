@@ -40,17 +40,22 @@ export async function sendTuitionRequest(input: {
     studentId = (gp?.linked_student_id as string | null) ?? null;
   }
 
-  const { data: tuition } = await supabase
-    .from("tuitions")
-    .select("poster_id,student_id,status")
-    .eq("id", input.tuitionId)
-    .maybeSingle();
-  if (!tuition || tuition.status !== "open") return failure("নির্বাচিত টিউশনটি আর খোলা নেই।");
+  const { data: tuition } = await supabase.rpc("get_public_tuition", {
+    p_tuition_id: input.tuitionId,
+  });
+  const tuitionInfo = tuition as {
+    poster_id?: string;
+    student_id?: string | null;
+    status?: string;
+  } | null;
+  if (!tuitionInfo || tuitionInfo.status !== "open") {
+    return failure("নির্বাচিত টিউশনটি আর খোলা নেই।");
+  }
 
   const ownsTuition =
-    tuition.poster_id === profile.id ||
-    tuition.student_id === profile.id ||
-    (studentId != null && tuition.student_id === studentId);
+    tuitionInfo.poster_id === profile.id ||
+    tuitionInfo.student_id === profile.id ||
+    (studentId != null && tuitionInfo.student_id === studentId);
   if (!ownsTuition) return failure("শুধু নিজের টিউশনের জন্য শিক্ষককে অনুরোধ পাঠানো যাবে।");
 
   const { data, error } = await supabase

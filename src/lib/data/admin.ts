@@ -41,7 +41,8 @@ export async function adminListTuitions(
   if (!db) return fail("Supabase is not configured.");
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
-  let query = db.from("tuitions").select("*", { count: "exact" });
+  // meeting_link/student_id সরাসরি select করা যায় না (0030 column-level RLS)
+  let query = db.from("tuitions").select("id,poster_id,title,class_level,subject,district,area,budget,budget_negotiable,teaching_mode,preferred_days,preferred_time,requirements,is_featured,featured_until,is_batch,batch_size,seats_filled,status,created_at,updated_at", { count: "exact" });
   if (status) query = query.eq("status", status);
   const { data, count, error } = await query
     .order("is_featured", { ascending: false })
