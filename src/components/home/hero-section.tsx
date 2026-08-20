@@ -89,7 +89,7 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
 
             <h1 className="mt-6 text-balance text-4xl font-black leading-[1.12] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl dark:text-white">
               সঠিক শিক্ষক খুঁজুন,
-              <span className="mt-1 block bg-gradient-to-r from-brand-700 via-emerald-600 to-teal-500 bg-clip-text text-transparent dark:from-brand-300 dark:via-emerald-300 dark:to-amber-300">
+              <span className="mt-1 block bg-gradient-to-r from-brand-700 via-emerald-600 to-teal-500 bg-clip-text text-transparent text-gradient-shimmer dark:from-brand-300 dark:via-emerald-300 dark:to-amber-300">
                 শেখার পথ সহজ করুন
               </span>
             </h1>

@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonStyles } from "@/components/ui/button";
+import { Reveal } from "@/components/motion/reveal";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -46,8 +47,9 @@ export default async function BlogPage() {
         {posts.length === 0 ? (
           <EmptyState icon={<BookOpen className="h-6 w-6" aria-hidden />} title="কোনো পোস্ট নেই" description="শীঘ্রই এখানে পড়াশোনার কনটেন্ট আসবে।" />
         ) : (
-          posts.map((post) => (
-            <Card key={post.id} className="transition-shadow hover:shadow-md">
+          posts.map((post, index) => (
+            <Reveal key={post.id} delay={Math.min(index * 70, 280)}>
+            <Card className="transition-shadow hover:shadow-md">
               <CardContent className="p-5">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{post.category.replace("_", " ")}</Badge>
@@ -59,6 +61,7 @@ export default async function BlogPage() {
                 {post.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{post.excerpt}</p>}
               </CardContent>
             </Card>
+            </Reveal>
           ))
         )}
       </div>
