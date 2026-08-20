@@ -283,11 +283,11 @@ export function JourneyCoverflow() {
           if (!drag || drag.id !== event.pointerId) return;
           const now = performance.now();
           const dt = Math.max(now - drag.lastT, 16);
-          const px = (event.clientX - drag.lastX) / STEP_X;
+          const px = (drag.lastX - event.clientX) / STEP_X;
           const instant = px / (dt / 1000); // cards per second
           drag.vel = 0.72 * instant + 0.28 * drag.vel;
           if (Math.abs(event.clientX - drag.startX) > DRAG_CLICK_PX) suppressClickRef.current = true;
-          const nextPos = drag.startPos + (event.clientX - drag.startX) / STEP_X;
+          const nextPos = drag.startPos - (event.clientX - drag.startX) / STEP_X;
           positionRef.current = nextPos;
           setPosition(nextPos);
           drag.lastX = event.clientX;
@@ -338,7 +338,6 @@ export function JourneyCoverflow() {
               const isCenter = abs < 0.5;
               const hoveredCard = hoverCard === index && !isCenter;
               const hoverPull = hoveredCard ? (offset > 0 ? -1 : 1) : 0;
-              const opacity = isCenter ? 1 : Math.max(0.42, 1 - abs * 0.22);
 
               return (
                 <article
@@ -350,12 +349,11 @@ export function JourneyCoverflow() {
                   className="absolute left-1/2 top-1/2 w-[min(19rem,78vw)] will-change-transform"
                   style={{
                     transform: `translateX(calc(-50% + ${offset * STEP_X}px)) translateY(-50%) translateZ(${isCenter ? 90 : -90 - abs * 30}px) rotateY(${offset * -26}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.02})`,
-                    opacity,
                     zIndex: isCenter ? 30 : Math.round(20 - abs * 4),
                     pointerEvents: abs > 2.2 ? "none" : "auto",
-                    cursor: isCenter ? "pointer" : "pointer",
+                    cursor: "pointer",
                   }}
-                  aria-hidden={abs > 2}
+                  aria-hidden={!isCenter}
                 >
                   {/* Hover-pull toward centre (Apple Store style) */}
                   <div
