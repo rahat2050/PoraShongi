@@ -37,6 +37,46 @@ export const developer = {
     { value: 2, suffix: "×", label: "GPA 5.00", labelEn: "GPA 5.00" },
   ],
 
+  /** Powerpoint-স্টাইল scroll deck-এ দেখানো প্রজেক্ট (উৎস: rahatahmed.site/en) */
+  projects: [
+    {
+      id: "rahatverse",
+      name: "RahatVerse",
+      tagline: "Personal Ecosystem & CMS",
+      category: "Portfolio",
+      categoryBangla: "পোর্টফোলিও",
+      year: "2026",
+      desc: "বাংলা–ইংরেজি দ্বিভাষিক পোর্টফোলিও ও পূর্ণাঙ্গ admin CMS — ব্লগ, ফটো গ্যালারি, সার্ভিস প্যাকেজ ও লাইভ অর্ডার উইজার্ড, FAQ, newsletter এবং on-site AI assistant। Next.js 16 App Router, Supabase ও Cloudinary-তে চালানো; এই সাইটটিই এর লাইভ ডেমো।",
+      tech: ["Next.js 16", "TypeScript", "Tailwind CSS", "Supabase", "Cloudinary", "i18n"],
+      live: "https://www.rahatahmed.site",
+      github: "https://github.com/rahatahmedbd/Rahatverse01",
+    },
+    {
+      id: "porasathi",
+      name: "PoraSathi (পড়াসাথী)",
+      tagline: "Tuition Marketplace",
+      category: "Education",
+      categoryBangla: "শিক্ষা",
+      year: "2026",
+      desc: "বাংলাদেশের লাইভ টিউশন মার্কেটপ্লেস — শিক্ষার্থী-অভিভাবক লগইন ছাড়াই শিক্ষক খুঁজে, ফিল্টার করে এবং নিরাপদে সংযোগ করে। অনুরোধ, মেসেজ, সময়সূচি, লিডারবোর্ড, ফ্রি রিসোর্স ও নিরাপত্তা গাইড — সব এক জায়গায়।",
+      tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase"],
+      live: "https://porasathi.rahatahmed.site",
+      github: "https://github.com/rahatahmedbd",
+    },
+    {
+      id: "shantichakra",
+      name: "Shantichakra Blood Society",
+      tagline: "Emergency Donor Directory",
+      category: "Blood Donation",
+      categoryBangla: "রক্তদান",
+      year: "2026",
+      desc: "সুনামগঞ্জের স্বেচ্ছাসেবী সংগঠনের জন্য লাইভ ডিজিটাল ডোনার ডিরেক্টরি ও জরুরি রক্তের আবেদন প্ল্যাটফর্ম — রক্তের গ্রুপ, জেলা ও উপজেলা অনুযায়ী ডোনার খোঁজা, SOS শেয়ার, সামঞ্জস্য গাইড ও যোগ্যতা পরীক্ষা।",
+      tech: ["Next.js", "React", "Supabase", "Tailwind CSS", "Cloudinary"],
+      live: "https://shantichakrabloodsociety.rahatahmed.site",
+      github: "https://github.com/rahatahmedbd",
+    },
+  ],
+
   links: {
     portfolio: "https://www.rahatahmed.site/en",
     about: "https://www.rahatahmed.site/en/about",
