@@ -298,19 +298,16 @@ export function JourneyCoverflow() {
           if (!drag || drag.id !== event.pointerId) return;
           const dist = event.clientX - drag.startX;
           const vel = drag.vel;
+          const startPos = drag.startPos;
           dragRef.current = null;
           setIsDragging(false);
           if (event.currentTarget.hasPointerCapture(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
           }
           const fling = Math.abs(dist) > 48 || Math.abs(vel) > 0.6;
-          let target;
-          if (fling) {
-            const dir = dist + vel * 120 < 0 ? 1 : -1; // +1 = next, -1 = prev
-            target = Math.round(positionRef.current + dir);
-          } else {
-            target = Math.round(positionRef.current);
-          }
+          const target = fling
+            ? Math.round(startPos) + (dist > 0 ? -1 : 1)
+            : Math.round(startPos);
           animateTo(target, fling ? (target - positionRef.current) * 1.1 : 0);
         }}
         onPointerCancel={(event) => {
