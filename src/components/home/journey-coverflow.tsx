@@ -195,9 +195,9 @@ export function JourneyCoverflow() {
                 <article
                   key={step.key}
                   data-journey-rail={step.key}
-                  className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
-                    transform: `translateX(calc(-50% + ${offset * 210 + drag * 2}px)) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26 + drag * 0.12}deg) scale(${isCenter ? 1 : 0.9})`,
+                    transform: `translateX(calc(-50% + ${offset * 210 + drag * 2}px)) translateY(-50%) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26 + drag * 0.12}deg) scale(${isCenter ? 1 : 0.9})`,
                     opacity: 1,
                     zIndex: isCenter ? 30 : 20 - abs,
                     pointerEvents: isCenter ? "auto" : "none",
