@@ -33,13 +33,13 @@ export function DesktopNav() {
             aria-label={item.label}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "group inline-flex h-11 w-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 xl:w-auto xl:px-3",
+              "group inline-flex h-11 w-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-px active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 xl:w-auto xl:px-3",
               active
                 ? "bg-white text-brand-800 shadow-sm dark:bg-slate-700 dark:text-brand-300"
                 : "text-slate-600 hover:bg-white/80 hover:text-brand-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-brand-300",
             )}
           >
-            <Icon className={cn("h-[18px] w-[18px] shrink-0", item.href === "/leaderboard" && "text-amber-500")} aria-hidden />
+            <Icon className={cn("h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover:scale-110", item.href === "/leaderboard" && "text-amber-500")} aria-hidden />
             <span className="hidden xl:inline">{item.shortLabel}</span>
           </Link>
         );

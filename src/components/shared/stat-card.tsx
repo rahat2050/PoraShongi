@@ -1,5 +1,13 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { CountUp } from "@/components/motion/count-up";
+
+function StatValue({ value }: { value: string | number }) {
+  if (typeof value === "number") {
+    return <CountUp value={value} duration={900} className="text-2xl font-bold text-slate-900 dark:text-slate-100" />;
+  }
+  return <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>;
+}
 
 export function StatCard({
   label,
@@ -20,7 +28,7 @@ export function StatCard({
         {icon}
       </div>
       <div className="min-w-0">
-        <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+        <StatValue value={value} />
         <p className="truncate text-sm text-slate-500 dark:text-slate-400">{label}</p>
       </div>
     </CardContent>

@@ -7,6 +7,7 @@ import { listFavoriteTeacherIds } from "@/lib/data/favorites";
 import { getPublicTeachers } from "@/lib/data/teachers";
 import { TeacherCard } from "@/components/shared/teacher-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Reveal } from "@/components/motion/reveal";
 import { buttonStyles } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "সেভ করা শিক্ষক" };
@@ -40,7 +41,11 @@ export default async function FavoritesPage() {
           />
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {teachers.map((teacher) => <TeacherCard key={teacher.id} teacher={teacher} canSave initiallySaved />)}
+            {teachers.map((teacher, index) => (
+              <Reveal key={teacher.id} delay={Math.min(index * 70, 350)} className="h-full">
+                <TeacherCard teacher={teacher} canSave initiallySaved />
+              </Reveal>
+            ))}
           </div>
         )}
       </div>

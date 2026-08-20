@@ -6,6 +6,7 @@ import { type GuardianProfile, type StudentOption, type StudentProfile, type Tea
 import { ROLE_LABELS } from "@/lib/auth/roles";
 import { Badge } from "@/components/ui/badge";
 import { ProfileCompletion } from "@/components/shared/profile-completion";
+import { Reveal } from "@/components/motion/reveal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BaseProfileForm } from "@/features/profile/base-profile-form";
 import { StudentProfileForm } from "@/features/profile/student-profile-form";
@@ -46,30 +47,38 @@ export default async function ProfilePage() {
       </div>
 
       <div className="grid gap-6">
+        <Reveal>
         <Card>
           <CardHeader><CardTitle>মৌলিক তথ্য ও প্রোফাইল ছবি</CardTitle></CardHeader>
           <CardContent><BaseProfileForm profile={profile} /></CardContent>
         </Card>
+        </Reveal>
 
         {profile.role === "student" && (
+          <Reveal delay={60}>
           <Card>
             <CardHeader><CardTitle>শিক্ষার্থী তথ্য</CardTitle></CardHeader>
             <CardContent><StudentProfileForm data={roleProfile as StudentProfile | null} /></CardContent>
           </Card>
+          </Reveal>
         )}
 
         {profile.role === "teacher" && (
+          <Reveal delay={60}>
           <Card>
             <CardHeader><CardTitle>শিক্ষক তথ্য</CardTitle></CardHeader>
             <CardContent><TeacherProfileForm data={roleProfile as TeacherProfile | null} /></CardContent>
           </Card>
+          </Reveal>
         )}
 
         {profile.role === "guardian" && (
+          <Reveal delay={60}>
           <Card>
             <CardHeader><CardTitle>অভিভাবক তথ্য</CardTitle></CardHeader>
             <CardContent><GuardianProfileForm data={roleProfile as GuardianProfile | null} students={students} /></CardContent>
           </Card>
+          </Reveal>
         )}
       </div>
     </div>

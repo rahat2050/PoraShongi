@@ -76,8 +76,8 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
         }}
         aria-hidden
       />
-      <div className="pointer-events-none absolute -left-32 top-24 -z-10 h-80 w-80 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-800/20" aria-hidden />
-      <div className="pointer-events-none absolute -right-24 top-10 -z-10 h-96 w-96 rounded-full bg-amber-200/45 blur-3xl dark:bg-amber-700/10" aria-hidden />
+      <div className="motion-parallax-slow pointer-events-none absolute -left-32 top-24 -z-10 h-80 w-80 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-800/20" aria-hidden />
+      <div className="motion-parallax-fast pointer-events-none absolute -right-24 top-10 -z-10 h-96 w-96 rounded-full bg-amber-200/45 blur-3xl dark:bg-amber-700/10" aria-hidden />
 
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">

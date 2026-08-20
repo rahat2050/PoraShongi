@@ -8,15 +8,18 @@ import { formatDate } from "@/lib/utils";
 export function RequestRow({
   row,
   direction,
+  bordered = true,
 }: {
   row: RequestDisplayRow;
   direction: "sent" | "received";
+  /** List-item animation wrappers move the divider to the wrapper. */
+  bordered?: boolean;
 }) {
   const { request, tuition, other } = row;
   const otherName = other?.display_name || other?.full_name || "সদস্য";
 
   return (
-    <div className="flex flex-col gap-3 border-b border-slate-100 dark:border-slate-700 p-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+    <div className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${bordered ? "border-b border-slate-100 dark:border-slate-700" : ""}`}>
       <div className="flex min-w-0 items-center gap-3">
         <Avatar src={other?.avatar_url ?? null} name={otherName} size="sm" />
         <div className="min-w-0">

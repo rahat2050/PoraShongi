@@ -49,8 +49,8 @@ export function LiveStatsSection({ items }: { items: LiveStatItem[] }) {
 
   return (
     <section ref={sectionRef} className="relative isolate overflow-hidden border-y border-white/10 bg-slate-950 text-white" aria-labelledby="live-stats-title">
-      <div className="pointer-events-none absolute -left-28 top-0 -z-10 h-80 w-80 rounded-full bg-brand-600/20 blur-3xl" aria-hidden />
-      <div className="pointer-events-none absolute -right-24 bottom-0 -z-10 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl" aria-hidden />
+      <div className="motion-parallax-slow pointer-events-none absolute -left-28 top-0 -z-10 h-80 w-80 rounded-full bg-brand-600/20 blur-3xl" aria-hidden />
+      <div className="motion-parallax-fast pointer-events-none absolute -right-24 bottom-0 -z-10 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl" aria-hidden />
       <div
         className="pointer-events-none absolute inset-0 -z-20 opacity-10"
         style={{

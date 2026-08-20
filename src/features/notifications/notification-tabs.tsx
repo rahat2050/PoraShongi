@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { type AppNotification } from "@/types/index";
 import { NotificationItem } from "@/features/notifications/notification-item";
+import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 const TABS = [
@@ -55,7 +56,11 @@ export function NotificationTabs({ notifications }: { notifications: AppNotifica
         {filtered.length === 0 ? (
           <p className="py-8 text-center text-sm text-slate-400">এই ধরনের কোনো নোটিফিকেশন নেই।</p>
         ) : (
-          filtered.map((n) => <NotificationItem key={n.id} notification={n} />)
+          filtered.map((n, index) => (
+            <Reveal key={n.id} delay={Math.min(index * 40, 240)} className="border-b border-slate-100 last:border-0 dark:border-slate-700">
+              <NotificationItem notification={n} bordered={false} />
+            </Reveal>
+          ))
         )}
       </div>
     </div>

@@ -119,7 +119,7 @@ export default async function Home() {
 
       {/* Role-based entry points */}
       <section className="relative overflow-hidden bg-white dark:bg-slate-900" aria-labelledby="role-entry-title">
-        <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-brand-100/60 blur-3xl dark:bg-brand-900/10" aria-hidden />
+        <div className="motion-parallax-fast pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-brand-100/60 blur-3xl dark:bg-brand-900/10" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">
           <div className="grid items-end gap-6 lg:grid-cols-[1fr_.7fr]">
             <div>
@@ -245,8 +245,8 @@ export default async function Home() {
       <section className="bg-slate-50 dark:bg-slate-950">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
           <div className="motion-reveal motion-glow relative isolate overflow-hidden rounded-[2rem] border border-brand-700/50 bg-[linear-gradient(135deg,#042f2e_0%,#115e59_58%,#0f766e_100%)] px-6 py-12 shadow-[0_30px_90px_-40px_rgba(4,47,46,.8)] sm:px-10 lg:px-14 lg:py-14">
-            <div className="pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
-            <div className="pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
+            <div className="motion-parallax-slow pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
+            <div className="motion-parallax-fast pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
             <div className="pointer-events-none absolute right-10 top-8 hidden gap-3 lg:flex" aria-hidden>
               <span className="motion-float rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-brand-50 backdrop-blur">Discover</span>
               <span className="motion-float motion-float-delay rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-amber-100 backdrop-blur">Match</span>

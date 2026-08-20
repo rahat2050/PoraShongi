@@ -24,11 +24,11 @@ export function TeacherCard({
   );
 
   return (
-    <Card className="motion-card h-full transition-shadow hover:shadow-md">
+    <Card className="group motion-card h-full transition-shadow hover:shadow-md">
       <CardContent className="p-5">
         <div className="flex items-start gap-4">
           <Link href={`/teachers/${teacher.id}`} aria-label={`${name} দেখুন`}>
-            <Avatar src={teacher.avatar_url} name={name} size="lg" />
+            <Avatar src={teacher.avatar_url} name={name} size="lg" className="transition-transform duration-300 group-hover:scale-110" />
           </Link>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">

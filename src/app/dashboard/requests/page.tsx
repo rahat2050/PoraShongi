@@ -7,6 +7,7 @@ import { getRoleProfileRow } from "@/lib/data/profiles";
 import { type GuardianProfile } from "@/types/index";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Reveal } from "@/components/motion/reveal";
 import { RequestRow } from "@/components/shared/request-row";
 
 export const metadata: Metadata = { title: "টিউশন অনুরোধ" };
@@ -55,7 +56,11 @@ export default async function RequestsPage() {
               />
             </div>
           ) : (
-            rows.map((row) => <RequestRow key={row.request.id} row={row} direction={direction} />)
+            rows.map((row, index) => (
+              <Reveal key={row.request.id} delay={Math.min(index * 50, 300)} direction="left" className="border-b border-slate-100 last:border-0 dark:border-slate-700">
+                <RequestRow row={row} direction={direction} bordered={false} />
+              </Reveal>
+            ))
           )}
         </CardContent>
       </Card>

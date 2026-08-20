@@ -52,6 +52,28 @@ Toast item-এ আগে থেকে থাকা `message-in` keyframe লা�
 ### e) Theme toggle icon switch (নতুন)
 Dark/light toggle-এ icon-টি rotate+scale হয়ে বদলায় (`theme-icon-switch` keyframe)।
 
+## ২.৫) "সব professional কাজ করো" রাউন্ডে যা যা যোগ হলো (Implemented ✅)
+
+নিচের সবগুলো reduced-motion-safe, no-JS-safe এবং কোনো external library ছাড়া:
+
+1. **Smart header (hide-on-scroll + shadow)** — নিচে স্ক্রল করলে header সরে যায়, উপরে এলে ফিরে আসে; scroll-এ shadow গাঢ় হয়। `prefers-reduced-motion` বা keyboard focus-এ কখনো লুকায় না। (`header.tsx` → client)
+2. **Button press feedback + shine sweep** — সব বাটনে `active:scale-[0.97]`; primary বাটনে hover-এ shine sweep (`btn-shine`)। (`button.tsx`)
+3. **Nav animated polish** — desktop nav-এ hover lift + press + icon micro-zoom; dashboard nav-এ একই; mobile menu panel slide-in + প্রতিটি link staggered entrance। (`desktop-nav.tsx`, `mobile-nav.tsx`, `dashboard-nav.tsx`)
+4. **Stat card count-up** — dashboard/admin এর সব numeric stat card viewport-এ এলে 0 → value count-up করে। (`stat-card.tsx` + নতুন `motion/count-up.tsx`)
+5. **Tuition fee micro count-up** — টিউশন কার্ডের বাজেট সংখ্যা count-up হয়। (`tuition-card.tsx`)
+6. **Profile completion animated bar** — প্রোফাইল সম্পূর্ণতা bar 0 → X% পর্যন্ত animate হয় + percent count-up। (`profile-completion.tsx` → client)
+7. **Announcement bar entrance** — config থাকলে slide-down entrance। (`announcement.tsx`)
+8. **Page transition উন্নত** — page-enter এখন হালকা slide+fade (300ms ease-out)। (`globals.css`)
+9. **Avatar hover zoom** — teacher/তিউশন/coverflow কার্ডে avatar hover-এ gently zoom হয়। (`teacher-card`, `tuition-card`, `home-teacher-section`, `featured-coverflow`)
+10. **Parallax gradient blobs** — hero, CTA, stats, coverflow সেকশনের decorative blob গুলো scroll-এ আলাদা গতিতে ভেসে চলে (progressive enhancement)। (`globals.css` + ৬ সেকশন)
+11. **Chat bubble entrance** — ইতিমধ্যে ছিল (`animate-message-in`) ✅
+12. **Stagger reveal আরও পেজে** — `/coaching`, dashboard favorites, saved-tuitions, messages list, requests, notifications tabs, tuition/teacher detail (top card + matches + similar), profile form cards, coaching detail। (`Reveal` component)
+13. **Empty state icon float** — খালি স্টেটের icon মৃদু float করে। (`empty-state.tsx`)
+14. **Back-to-top polish** — hover lift + press feedback। (`back-to-top.tsx`)
+15. **Toast entrance** — আগের রাউন্ডে যোগ হয়েছে (message-in) ✅
+
+**ছেড়ে দেওয়া হয়েছে (ইচ্ছাকৃত):** typing effect (a11y ঝুঁকি), full-page route overlay (SE/UX ঝুঁকি), video hero (performance), confetti burst (redirect-এ চোখে পড়ে না), auto-rotating testimonial (নির্ভরযোগ্য data নেই)।
+
 ## ৩) আরও যা যোগ করা যেতে পারে (menu — বাছাই করে বলুন, করে দেব)
 
 | # | অ্যানিমেশন | কোথায় | Effort | Impact |

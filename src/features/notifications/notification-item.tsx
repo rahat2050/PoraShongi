@@ -6,7 +6,14 @@ import { markNotificationRead } from "@/features/notifications/actions";
 import { cn, formatDateTime } from "@/lib/utils";
 import { type AppNotification } from "@/types/index";
 
-export function NotificationItem({ notification }: { notification: AppNotification }) {
+export function NotificationItem({
+  notification,
+  bordered = true,
+}: {
+  notification: AppNotification;
+  /** List-item animation wrappers move the divider to the wrapper. */
+  bordered?: boolean;
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -24,7 +31,8 @@ export function NotificationItem({ notification }: { notification: AppNotificati
       onClick={open}
       disabled={pending}
       className={cn(
-        "flex w-full items-start gap-3 border-b border-slate-100 p-4 text-left transition-colors last:border-0 hover:bg-slate-50",
+        "flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-slate-50",
+        bordered && "border-b border-slate-100 last:border-0",
         !notification.read && "bg-brand-50/50",
       )}
     >

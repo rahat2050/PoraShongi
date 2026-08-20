@@ -14,6 +14,7 @@ import { TuitionStatusBadge } from "@/components/shared/status-badge";
 import { MatchBadge } from "@/components/shared/match-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ShareButtons } from "@/components/shared/share-buttons";
+import { Reveal } from "@/components/motion/reveal";
 import { MeetingLinkForm } from "@/features/tuitions/meeting-link-form";
 import { SaveTuitionButton } from "@/components/shared/save-tuition-button";
 import { isTuitionSaved } from "@/lib/data/saved-tuitions";
@@ -76,6 +77,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">
+      <Reveal>
       <Card>
         <CardContent className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-3">
@@ -166,6 +168,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
           </div>
         </CardContent>
       </Card>
+      </Reveal>
 
       {isOwner && matches && (
         <Card className="mt-6">
@@ -180,10 +183,11 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
               <EmptyState title="এখনই কোনো উপযুক্ত শিক্ষক নেই" description="নতুন শিক্ষক যুক্ত হলে খুঁজে নিন।" />
             ) : (
               <div className="space-y-3">
-                {matches.results.map((m) => {
+                {matches.results.map((m, index) => {
                   const name = m.display_name || m.full_name || "শিক্ষক";
                   return (
-                    <div key={m.id} className="flex items-center gap-3 rounded-xl border border-slate-200 p-4">
+                    <Reveal key={m.id} delay={Math.min(index * 60, 300)} direction="left">
+                    <div className="flex items-center gap-3 rounded-xl border border-slate-200 p-4">
                       <Avatar src={m.avatar_url} name={name} size="md" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-slate-800">{name}</p>
@@ -192,6 +196,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
                       <MatchBadge score={m.score} />
                       <Link href={`/teachers/${m.id}`} className="text-sm font-medium text-brand-700 hover:underline">দেখুন</Link>
                     </div>
+                    </Reveal>
                   );
                 })}
               </div>
