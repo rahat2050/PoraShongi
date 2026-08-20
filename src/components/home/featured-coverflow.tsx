@@ -21,6 +21,8 @@ export function FeaturedCoverflow({
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(0);
+  const draggingRef = useRef(false);
+  const suppressClickRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Derived safe index — avoids setState-in-effect lint and keeps idx valid when teachers length changes
@@ -51,21 +53,38 @@ export function FeaturedCoverflow({
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
     };
+    const onClickCapture = (event: Event) => {
+      if (!suppressClickRef.current) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClickRef.current = false;
+    };
     el.addEventListener("keydown", onKey);
-    return () => el.removeEventListener("keydown", onKey);
+    el.addEventListener("click", onClickCapture, true);
+    return () => {
+      el.removeEventListener("keydown", onKey);
+      el.removeEventListener("click", onClickCapture, true);
+    };
   }, [next, prev]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("button")) return;
+    draggingRef.current = true;
+    suppressClickRef.current = false;
     setIsDragging(true);
     startX.current = e.clientX;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    setDragX(e.clientX - startX.current);
+    if (!draggingRef.current) return;
+    const dx = e.clientX - startX.current;
+    if (Math.abs(dx) > 8) suppressClickRef.current = true;
+    setDragX(dx);
   };
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDragging) return;
+  const finishDrag = (e: React.PointerEvent) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
     const diff = e.clientX - startX.current;
     if (Math.abs(diff) > 50) {
       if (diff > 0) prev();
@@ -73,6 +92,9 @@ export function FeaturedCoverflow({
     }
     setIsDragging(false);
     setDragX(0);
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
   };
 
   if (teachers.length === 0) return null;
@@ -148,11 +170,8 @@ export function FeaturedCoverflow({
           className="relative mt-10 select-none outline-none"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={() => {
-            setIsDragging(false);
-            setDragX(0);
-          }}
+          onPointerUp={finishDrag}
+          onPointerCancel={finishDrag}
           style={{ touchAction: "pan-y" }}
         >
           <div className="relative mx-auto flex h-[420px] max-w-6xl items-center justify-center sm:h-[440px]">
@@ -187,23 +206,27 @@ export function FeaturedCoverflow({
                       transform: `translateX(calc(-50% + ${translateX}px)) translateY(-50%) translateZ(${isCenter ? 100 : -70 - abs * 35}px) rotateY(${offset * -22 + dragInfluence * 0.1}deg) scale(${isCenter ? 1 : 0.86 - abs * 0.04})`,
                       opacity: isVisible ? (isCenter ? 1 : 0.72 - abs * 0.18) : 0,
                       zIndex: isCenter ? 30 : 20 - abs,
-                      pointerEvents: isCenter ? "auto" : "none",
-                      filter: isCenter ? "none" : `saturate(${Math.max(0.35, 1 - abs * 0.22)})`,
+                      pointerEvents: isVisible ? "auto" : "none",
                     }}
                     aria-hidden={!isCenter}
+                    onClick={(event) => {
+                      if (suppressClickRef.current) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return;
+                      }
+                      if (!isCenter) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setIdx(i);
+                      }
+                    }}
                   >
                     <TeacherCard teacher={teacher} featured={isCenter} />
                   </div>
                 );
               })}
             </div>
-
-            {/* Soft edge fades so cards dissolve into the section */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-40 w-20 bg-gradient-to-r from-white/80 to-transparent sm:w-32 dark:from-slate-900/90" aria-hidden />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-40 w-20 bg-gradient-to-l from-white/80 to-transparent sm:w-32 dark:from-slate-900/90" aria-hidden />
-
-            {/* Glossy floor reflection hint */}
-            <div className="pointer-events-none absolute inset-x-8 bottom-1 z-30 h-14 bg-gradient-to-t from-brand-400/15 to-transparent blur-md dark:from-brand-300/10" aria-hidden />
 
             <div className="pointer-events-none absolute bottom-2 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur sm:hidden">
               Swipe করে দেখুন
@@ -254,6 +277,8 @@ function TeacherCard({ teacher, featured }: { teacher: TeacherPublic; featured?:
   return (
     <Link
       href={`/teachers/${teacher.id}`}
+      draggable={false}
+      onDragStart={(event) => event.preventDefault()}
       className={cn(
         "group flex min-h-[380px] flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-xl transition-all hover:shadow-2xl dark:bg-slate-800",
         featured
