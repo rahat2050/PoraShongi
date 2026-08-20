@@ -64,6 +64,21 @@
   to { transform: perspective(1100px) rotateY(0deg) translate3d(0, 0, 0); opacity: 1; }
 }
 
+@keyframes motion-flip-in-up {
+  from { transform: perspective(1100px) rotateX(40deg) translate3d(0, 28px, -36px); opacity: 0.12; }
+  to { transform: perspective(1100px) rotateX(0deg) translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes digit-flip {
+  from { transform: perspective(420px) rotateX(-78deg) translateY(6px); opacity: 0.2; }
+  to { transform: perspective(420px) rotateX(0deg) translateY(0); opacity: 1; }
+}
+
+@keyframes motion-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(2deg); }
+}
+
 @keyframes hero-copy-enter {
   from { transform: translate3d(0, 18px, 0); }
   to { transform: translate3d(0, 0, 0); }
@@ -109,6 +124,12 @@
     animation: motion-flip-in-right 1ms ease-out both;
     animation-timeline: view();
     animation-range: entry 0% cover 34%;
+  }
+
+  .motion-flip-up {
+    animation: motion-flip-in-up 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 32%;
   }
 }
 
@@ -202,6 +223,43 @@
     width: min(44rem, 86%);
     height: min(30rem, 100%);
   }
+}
+
+.scroll-fan {
+  --fan-progress: 1;
+}
+
+.scroll-fan-item {
+  --fan-from-center: 0;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .scroll-fan[data-fan-motion="enabled"] .scroll-fan-item {
+    transform: perspective(1200px)
+      rotateY(calc(var(--fan-from-center) * var(--fan-progress) * -15deg))
+      translate3d(0, calc((1 - var(--fan-progress)) * 22px), calc(var(--fan-depth) * var(--fan-progress) * 28px));
+    transform-origin: center top;
+  }
+}
+
+.flip-digit {
+  display: inline-block;
+  transform-origin: 50% 85%;
+  animation: digit-flip 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  backface-visibility: hidden;
+}
+
+.motion-float {
+  animation: motion-float 4.8s ease-in-out infinite;
+}
+
+.motion-float-delay {
+  animation-delay: 0.7s;
+}
+
+.motion-float-delay-more {
+  animation-delay: 1.4s;
 }
 
 .motion-card {

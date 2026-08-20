@@ -168,6 +168,16 @@ test("scroll presentation deck stays static when motion is reduced", async ({ pa
   await expect(page.locator("[data-deck-slide]").first()).toHaveCSS("transform", "none");
 });
 
+test("journey coverflow keeps five cinematic steps without duplicating hero journey hooks", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("[data-journey-coverflow]")).toHaveCount(1);
+  await expect(page.locator("[data-journey-rail]")).toHaveCount(5);
+  await expect(page.locator("a[data-journey-step]")).toHaveCount(5);
+  await expect(page.locator('[data-journey-rail="match"] a')).toHaveAttribute("href", "/teachers?sort=relevance");
+  await expect(page.locator("[data-scroll-progress]")).toHaveCount(1);
+  await expect(page.locator("[data-scroll-fan]")).toHaveCount(1);
+});
+
 test("hero teacher spotlight never substitutes fabricated profile data", async ({ page }) => {
   await page.goto("/");
   const teacher = page.locator("[data-hero-teacher]");

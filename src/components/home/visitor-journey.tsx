@@ -38,7 +38,7 @@ export function VisitorJourney() {
 
         <div className="mt-12 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Visitor quick actions">
           {actions.map((action) => (
-            <Link key={action.href} href={action.href} data-visitor-action={action.href} className="motion-card group flex min-h-28 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300 hover:bg-brand-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-700 dark:hover:bg-brand-950/30">
+            <Link key={action.href} href={action.href} data-visitor-action={action.href} className="motion-flip motion-card group flex min-h-28 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-brand-300 hover:bg-brand-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-brand-700 dark:hover:bg-brand-950/30">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-brand-800 dark:bg-slate-800 dark:text-brand-300"><action.icon className="h-5 w-5" aria-hidden /></span>
               <span className="min-w-0"><span className="block font-bold text-slate-900 dark:text-slate-100">{action.label}</span><span className="mt-0.5 block text-xs leading-5 text-slate-500 dark:text-slate-400">{action.description}</span></span>
             </Link>
