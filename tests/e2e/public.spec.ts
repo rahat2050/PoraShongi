@@ -485,7 +485,10 @@ test("SEO, PWA and security endpoints are production-safe", async ({ request }) 
   const home = await request.get("/");
   expect(home.status()).toBe(200);
   const headers = home.headers();
-  expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["content-security-policy"]).toContain("frame-ancestors 'self'");
+  expect(headers["content-security-policy"]).toContain("https://rahatahmed.site");
+  expect(headers["content-security-policy"]).toContain("https://*.e2b.app");
+  expect(headers["x-frame-options"]).toBeUndefined();
   expect(headers["content-security-policy"]).toContain("img-src 'self' data: blob: https:");
   expect(headers["content-security-policy"]).not.toContain("api.cloudinary.com");
   expect(headers["x-content-type-options"]).toBe("nosniff");
