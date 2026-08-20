@@ -135,9 +135,11 @@ test("precise pointer updates cinematic hero compositor variables", async ({ bro
 
 test("scroll presentation deck keeps step routes and flips on scroll", async ({ page }) => {
   await page.goto("/");
-  const deck = page.locator("[data-scroll-deck]");
+  // The "how it works" deck is scoped by id — the homepage also has a second
+  // (developer portfolio) deck, so `[data-scroll-deck]` alone is ambiguous.
+  const deck = page.locator("#how");
   await expect(deck).toHaveCount(1);
-  await expect(page.locator("[data-deck-slide]")).toHaveCount(4);
+  await expect(page.locator("#how [data-deck-slide]")).toHaveCount(4);
   await expect(page.locator('[data-home-action="step-১"]')).toHaveAttribute("href", "/dashboard/tuitions/new");
   await expect(page.locator('[data-home-action="step-২"]')).toHaveAttribute("href", "/teachers");
   await expect(page.locator('[data-home-action="step-৩"]')).toHaveAttribute("href", "/teachers");
@@ -150,7 +152,7 @@ test("scroll presentation deck keeps step routes and flips on scroll", async ({ 
   }
 
   await expect(deck).toHaveAttribute("data-scroll-deck-motion", "enabled");
-  const first = page.locator("[data-deck-slide]").first();
+  const first = page.locator("#how [data-deck-slide]").first();
   await page.evaluate(() => {
     const track = document.querySelector(".scroll-flip-track");
     if (!track) return;
@@ -163,9 +165,16 @@ test("scroll presentation deck keeps step routes and flips on scroll", async ({ 
 test("scroll presentation deck stays static when motion is reduced", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const deck = page.locator("[data-scroll-deck]");
+  const deck = page.locator("#how");
   await expect(deck).toHaveAttribute("data-scroll-deck-motion", "static");
-  await expect(page.locator("[data-deck-slide]").first()).toHaveCSS("transform", "none");
+  await expect(page.locator("#how [data-deck-slide]").first()).toHaveCSS("transform", "none");
+});
+
+test("developer project deck presents three project slides", async ({ page }) => {
+  await page.goto("/");
+  const deck = page.locator("#developer-work");
+  await expect(deck).toHaveCount(1);
+  await expect(page.locator("#developer-work [data-deck-slide]")).toHaveCount(3);
 });
 
 test("journey coverflow keeps five cinematic steps without duplicating hero journey hooks", async ({ page }) => {
