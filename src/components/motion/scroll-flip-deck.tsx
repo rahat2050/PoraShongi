@@ -128,7 +128,7 @@ export function ScrollFlipDeck({
         slide.style.setProperty("--slide-abs", abs.toFixed(4));
         slide.style.zIndex = String(Math.round(48 - abs * 12));
         slide.toggleAttribute("data-active", active);
-        slide.setAttribute("data-visible", abs < 1.05 ? "true" : "false");
+        slide.setAttribute("data-visible", abs < 0.55 ? "true" : "false");
         slide.setAttribute("aria-hidden", active ? "false" : "true");
         const link = slide.querySelector<HTMLElement>("a, button");
         if (link) link.tabIndex = active ? 0 : -1;

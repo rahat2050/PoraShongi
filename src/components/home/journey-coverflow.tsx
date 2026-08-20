@@ -197,11 +197,11 @@ export function JourneyCoverflow() {
                   data-journey-rail={step.key}
                   className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
-                    transform: `translateX(calc(-50% + ${offset * 250 + drag * 2}px)) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26 + drag * 0.12}deg) scale(${isCenter ? 1 : 0.86 - abs * 0.04})`,
-                    opacity: abs > 2 ? 0 : isCenter ? 1 : 0.62 - abs * 0.14,
+                    transform: `translateX(calc(-50% + ${offset * 210 + drag * 2}px)) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26 + drag * 0.12}deg) scale(${isCenter ? 1 : 0.9})`,
+                    opacity: 1,
                     zIndex: isCenter ? 30 : 20 - abs,
                     pointerEvents: isCenter ? "auto" : "none",
-                    visibility: abs > 2 ? "hidden" : "visible",
+                    visibility: isCenter ? "visible" : "hidden",
                   }}
                   aria-hidden={!isCenter}
                 >
