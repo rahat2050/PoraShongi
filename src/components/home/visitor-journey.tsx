@@ -26,7 +26,7 @@ export function VisitorJourney() {
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {steps.map((step, index) => (
-            <Link key={step.title} href={step.href} className="motion-reveal motion-card group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900">
+            <Link key={step.title} href={step.href} className="motion-flip motion-card group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 dark:border-slate-700 dark:bg-slate-900">
               <div className="flex items-center justify-between gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300"><step.icon className="h-5 w-5" aria-hidden /></span><span className="text-3xl font-black text-slate-500 dark:text-slate-400">0{index + 1}</span></div>
               <p className="mt-4 text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">{step.label}</p>
               <h3 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{step.title}</h3>

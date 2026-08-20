@@ -54,6 +54,16 @@
   to { transform: translateY(0) scale(1); }
 }
 
+@keyframes motion-flip-in-left {
+  from { transform: perspective(1100px) rotateY(-46deg) translate3d(-40px, 22px, -48px); opacity: 0.12; }
+  to { transform: perspective(1100px) rotateY(0deg) translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes motion-flip-in-right {
+  from { transform: perspective(1100px) rotateY(46deg) translate3d(40px, 22px, -48px); opacity: 0.12; }
+  to { transform: perspective(1100px) rotateY(0deg) translate3d(0, 0, 0); opacity: 1; }
+}
+
 @keyframes hero-copy-enter {
   from { transform: translate3d(0, 18px, 0); }
   to { transform: translate3d(0, 0, 0); }
@@ -87,6 +97,110 @@
     animation: motion-reveal 1ms ease-out both;
     animation-timeline: view();
     animation-range: entry 5% cover 28%;
+  }
+
+  .motion-flip:nth-child(odd) {
+    animation: motion-flip-in-left 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 34%;
+  }
+
+  .motion-flip:nth-child(even) {
+    animation: motion-flip-in-right 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 34%;
+  }
+}
+
+/* Sticky 3D presentation deck — scroll scrubs rotateY from one side to the other. */
+.scroll-flip-clip {
+  height: calc(100svh - 5.25rem);
+  overflow: hidden;
+}
+
+.scroll-flip-stage {
+  height: 100%;
+}
+
+.scroll-flip-world {
+  transform-style: preserve-3d;
+  touch-action: pan-y;
+}
+
+[data-scroll-deck-motion="static"] .scroll-flip-track {
+  height: auto !important;
+}
+
+[data-scroll-deck-motion="static"] .scroll-flip-clip {
+  position: static;
+  height: auto;
+  overflow: visible;
+}
+
+[data-scroll-deck-motion="static"] .scroll-flip-world {
+  display: grid;
+  height: auto;
+  min-height: 0;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  perspective: none;
+  transform: none;
+}
+
+[data-scroll-deck-motion="static"] .scroll-flip-slide {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: auto;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  [data-scroll-deck-motion="static"] .scroll-flip-world {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.scroll-flip-slide {
+  --slide-offset: 0;
+  --slide-abs: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(40rem, 92%);
+  height: min(28rem, 100%);
+  transform: translate3d(-50%, -50%, 0)
+    translateX(calc(var(--slide-offset) * 58%))
+    translateZ(calc(var(--slide-abs) * -210px))
+    rotateY(calc(var(--slide-offset) * -56deg))
+    scale(calc(1 - var(--slide-abs) * 0.06));
+  opacity: calc(1 - var(--slide-abs) * 0.36);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.scroll-flip-slide[data-visible="true"] {
+  visibility: visible;
+}
+
+.scroll-flip-slide[data-active] {
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .scroll-flip-clip {
+    height: calc(100svh - 5.5rem);
+  }
+
+  .scroll-flip-slide {
+    width: min(44rem, 86%);
+    height: min(30rem, 100%);
   }
 }
 
@@ -257,11 +371,50 @@ html:not(.dark) .text-slate-400 {
     transition-duration: 0.01ms !important;
   }
   .motion-reveal,
+  .motion-flip,
   .hero-copy-enter,
   .hero-stage-enter {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .scroll-flip-track {
+    height: auto !important;
+  }
+
+  .scroll-flip-clip {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .scroll-flip-world {
+    display: grid;
+    height: auto;
+    min-height: 0;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    perspective: none;
+    transform: none;
+  }
+
+  .scroll-flip-slide {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+  }
+
+  @media (min-width: 768px) {
+    .scroll-flip-world {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   .motion-card:hover,
   .motion-glow:hover,
