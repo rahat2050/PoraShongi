@@ -174,7 +174,7 @@ export function FeaturedCoverflow({
                     key={teacher.id}
                     className={cn(
                       "absolute left-1/2 top-1/2 w-[300px] sm:w-[340px]",
-                      "transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
+                      "transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform",
                       isVisible ? "visible" : "invisible",
                     )}
                     style={{
