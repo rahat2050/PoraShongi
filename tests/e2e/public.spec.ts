@@ -178,6 +178,27 @@ test("journey coverflow keeps five cinematic steps without duplicating hero jour
   await expect(page.locator("[data-scroll-fan]")).toHaveCount(1);
 });
 
+test("journey coverflow keeps a single active card and advances on arrow click", async ({ page }) => {
+  await page.goto("/");
+  const stage = page.locator("[data-journey-coverflow]");
+  await expect(stage).toHaveCount(1);
+
+  const reduced = await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (reduced) {
+    await expect(stage).toHaveAttribute("data-journey-coverflow-motion", "static");
+    return;
+  }
+
+  await expect(stage).toHaveAttribute("data-journey-coverflow-motion", "enabled");
+  await stage.scrollIntoViewIfNeeded();
+  await expect(page.locator("[data-coverflow-active]")).toHaveCount(1);
+  await expect(page.locator('[data-coverflow-active][data-journey-rail="discover"]')).toHaveCount(1);
+
+  await page.getByRole("button", { name: "পরের ধাপ" }).click();
+  await expect(page.locator('[data-coverflow-active][data-journey-rail="match"]')).toHaveCount(1, { timeout: 4000 });
+  await expect(page.locator("[data-coverflow-active]")).toHaveCount(1);
+});
+
 test("hero teacher spotlight never substitutes fabricated profile data", async ({ page }) => {
   await page.goto("/");
   const teacher = page.locator("[data-hero-teacher]");
