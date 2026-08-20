@@ -10,7 +10,9 @@ import { HeroSection } from "@/components/home/hero-section";
 import { VisitorJourney } from "@/components/home/visitor-journey";
 import { VisitorMobileCta } from "@/components/home/visitor-mobile-cta";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
+import { FeaturedCoverflow } from "@/components/home/featured-coverflow";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
+import { PointerTilt } from "@/components/motion/pointer-tilt";
 import type { HomeFeed } from "@/types/index";
 
 const roles = [
@@ -160,35 +162,54 @@ export default async function Home() {
 
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {roles.map((role, index) => (
-              <Link
-                key={role.key}
-                href={role.href}
-                data-home-action={`role-${role.key}`}
-                className="motion-reveal motion-card group rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
-                aria-label={`${role.title}: ${role.cta}`}
-              >
-                <Card className="relative flex min-h-80 h-full flex-col overflow-hidden rounded-[1.75rem] border-slate-200/80 bg-gradient-to-b from-white to-slate-50/80 shadow-[0_18px_50px_-34px_rgba(15,23,42,.45)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[0_28px_70px_-34px_rgba(15,118,110,.45)] dark:border-slate-700 dark:from-slate-800 dark:to-slate-900 dark:group-hover:border-brand-700">
-                  <div className="h-1.5 w-full bg-gradient-to-r from-brand-700 via-brand-400 to-amber-400 opacity-70 transition-opacity group-hover:opacity-100" aria-hidden />
-                  <CardHeader className="border-0 pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-brand-800 shadow-sm transition-all group-hover:-rotate-3 group-hover:bg-brand-700 group-hover:text-white dark:border-brand-800 dark:bg-brand-950/70 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white">
-                        <role.icon className="h-7 w-7" aria-hidden />
+              <PointerTilt key={role.key} maxRotation={5} maxLayerOffset={10} className="motion-reveal group rounded-[1.75rem]">
+                <Link
+                  href={role.href}
+                  data-home-action={`role-${role.key}`}
+                  className="block rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
+                  aria-label={`${role.title}: ${role.cta}`}
+                >
+                  <Card className="relative flex min-h-80 h-full flex-col overflow-hidden rounded-[1.75rem] border-slate-200/80 bg-gradient-to-b from-white to-slate-50/80 shadow-[0_18px_50px_-34px_rgba(15,23,42,.45)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[0_28px_70px_-34px_rgba(15,118,110,.45)] dark:border-slate-700 dark:from-slate-800 dark:to-slate-900 dark:group-hover:border-brand-700">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-brand-700 via-brand-400 to-amber-400 opacity-70 transition-opacity group-hover:opacity-100" aria-hidden />
+                    <CardHeader className="border-0 pb-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div
+                          data-pointer-layer="0.4"
+                          className="pointer-tilt-layer flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-200 bg-brand-50 text-brand-800 shadow-sm transition-all group-hover:-rotate-3 group-hover:bg-brand-700 group-hover:text-white dark:border-brand-800 dark:bg-brand-950/70 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white"
+                        >
+                          <role.icon className="h-7 w-7" aria-hidden />
+                        </div>
+                        <span
+                          data-pointer-layer="0.25"
+                          className="pointer-tilt-layer text-4xl font-black tracking-tighter text-slate-200 dark:text-slate-700"
+                        >
+                          0{index + 1}
+                        </span>
                       </div>
-                      <span className="text-4xl font-black tracking-tighter text-slate-200 dark:text-slate-700">0{index + 1}</span>
-                    </div>
-                    <CardTitle className="mt-5 text-2xl transition-colors group-hover:text-brand-800 dark:group-hover:text-brand-300">{role.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-1 flex-col pt-0 text-sm leading-7 text-slate-600 dark:text-slate-300">
-                    <p>{role.desc}</p>
-                    <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 font-bold text-brand-800 dark:border-slate-700 dark:text-brand-300">
-                      {role.cta}
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 transition-all group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950">
-                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                      <CardTitle
+                        data-pointer-layer="0.3"
+                        className="pointer-tilt-layer mt-5 text-2xl transition-colors group-hover:text-brand-800 dark:group-hover:text-brand-300"
+                      >
+                        {role.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-1 flex-col pt-0 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                      <p data-pointer-layer="0.2" className="pointer-tilt-layer">
+                        {role.desc}
+                      </p>
+                      <span
+                        data-pointer-layer="0.35"
+                        className="pointer-tilt-layer mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 font-bold text-brand-800 dark:border-slate-700 dark:text-brand-300"
+                      >
+                        {role.cta}
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 transition-all group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950">
+                          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                        </span>
                       </span>
-                    </span>
-                  </CardContent>
-                </Card>
-              </Link>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </PointerTilt>
             ))}
           </div>
         </div>
@@ -228,11 +249,9 @@ export default async function Home() {
         </section>
       )}
 
-      <HomeTeacherSection
-        title="ফিচার্ড শিক্ষক"
-        description="যাচাইকৃত ও বর্তমানে ফিচার্ড শিক্ষক।"
-        teachers={feed.featured_teachers}
-      />
+      {feed.featured_teachers.length > 0 && (
+        <FeaturedCoverflow teachers={feed.featured_teachers} title="ফিচার্ড শিক্ষক" description="যাচাইকৃত ও বর্তমানে ফিচার্ড শিক্ষক — 3D তে swipe করে দেখুন।" />
+      )}
       <HomeTeacherSection
         title="সেরা রেটিংয়ের শিক্ষক"
         description="যাচাইকৃত রিভিউ ও রেটিং অনুযায়ী নির্বাচিত শিক্ষক।"
@@ -264,26 +283,47 @@ export default async function Home() {
             <div className="pointer-events-none absolute left-[10%] right-[10%] top-7 hidden h-px bg-gradient-to-r from-transparent via-brand-300 to-transparent lg:block dark:via-brand-800" aria-hidden />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {steps.map((step) => (
-                <Link
-                  key={step.n}
-                  href={step.href}
-                  data-home-action={`step-${step.n}`}
-                  className="motion-reveal motion-card group relative flex min-h-64 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,.45)] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-300 hover:shadow-[0_26px_60px_-32px_rgba(15,118,110,.38)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
-                  aria-label={`${step.title}: ${step.cta}`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-brand-700 text-lg font-black text-white shadow-lg shadow-brand-900/15 transition-transform group-hover:-rotate-3 group-hover:scale-105 dark:border-slate-800">
-                      {step.n}
+                <PointerTilt key={step.n} maxRotation={4.5} maxLayerOffset={8} className="motion-reveal group rounded-[1.5rem]">
+                  <Link
+                    href={step.href}
+                    data-home-action={`step-${step.n}`}
+                    className="block rounded-[1.5rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
+                    aria-label={`${step.title}: ${step.cta}`}
+                  >
+                    <div className="relative flex min-h-64 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,.45)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[0_26px_60px_-32px_rgba(15,118,110,.38)] dark:border-slate-700 dark:bg-slate-800 dark:group-hover:border-brand-700">
+                      <div className="flex items-center justify-between gap-3">
+                        <div
+                          data-pointer-layer="0.45"
+                          className="pointer-tilt-layer relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-brand-700 text-lg font-black text-white shadow-lg shadow-brand-900/15 transition-transform group-hover:-rotate-3 group-hover:scale-105 dark:border-slate-800"
+                        >
+                          {step.n}
+                        </div>
+                        <span
+                          data-pointer-layer="0.2"
+                          className="pointer-tilt-layer text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400"
+                        >
+                          ধাপ {step.n}
+                        </span>
+                      </div>
+                      <h3
+                        data-pointer-layer="0.3"
+                        className="pointer-tilt-layer mt-6 text-lg font-bold text-slate-900 transition-colors group-hover:text-brand-800 dark:text-slate-100 dark:group-hover:text-brand-300"
+                      >
+                        {step.title}
+                      </h3>
+                      <p data-pointer-layer="0.2" className="pointer-tilt-layer mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                        {step.desc}
+                      </p>
+                      <span
+                        data-pointer-layer="0.35"
+                        className="pointer-tilt-layer mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-700 dark:text-brand-300"
+                      >
+                        {step.cta}
+                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                      </span>
                     </div>
-                    <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">ধাপ {step.n}</span>
-                  </div>
-                  <h3 className="mt-6 text-lg font-bold text-slate-900 transition-colors group-hover:text-brand-800 dark:text-slate-100 dark:group-hover:text-brand-300">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{step.desc}</p>
-                  <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-700 dark:text-brand-300">
-                    {step.cta}
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
-                  </span>
-                </Link>
+                  </Link>
+                </PointerTilt>
               ))}
             </div>
           </div>
