@@ -156,6 +156,39 @@
   to { transform: rotate(360deg); }
 }
 
+/* Developer section — scroll-driven 3D entrance (progressive enhancement).
+ * The card flips in 3D and the copy slides in as the section scrolls into
+ * view. Unsupported browsers keep everything fully static/visible. */
+@supports (animation-timeline: view()) {
+  .developer-scroll-card {
+    animation: developer-card-enter 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+
+  .developer-scroll-copy {
+    animation: developer-copy-enter 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 38%;
+  }
+}
+
+@keyframes developer-card-enter {
+  from {
+    transform: perspective(1200px) rotateY(-26deg) translate3d(0, 64px, 0) scale(0.94);
+    opacity: 0.15;
+  }
+  to {
+    transform: perspective(1200px) rotateY(0deg) translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes developer-copy-enter {
+  from { transform: translate3d(-40px, 44px, 0); opacity: 0; }
+  to { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
 .hero-copy-enter {
   animation: hero-copy-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -690,7 +723,9 @@ body {
   .check-pop,
   .spotlight-in,
   .confetti-particle,
-  .developer-ring {
+  .developer-ring,
+  .developer-scroll-card,
+  .developer-scroll-copy {
     animation: none !important;
     transform: none !important;
     transition: none !important;
