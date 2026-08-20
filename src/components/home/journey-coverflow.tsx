@@ -37,20 +37,20 @@ function StepCard({
     <Link
       href={step.href}
       tabIndex={tabIndex}
-      className="group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border border-white/12 bg-[linear-gradient(165deg,#ffffff_0%,#f8fafc_55%,#ecfdf5_100%)] p-6 text-slate-900 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 dark:border-white/10 dark:bg-[linear-gradient(165deg,#1e293b_0%,#0f172a_62%,#042f2e_100%)] dark:text-white"
+      className="group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 text-slate-950 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
       aria-label={`${step.label}: ${step.title}`}
     >
       <div className="flex items-center justify-between gap-3">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-700 text-white shadow-lg shadow-brand-900/20">
           <Icon className="h-5 w-5" aria-hidden />
         </span>
-        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
           {step.label} · 0{index + 1}
         </span>
       </div>
       <h3 className="mt-8 text-2xl font-black tracking-tight">{step.title}</h3>
-      <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{step.text}</p>
-      <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-white/10 dark:text-brand-300">
+      <p className="mt-3 text-sm leading-6 text-slate-700 dark:text-slate-200">{step.text}</p>
+      <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-600 dark:text-emerald-200">
         এগিয়ে যান
         <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
       </span>
@@ -60,7 +60,7 @@ function StepCard({
 
 function SectionShell({ children }: { children: ReactNode }) {
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#042f2e_0%,#0f172a_48%,#020617_100%)] text-white" aria-labelledby="journey-coverflow-title">
+    <section className="relative overflow-x-clip overflow-y-hidden bg-[linear-gradient(180deg,#042f2e_0%,#0f172a_48%,#020617_100%)] text-white" aria-labelledby="journey-coverflow-title">
       <div className="pointer-events-none absolute -left-16 top-10 h-64 w-64 rounded-full bg-brand-400/15 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">{children}</div>
@@ -108,8 +108,8 @@ export function JourneyCoverflow() {
     return (
       <SectionShell>
         <div className="max-w-2xl">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-300">Cinematic journey</p>
-          <h2 id="journey-coverflow-title" className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-200">Cinematic journey</p>
+          <h2 id="journey-coverflow-title" className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
             Discover থেকে Trust—পাঁচটি পরিষ্কার ধাপ
           </h2>
         </div>
@@ -128,11 +128,11 @@ export function JourneyCoverflow() {
     <SectionShell>
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div className="max-w-2xl">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-300">Cinematic journey</p>
-          <h2 id="journey-coverflow-title" className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-200">Cinematic journey</p>
+          <h2 id="journey-coverflow-title" className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
             স্ক্রল নয়—স্লাইড উল্টে পুরো পথ দেখুন
           </h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">
+          <p className="mt-3 text-sm leading-7 text-slate-200">
             Discover থেকে Trust—পাঁচটি ধাপ 3D coverflow-এ। Swipe করুন, তীর চাপুন, বা বসুন দেখুন।
           </p>
         </div>

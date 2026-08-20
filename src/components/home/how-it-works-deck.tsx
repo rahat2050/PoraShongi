@@ -55,7 +55,7 @@ export function HowItWorksDeck() {
             key={step.n}
             data-deck-slide
             data-active={index === 0 ? "true" : undefined}
-            data-visible={index <= 1 ? "true" : undefined}
+            data-visible={index === 0 ? "true" : "false"}
             className="scroll-flip-slide"
             style={{
               ["--slide-offset" as string]: String(index),
@@ -65,10 +65,10 @@ export function HowItWorksDeck() {
             <Link
               href={step.href}
               data-home-action={`step-${step.n}`}
-              className="group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(165deg,#ffffff_0%,#f8fafc_58%,#ecfdf5_100%)] p-6 shadow-[0_28px_80px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:p-8 dark:border-white/10 dark:bg-[linear-gradient(165deg,#1e293b_0%,#0f172a_60%,#042f2e_100%)]"
+              className="group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_28px_80px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:p-8 dark:border-slate-600 dark:bg-slate-800"
               aria-label={`${step.title}: ${step.cta}`}
             >
-              <div className="pointer-events-none absolute -right-3 -top-10 select-none text-[9.5rem] font-black leading-none tracking-tighter text-brand-700/[0.07] dark:text-white/[0.06]" aria-hidden>
+              <div className="pointer-events-none absolute -right-3 -top-10 select-none text-[9.5rem] font-black leading-none tracking-tighter text-slate-200 dark:text-slate-700" aria-hidden>
                 {step.n}
               </div>
               <div className="h-1.5 w-24 rounded-full bg-gradient-to-r from-brand-700 via-brand-400 to-amber-400" aria-hidden />
@@ -76,14 +76,14 @@ export function HowItWorksDeck() {
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-700 text-lg font-black text-white shadow-lg shadow-brand-900/25">
                   {step.n}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
-                  <Icon className="h-3.5 w-3.5 text-brand-700 dark:text-brand-300" aria-hidden />
+                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
+                  <Icon className="h-3.5 w-3.5 text-brand-800 dark:text-emerald-200" aria-hidden />
                   ধাপ {step.n}
                 </span>
               </div>
               <h3 className="mt-8 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">{step.title}</h3>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base dark:text-slate-300">{step.desc}</p>
-              <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-white/10 dark:text-brand-300">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-700 sm:text-base dark:text-slate-200">{step.desc}</p>
+              <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-600 dark:text-emerald-200">
                 {step.cta}
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-800 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950 dark:text-brand-200">
                   <ArrowUpRight className="h-4 w-4" aria-hidden />

@@ -128,7 +128,7 @@ export function ScrollFlipDeck({
         slide.style.setProperty("--slide-abs", abs.toFixed(4));
         slide.style.zIndex = String(Math.round(48 - abs * 12));
         slide.toggleAttribute("data-active", active);
-        slide.setAttribute("data-visible", abs < 1.7 ? "true" : "false");
+        slide.setAttribute("data-visible", abs < 1.05 ? "true" : "false");
         slide.setAttribute("aria-hidden", active ? "false" : "true");
         const link = slide.querySelector<HTMLElement>("a, button");
         if (link) link.tabIndex = active ? 0 : -1;
@@ -239,13 +239,13 @@ export function ScrollFlipDeck({
         <div className="grid items-end gap-6 lg:grid-cols-[1fr_.7fr]">
           <div>
             {eyebrow ? (
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-300">{eyebrow}</p>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-200">{eyebrow}</p>
             ) : null}
             <h2 id={resolvedTitleId} className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
               {title}
             </h2>
           </div>
-          <p className="max-w-xl text-base leading-7 text-slate-300 lg:justify-self-end">{description}</p>
+          <p className="max-w-xl text-base leading-7 text-slate-200 lg:justify-self-end">{description}</p>
         </div>
       </div>
 
@@ -257,8 +257,8 @@ export function ScrollFlipDeck({
         <div className="scroll-flip-clip sticky top-16">
           <div className="scroll-flip-stage mx-auto flex h-full max-w-7xl flex-col px-4 sm:px-6">
             <div className="flex items-center justify-between gap-3 pt-5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-200/90">{label}</p>
-              <p className="hidden text-xs font-medium text-slate-400 sm:block">{hint}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-200">{label}</p>
+              <p className="hidden text-xs font-medium text-slate-200 sm:block">{hint}</p>
             </div>
 
             <div ref={worldRef} className="scroll-flip-world relative mt-3 min-h-0 flex-1" style={{ perspective: "1400px" }}>
@@ -267,7 +267,7 @@ export function ScrollFlipDeck({
 
             <div className="flex flex-col gap-3 pb-6 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold tabular-nums text-slate-300" aria-hidden>
+                <span className="font-mono text-xs font-bold tabular-nums text-slate-200" aria-hidden>
                   {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
                 </span>
                 <div
@@ -303,7 +303,7 @@ export function ScrollFlipDeck({
                   onClick={() => scrollToSlide(activeIndex - 1)}
                   disabled={activeIndex <= 0}
                   aria-label="আগের স্লাইড"
-                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-slate-300"
                 >
                   <ChevronLeft className="h-5 w-5" aria-hidden />
                 </button>
@@ -312,7 +312,7 @@ export function ScrollFlipDeck({
                   onClick={() => scrollToSlide(activeIndex + 1)}
                   disabled={activeIndex >= total - 1}
                   aria-label="পরের স্লাইড"
-                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-slate-300"
                 >
                   <ChevronRight className="h-5 w-5" aria-hidden />
                 </button>
