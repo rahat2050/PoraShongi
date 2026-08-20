@@ -220,7 +220,7 @@ export function DeveloperSection() {
               </div>
 
               <div
-                className={cn("flip-card", canFlip && "cursor-pointer")}
+                className={cn("flip-card developer-flip", canFlip && "cursor-pointer")}
                 data-flipped={flipped || undefined}
                 onClick={handleCardClick}
               >
@@ -276,11 +276,12 @@ export function DeveloperSection() {
                     aria-hidden={!flipped}
                     inert={!flipped}
                   >
-                    <div className="flex h-full flex-col overflow-hidden overflow-y-auto rounded-[2rem] border-2 border-amber-300/70 bg-[linear-gradient(150deg,#042f2e_0%,#0f3d3a_52%,#1f2937_100%)] p-6 text-white shadow-[0_40px_100px_-40px_rgba(16,185,129,.5)] sm:p-7">
+                    <div className="relative flex h-full flex-col overflow-hidden overflow-y-auto rounded-[2rem] border-2 border-amber-300/70 bg-[linear-gradient(150deg,#042f2e_0%,#0f3d3a_52%,#1f2937_100%)] p-6 text-white shadow-[0_40px_100px_-40px_rgba(16,185,129,.5)] sm:p-7">
                       <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-amber-400/15 blur-2xl" aria-hidden />
                       <div className="pointer-events-none absolute -bottom-14 -left-10 h-36 w-36 rounded-full bg-brand-400/15 blur-2xl" aria-hidden />
+                      {canFlip && <span className="developer-shine" aria-hidden />}
 
-                      <div className="relative flex items-center gap-3">
+                      <div className="dev-back-enter dev-d1 relative flex items-center gap-3">
                         <Avatar src={developer.avatarUrl} name={developer.name} size="md" />
                         <div className="min-w-0">
                           <p className="truncate text-lg font-black text-white">{developer.name}</p>
@@ -298,11 +299,11 @@ export function DeveloperSection() {
                         )}
                       </div>
 
-                      <h3 className="relative mt-5 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-amber-300">
+                      <h3 className="dev-back-enter dev-d2 relative mt-5 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-amber-300">
                         <Medal className="h-4 w-4" aria-hidden /> গুরুত্বপূর্ণ তথ্য
                       </h3>
 
-                      <dl className="relative mt-3 space-y-2.5">
+                      <dl className="dev-back-enter dev-d3 relative mt-3 space-y-2.5">
                         {developerFacts.map((fact) => (
                           <div key={fact.label} className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
                             <fact.icon className={cn("mt-0.5 h-4 w-4 shrink-0", fact.tone)} aria-hidden />
@@ -314,10 +315,10 @@ export function DeveloperSection() {
                         ))}
                       </dl>
 
-                      <h3 className="relative mt-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-brand-200">
+                      <h3 className="dev-back-enter dev-d4 relative mt-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-brand-200">
                         <Rocket className="h-3.5 w-3.5" aria-hidden /> যা বানাই
                       </h3>
-                      <div className="relative mt-2 flex flex-wrap gap-1.5">
+                      <div className="dev-back-enter dev-d4 relative mt-2 flex flex-wrap gap-1.5">
                         {developerServices.map((service) => (
                           <span key={service} className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-amber-100">
                             {service}
@@ -325,7 +326,7 @@ export function DeveloperSection() {
                         ))}
                       </div>
 
-                      <div className="relative mt-auto pt-5">
+                      <div className="dev-back-enter dev-d5 relative mt-auto pt-5">
                         <div className="grid gap-2">
                           <a
                             href={developer.links.portfolio}
