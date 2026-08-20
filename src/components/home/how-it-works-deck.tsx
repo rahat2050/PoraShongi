@@ -65,14 +65,14 @@ export function HowItWorksDeck() {
             <Link
               href={step.href}
               data-home-action={`step-${step.n}`}
-              className="group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_28px_80px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:p-8 dark:border-slate-600 dark:bg-slate-800"
+              className="deck-card group relative flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_28px_80px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:p-8 dark:border-slate-600 dark:bg-slate-800"
               aria-label={`${step.title}: ${step.cta}`}
             >
               <div className="pointer-events-none absolute -right-3 -top-10 select-none text-[9.5rem] font-black leading-none tracking-tighter text-slate-200 dark:text-slate-700" aria-hidden>
                 {step.n}
               </div>
               <div className="h-1.5 w-24 rounded-full bg-gradient-to-r from-brand-700 via-brand-400 to-amber-400" aria-hidden />
-              <div className="mt-6 flex items-center justify-between gap-3">
+              <div className="deck-step-row mt-6 flex items-center justify-between gap-3">
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-700 text-lg font-black text-white shadow-lg shadow-brand-900/25">
                   {step.n}
                 </span>
@@ -81,9 +81,9 @@ export function HowItWorksDeck() {
                   ধাপ {step.n}
                 </span>
               </div>
-              <h3 className="mt-8 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">{step.title}</h3>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-700 sm:text-base dark:text-slate-200">{step.desc}</p>
-              <span className="mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-600 dark:text-emerald-200">
+              <h3 className="deck-title mt-8 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">{step.title}</h3>
+              <p className="deck-desc mt-4 max-w-xl text-sm leading-7 text-slate-700 sm:text-base dark:text-slate-200">{step.desc}</p>
+              <span className="deck-cta mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-600 dark:text-emerald-200">
                 {step.cta}
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-800 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-brand-700 group-hover:text-white dark:bg-brand-950 dark:text-brand-200">
                   <ArrowUpRight className="h-4 w-4" aria-hidden />

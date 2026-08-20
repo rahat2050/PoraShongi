@@ -156,6 +156,12 @@ export function FeaturedCoverflow({
           style={{ touchAction: "pan-y" }}
         >
           <div className="relative mx-auto flex h-[420px] max-w-6xl items-center justify-center sm:h-[440px]">
+            {/* Centre-stage glow that follows the active card */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[24rem] w-[34rem] max-w-[94vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-400/15 blur-[90px] dark:bg-brand-400/20"
+              aria-hidden
+            />
+
             <div className="relative h-full w-full" style={{ perspective: "1400px", transformStyle: "preserve-3d" as const }}>
               {teachers.map((teacher, i) => {
                 let offset = i - safeIdx;
@@ -173,15 +179,16 @@ export function FeaturedCoverflow({
                   <div
                     key={teacher.id}
                     className={cn(
-                      "absolute left-1/2 top-1/2 w-[300px] -translate-x-1/2 -translate-y-1/2 sm:w-[340px]",
-                      "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
+                      "absolute left-1/2 top-1/2 w-[300px] sm:w-[340px]",
+                      "transition-[transform,opacity,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform",
                       isVisible ? "visible" : "invisible",
                     )}
                     style={{
-                      transform: `translateX(calc(-50% + ${translateX}px)) translateZ(${isCenter ? 90 : -70 - abs * 35}px) rotateY(${offset * -22 + dragInfluence * 0.1}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.05})`,
+                      transform: `translateX(calc(-50% + ${translateX}px)) translateY(-50%) translateZ(${isCenter ? 100 : -70 - abs * 35}px) rotateY(${offset * -22 + dragInfluence * 0.1}deg) scale(${isCenter ? 1 : 0.86 - abs * 0.04})`,
                       opacity: isVisible ? (isCenter ? 1 : 0.72 - abs * 0.18) : 0,
                       zIndex: isCenter ? 30 : 20 - abs,
                       pointerEvents: isCenter ? "auto" : "none",
+                      filter: isCenter ? "none" : `saturate(${Math.max(0.35, 1 - abs * 0.22)})`,
                     }}
                     aria-hidden={!isCenter}
                   >
@@ -190,7 +197,15 @@ export function FeaturedCoverflow({
                 );
               })}
             </div>
-            <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur sm:hidden">
+
+            {/* Soft edge fades so cards dissolve into the section */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-40 w-20 bg-gradient-to-r from-white/80 to-transparent sm:w-32 dark:from-slate-900/90" aria-hidden />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-40 w-20 bg-gradient-to-l from-white/80 to-transparent sm:w-32 dark:from-slate-900/90" aria-hidden />
+
+            {/* Glossy floor reflection hint */}
+            <div className="pointer-events-none absolute inset-x-8 bottom-1 z-30 h-14 bg-gradient-to-t from-brand-400/15 to-transparent blur-md dark:from-brand-300/10" aria-hidden />
+
+            <div className="pointer-events-none absolute bottom-2 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur sm:hidden">
               Swipe করে দেখুন
             </div>
           </div>
@@ -241,7 +256,9 @@ function TeacherCard({ teacher, featured }: { teacher: TeacherPublic; featured?:
       href={`/teachers/${teacher.id}`}
       className={cn(
         "group flex min-h-[380px] flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-xl transition-all hover:shadow-2xl dark:bg-slate-800",
-        featured ? "border-brand-200 dark:border-brand-800 shadow-[0_20px_60px_-20px_rgba(15,118,110,.35)]" : "border-slate-200 dark:border-slate-700",
+        featured
+          ? "border-brand-200 shadow-[0_0_0_1px_rgba(16,185,129,.35),0_40px_90px_-24px_rgba(16,185,129,.45)] ring-1 ring-emerald-300/40 dark:border-emerald-700/70 dark:ring-emerald-300/30"
+          : "border-slate-200 shadow-[0_24px_70px_-28px_rgba(0,0,0,.45)] dark:border-slate-700",
       )}
       aria-label={`${displayName}-এর প্রোফাইল দেখুন`}
     >

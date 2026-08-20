@@ -16,28 +16,36 @@ import {
 import { cn } from "@/lib/utils";
 
 const steps = [
-  { key: "discover", label: "Discover", title: "প্রয়োজন অনুযায়ী খুঁজুন", text: "ক্লাস, বিষয়, এলাকা ও মাধ্যম দিয়ে শিক্ষক তালিকা দেখুন।", href: "/teachers", icon: Search },
-  { key: "match", label: "Match", title: "সেরা মিল বাছুন", text: "ফিল্টার ও প্রাসঙ্গিকতা দিয়ে যে শিক্ষক সবচেয়ে কাছাকাছি, তা দেখুন।", href: "/teachers?sort=relevance", icon: Sparkles },
-  { key: "connect", label: "Connect", title: "নিরাপদে যুক্ত হোন", text: "পছন্দ হলে অনুরোধ পাঠান—যোগাযোগ নিয়ন্ত্রিত থাকে।", href: "/teachers", icon: Handshake },
-  { key: "manage", label: "Manage", title: "সময়সূচি চালান", text: "সেশন, উপস্থিতি ও শেখার কাজ এক জায়গায় রাখুন।", href: "/dashboard/schedule", icon: CalendarCheck2 },
-  { key: "trust", label: "Trust", title: "যাচাই করে এগোন", text: "ভেরিফিকেশন, নিরাপত্তা ও স্বচ্ছ প্রক্রিয়া আগে জেনে নিন।", href: "/safety", icon: ShieldCheck },
+  { key: "discover", label: "Discover", title: "প্রয়োজন অনুযায়ী খুঁজুন", text: "ক্লাস, বিষয়, এলাকা ও মাধ্যম দিয়ে শিক্ষক তালিকা দেখুন।", href: "/teachers", icon: Search, glow: "bg-emerald-400/15 dark:bg-emerald-400/20", bar: "from-emerald-400 to-teal-300", dot: "bg-emerald-400", accent: "text-emerald-300", ring: "ring-emerald-300/50" },
+  { key: "match", label: "Match", title: "সেরা মিল বাছুন", text: "ফিল্টার ও প্রাসঙ্গিকতা দিয়ে যে শিক্ষক সবচেয়ে কাছাকাছি, তা দেখুন।", href: "/teachers?sort=relevance", icon: Sparkles, glow: "bg-amber-400/15 dark:bg-amber-400/20", bar: "from-amber-400 to-orange-300", dot: "bg-amber-400", accent: "text-amber-300", ring: "ring-amber-300/50" },
+  { key: "connect", label: "Connect", title: "নিরাপদে যুক্ত হোন", text: "পছন্দ হলে অনুরোধ পাঠান—যোগাযোগ নিয়ন্ত্রিত থাকে।", href: "/teachers", icon: Handshake, glow: "bg-violet-400/15 dark:bg-violet-400/20", bar: "from-violet-400 to-purple-300", dot: "bg-violet-400", accent: "text-violet-300", ring: "ring-violet-300/50" },
+  { key: "manage", label: "Manage", title: "সময়সূচি চালান", text: "সেশন, উপস্থিতি ও শেখার কাজ এক জায়গায় রাখুন।", href: "/dashboard/schedule", icon: CalendarCheck2, glow: "bg-cyan-400/15 dark:bg-cyan-400/20", bar: "from-cyan-400 to-sky-300", dot: "bg-cyan-400", accent: "text-cyan-300", ring: "ring-cyan-300/50" },
+  { key: "trust", label: "Trust", title: "যাচাই করে এগোন", text: "ভেরিফিকেশন, নিরাপত্তা ও স্বচ্ছ প্রক্রিয়া আগে জেনে নিন।", href: "/safety", icon: ShieldCheck, glow: "bg-rose-400/15 dark:bg-rose-400/20", bar: "from-rose-400 to-pink-300", dot: "bg-rose-400", accent: "text-rose-300", ring: "ring-rose-300/50" },
 ] as const;
 
 function StepCard({
   step,
   index,
   tabIndex = 0,
+  featured = false,
 }: {
   step: (typeof steps)[number];
   index: number;
   tabIndex?: number;
+  featured?: boolean;
 }) {
   const Icon = step.icon as LucideIcon;
   return (
     <Link
       href={step.href}
       tabIndex={tabIndex}
-      className="group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 text-slate-950 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+      className={cn(
+        "group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border bg-white p-6 text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300",
+        featured && "card-content-in",
+        featured
+          ? "border-brand-200/90 shadow-[0_0_0_1px_rgba(52,211,153,.35),0_40px_90px_-24px_rgba(16,185,129,.45)] ring-1 ring-emerald-300/40 dark:border-emerald-700/70 dark:bg-slate-800 dark:ring-emerald-300/30 dark:text-white"
+          : "border-slate-200 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] dark:border-slate-600 dark:bg-slate-800 dark:text-white",
+      )}
       aria-label={`${step.label}: ${step.title}`}
     >
       <div className="flex items-center justify-between gap-3">
@@ -68,16 +76,62 @@ function SectionShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function JourneyCoverflow() {
-  const [idx, setIdx] = useState(0);
-  const [dragX, setDragX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [staticMode, setStaticMode] = useState(false);
-  const startX = useRef(0);
-  const stageRef = useRef<HTMLDivElement>(null);
+const STEP_X = 210; // px between card centres
+const SPRING_STIFFNESS = 150;
+const SPRING_DAMPING = 20;
 
-  const next = useCallback(() => setIdx((value) => (value + 1) % steps.length), []);
-  const prev = useCallback(() => setIdx((value) => (value - 1 + steps.length) % steps.length), []);
+export function JourneyCoverflow() {
+  const [staticMode, setStaticMode] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [hoverCard, setHoverCard] = useState<number | null>(null);
+  const [position, setPosition] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const positionRef = useRef(0);
+  const velocityRef = useRef(0);
+  const targetRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const dragRef = useRef<{ id: number; startX: number; startPos: number; lastX: number; lastT: number; vel: number } | null>(null);
+
+  const stopAnimation = useCallback(() => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  // Spring-integrates the coverflow position toward `target`. Momentum carries
+  // the current velocity in, so release-after-drag and arrow clicks feel fluid
+  // instead of snapping between discrete steps.
+  const animateTo = useCallback((target: number, v0 = 0) => {
+    stopAnimation();
+    targetRef.current = target;
+    velocityRef.current = v0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const diff = targetRef.current - positionRef.current;
+      const accel = SPRING_STIFFNESS * diff - SPRING_DAMPING * velocityRef.current;
+      velocityRef.current += accel * dt;
+      const next = positionRef.current + velocityRef.current * dt;
+      positionRef.current = next;
+      setPosition(next);
+      if (Math.abs(targetRef.current - next) > 0.004 || Math.abs(velocityRef.current) > 0.02) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        positionRef.current = targetRef.current;
+        velocityRef.current = 0;
+        setPosition(targetRef.current);
+        rafRef.current = null;
+      }
+    };
+    rafRef.current = requestAnimationFrame(tick);
+  }, [stopAnimation]);
+
+  const next = useCallback(() => animateTo(targetRef.current + 1, 1.1), [animateTo]);
+  const prev = useCallback(() => animateTo(targetRef.current - 1, -1.1), [animateTo]);
+  const goTo = useCallback((index: number) => animateTo(index), [animateTo]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -88,10 +142,10 @@ export function JourneyCoverflow() {
   }, []);
 
   useEffect(() => {
-    if (staticMode || isDragging) return;
-    const timer = window.setInterval(next, 3600);
+    if (staticMode || isDragging || hovered) return;
+    const timer = window.setInterval(() => animateTo(targetRef.current + 1, 1.1), 3800);
     return () => window.clearInterval(timer);
-  }, [isDragging, next, staticMode]);
+  }, [isDragging, staticMode, hovered, animateTo]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -103,6 +157,8 @@ export function JourneyCoverflow() {
     stage.addEventListener("keydown", onKey);
     return () => stage.removeEventListener("keydown", onKey);
   }, [next, prev]);
+
+  useEffect(() => stopAnimation, [stopAnimation]);
 
   if (staticMode) {
     return (
@@ -123,6 +179,9 @@ export function JourneyCoverflow() {
       </SectionShell>
     );
   }
+
+  const activeIndex = ((Math.round(position) % steps.length) + steps.length) % steps.length;
+  const activeStep = steps[activeIndex];
 
   return (
     <SectionShell>
@@ -156,73 +215,169 @@ export function JourneyCoverflow() {
         data-journey-coverflow-motion="enabled"
         className="relative mt-10 select-none outline-none"
         style={{ touchAction: "pan-y" }}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={(event) => {
+          setHovered(false);
+          if (isDragging && event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+          setIsDragging(false);
+          dragRef.current = null;
+        }}
         onPointerDown={(event) => {
+          stopAnimation();
           setIsDragging(true);
-          startX.current = event.clientX;
+          dragRef.current = {
+            id: event.pointerId,
+            startX: event.clientX,
+            startPos: positionRef.current,
+            lastX: event.clientX,
+            lastT: performance.now(),
+            vel: 0,
+          };
           event.currentTarget.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
-          if (!isDragging) return;
-          setDragX(event.clientX - startX.current);
+          const drag = dragRef.current;
+          if (!drag) return;
+          const now = performance.now();
+          const dt = Math.max(now - drag.lastT, 16);
+          const px = (event.clientX - drag.lastX) / STEP_X;
+          const instant = px / (dt / 1000); // cards per second
+          drag.vel = 0.72 * instant + 0.28 * drag.vel;
+          const nextPos = drag.startPos + (event.clientX - drag.startX) / STEP_X;
+          positionRef.current = nextPos;
+          setPosition(nextPos);
+          drag.lastX = event.clientX;
+          drag.lastT = now;
         }}
         onPointerUp={(event) => {
-          if (!isDragging) return;
-          const diff = event.clientX - startX.current;
-          if (Math.abs(diff) > 50) {
-            if (diff > 0) prev();
-            else next();
-          }
+          const drag = dragRef.current;
+          if (!drag) return;
+          const dist = event.clientX - drag.startX;
+          const vel = drag.vel;
+          dragRef.current = null;
           setIsDragging(false);
-          setDragX(0);
+          const fling = Math.abs(dist) > 48 || Math.abs(vel) > 0.6;
+          let target;
+          if (fling) {
+            const dir = dist + vel * 120 < 0 ? 1 : -1; // +1 = next, -1 = prev
+            target = Math.round(positionRef.current + dir);
+          } else {
+            target = Math.round(positionRef.current);
+          }
+          animateTo(target, fling ? (target - positionRef.current) * 1.1 : 0);
         }}
         onPointerCancel={() => {
+          const drag = dragRef.current;
+          const vel = drag?.vel ?? 0;
+          dragRef.current = null;
           setIsDragging(false);
-          setDragX(0);
+          animateTo(Math.round(positionRef.current), Math.sign(vel) * 0.6);
         }}
       >
         <div className="relative mx-auto flex h-[360px] max-w-5xl items-center justify-center sm:h-[400px]">
+          {/* Centre-stage glow — theme follows the active step */}
+          <div
+            className={cn(
+              "pointer-events-none absolute left-1/2 top-1/2 h-[22rem] w-[30rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px] transition-colors duration-700",
+              steps[((Math.round(position) % steps.length) + steps.length) % steps.length]?.glow,
+            )}
+            aria-hidden
+          />
+
           <div className="relative h-full w-full" style={{ perspective: "1400px", transformStyle: "preserve-3d" }}>
             {steps.map((step, index) => {
-              let offset = index - idx;
-              const half = Math.floor(steps.length / 2);
-              if (offset > half) offset -= steps.length;
-              if (offset < -half) offset += steps.length;
+              const raw = index - position;
+              const half = steps.length / 2;
+              let offset = raw;
+              while (offset > half) offset -= steps.length;
+              while (offset < -half) offset += steps.length;
               const abs = Math.abs(offset);
-              const isCenter = offset === 0;
-              const drag = isDragging ? dragX * 0.04 : 0;
+              const isCenter = Math.abs(raw - Math.round(raw)) < 0.5;
+              const opacity = isCenter ? 1 : Math.max(0.18, 1 - abs * 0.3);
+              const hoveredCard = hoverCard === index && !isCenter;
+              const hoverPull = hoveredCard ? (offset > 0 ? -1 : 1) : 0;
 
               return (
                 <article
                   key={step.key}
                   data-journey-rail={step.key}
-                  className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                  style={{
-                    transform: `translateX(calc(-50% + ${offset * 210 + drag * 2}px)) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26 + drag * 0.12}deg) scale(${isCenter ? 1 : 0.9})`,
-                    opacity: 1,
-                    zIndex: isCenter ? 30 : 20 - abs,
-                    pointerEvents: isCenter ? "auto" : "none",
-                    visibility: isCenter ? "visible" : "hidden",
+                  onMouseEnter={() => setHoverCard(index)}
+                  onMouseLeave={() => setHoverCard(null)}
+                  onClick={(event) => {
+                    if (!isCenter) {
+                      event.preventDefault();
+                      goTo(index);
+                    }
                   }}
-                  aria-hidden={!isCenter}
+                  className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] will-change-transform"
+                  style={{
+                    transform: `translateX(calc(-50% + ${offset * STEP_X}px)) translateY(-50%) translateZ(${isCenter ? 90 : -90 - abs * 30}px) rotateY(${offset * -26}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.02})`,
+                    opacity,
+                    zIndex: isCenter ? 30 : 20 - abs,
+                    pointerEvents: "auto",
+                    filter: isCenter ? "none" : `saturate(${Math.max(0.35, 1 - abs * 0.25)})`,
+                    cursor: isCenter ? "pointer" : "pointer",
+                  }}
+                  aria-hidden={abs > 2}
                 >
-                  <StepCard step={step} index={index} tabIndex={isCenter ? 0 : -1} />
+                  {/* Hover-pull toward centre (Apple Store style) */}
+                  <div
+                    className="h-full transition-transform duration-300 ease-out"
+                    style={{ transform: hoverPull ? `translateX(${hoverPull * 28}px) scale(1.04)` : "none" }}
+                  >
+                    <StepCard step={step} index={index} tabIndex={isCenter ? 0 : -1} featured={isCenter} />
+                  </div>
                 </article>
               );
             })}
           </div>
+
+          {/* Soft edge fades so cards dissolve into the section */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-40 w-20 bg-gradient-to-r from-slate-950/90 to-transparent sm:w-32" aria-hidden />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-40 w-20 bg-gradient-to-l from-slate-950/90 to-transparent sm:w-32" aria-hidden />
+
+          {/* Glossy floor reflection hint */}
+          <div className="pointer-events-none absolute inset-x-8 bottom-1 z-30 h-14 bg-gradient-to-t from-emerald-300/20 to-transparent blur-md dark:from-emerald-300/15" aria-hidden />
         </div>
 
-        <div className="mt-6 flex items-center justify-center gap-2">
-          {steps.map((step, index) => (
-            <button
-              key={step.key}
-              type="button"
-              onClick={() => setIdx(index)}
-              aria-label={`${step.label} ধাপ`}
-              aria-current={index === idx ? "true" : undefined}
-              className={cn("h-2.5 rounded-full transition-all", index === idx ? "w-8 bg-white" : "w-2.5 bg-white/30 hover:bg-white/55")}
-            />
-          ))}
+        {/* Continuous glide progress — gradient follows the active theme */}
+        <div className="mx-auto mt-6 h-1 w-56 max-w-full overflow-hidden rounded-full bg-white/10" aria-hidden>
+          <div
+            className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-200 ease-linear", activeStep.bar)}
+            style={{ width: `${Math.max(6, Math.min(100, ((position % steps.length) + steps.length) % steps.length * (100 / steps.length))) }%` }}
+          />
+        </div>
+
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {steps.map((step, index) => {
+            const active = Math.abs(position - index) < 0.5;
+            return (
+              <button
+                key={step.key}
+                type="button"
+                onClick={() => goTo(index)}
+                aria-label={`${step.label} ধাপ`}
+                aria-current={active ? "true" : undefined}
+                className={cn(
+                  "h-2.5 rounded-full transition-all",
+                  active ? cn("w-8", step.dot) : "w-2.5 bg-white/30 hover:bg-white/55",
+                )}
+              />
+            );
+          })}
+        </div>
+
+        {/* Live synced panel — text updates as the coverflow glides */}
+        <div className="mt-5 flex justify-center px-4">
+          <div key={activeStep.key} className="card-content-in max-w-md text-center">
+            <p className={cn("text-xs font-bold uppercase tracking-[0.18em]", activeStep.accent)}>
+              {activeStep.label} · 0{activeIndex + 1}
+            </p>
+            <h3 className="mt-1.5 text-xl font-black tracking-tight text-white">{activeStep.title}</h3>
+            <p className="mt-1 text-sm leading-6 text-slate-200">{activeStep.text}</p>
+          </div>
         </div>
       </div>
     </SectionShell>

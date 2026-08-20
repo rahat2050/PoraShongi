@@ -229,6 +229,75 @@
   }
 }
 
+/* Flip-deck cards must always stay fully inside the sticky box. The box height
+ * follows the viewport (100svh) and on shorter screens the card used to be
+ * taller than the box, so .scroll-flip-clip's overflow:hidden clipped the top
+ * and bottom of the card. Let the card shrink with the box and compact its
+ * text/spacing so nothing gets cut. */
+.deck-card {
+  min-height: 0;
+}
+
+@media (max-height: 44rem) {
+  .scroll-flip-slide {
+    height: min(26rem, 100%);
+  }
+
+  .deck-card {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .deck-step-row {
+    margin-top: 0.875rem;
+  }
+
+  .deck-step-row > span {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  .deck-title {
+    margin-top: 1.25rem;
+    font-size: 1.625rem;
+    line-height: 1.15;
+  }
+
+  .deck-desc {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .deck-cta {
+    padding-top: 0.75rem;
+  }
+}
+
+@media (max-height: 34rem) {
+  .scroll-flip-slide {
+    height: min(22rem, 100%);
+  }
+
+  .deck-card {
+    padding: 1rem 1.25rem;
+  }
+
+  .deck-step-row {
+    margin-top: 0.625rem;
+  }
+
+  .deck-title {
+    margin-top: 0.875rem;
+    font-size: 1.375rem;
+  }
+
+  .deck-desc {
+    margin-top: 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+}
+
 .scroll-fan {
   --fan-progress: 1;
 }
@@ -501,6 +570,16 @@ body {
   animation: menu-item-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Content entrance for the coverflow card that becomes the centre card */
+@keyframes card-content-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card-content-in {
+  animation: card-content-in 440ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Primary buttons: subtle shine sweep on hover */
 .btn-shine {
   position: relative;
@@ -547,7 +626,8 @@ body {
   .btn-shine::after,
   .site-header[data-header-hidden="true"],
   .motion-parallax-slow,
-  .motion-parallax-fast {
+  .motion-parallax-fast,
+  .card-content-in {
     animation: none !important;
     transform: none !important;
     transition: none !important;
