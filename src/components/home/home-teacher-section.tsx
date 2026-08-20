@@ -3,6 +3,7 @@ import { ArrowRight, Clock3, MapPin, Star } from "lucide-react";
 import type { TeacherPublic } from "@/types/index";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { PointerTilt } from "@/components/motion/pointer-tilt";
 
 export function HomeTeacherSection({
   title,
@@ -37,12 +38,13 @@ export function HomeTeacherSection({
           {teachers.slice(0, 6).map((teacher) => {
             const name = teacher.display_name || teacher.full_name || "শিক্ষক";
             return (
-              <Link
-                key={teacher.id}
-                href={`/teachers/${teacher.id}`}
-                className="motion-reveal motion-card group flex min-h-80 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_-36px_rgba(15,23,42,.5)] transition-all duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_26px_65px_-34px_rgba(15,118,110,.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
-                aria-label={`${name}-এর প্রোফাইল দেখুন`}
-              >
+              <PointerTilt key={teacher.id} maxRotation={3.5} maxLayerOffset={9} className="motion-reveal group rounded-[1.5rem]">
+                <Link
+                  href={`/teachers/${teacher.id}`}
+                  className="block rounded-[1.5rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
+                  aria-label={`${name}-এর প্রোফাইল দেখুন`}
+                >
+                  <div className="group flex min-h-80 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_-36px_rgba(15,23,42,.5)] transition-all duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-[0_26px_65px_-34px_rgba(15,118,110,.4)] dark:border-slate-700 dark:bg-slate-800 dark:group-hover:border-brand-700">
                 <div className="flex items-start gap-3">
                   <Avatar src={teacher.avatar_url} name={name} size="lg" />
                   <div className="min-w-0 flex-1">
@@ -78,7 +80,9 @@ export function HomeTeacherSection({
                   প্রোফাইল দেখুন
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </span>
-              </Link>
+                  </div>
+                </Link>
+              </PointerTilt>
             );
           })}
         </div>

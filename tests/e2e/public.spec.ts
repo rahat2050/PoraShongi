@@ -65,14 +65,14 @@ test("lightweight motion respects reduced-motion preference", async ({ page }) =
   expect(state.opacity).toBe("1");
   expect(state.transform).toBe("none");
 
-  const heroStage = page.locator("[data-pointer-tilt]");
+  const heroStage = page.locator("[data-hero-motion] [data-pointer-tilt]");
   await expect(heroStage).toHaveAttribute("data-pointer-motion", "static");
   await expect(heroStage).toHaveCSS("transform", "none");
 });
 
 test("cinematic hero limits pointer depth to capable desktop devices", async ({ page }) => {
   await page.goto("/");
-  const stage = page.locator("[data-pointer-tilt]");
+  const stage = page.locator("[data-hero-motion] [data-pointer-tilt]");
   await expect(stage).toHaveCount(1);
 
   const supportsPointerMotion = await page.evaluate(() => (
@@ -120,7 +120,7 @@ test("precise pointer updates cinematic hero compositor variables", async ({ bro
 
   try {
     await page.goto("/");
-    const stage = page.locator("[data-pointer-tilt]");
+    const stage = page.locator("[data-hero-motion] [data-pointer-tilt]");
     await expect(stage).toHaveAttribute("data-pointer-motion", "enabled");
     const box = await stage.boundingBox();
     expect(box).not.toBeNull();
