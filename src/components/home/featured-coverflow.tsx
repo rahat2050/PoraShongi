@@ -173,12 +173,12 @@ export function FeaturedCoverflow({
                   <div
                     key={teacher.id}
                     className={cn(
-                      "absolute left-1/2 top-1/2 w-[300px] -translate-x-1/2 -translate-y-1/2 sm:w-[340px]",
+                      "absolute left-1/2 top-1/2 w-[300px] sm:w-[340px]",
                       "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
                       isVisible ? "visible" : "invisible",
                     )}
                     style={{
-                      transform: `translateX(calc(-50% + ${translateX}px)) translateZ(${isCenter ? 90 : -70 - abs * 35}px) rotateY(${offset * -22 + dragInfluence * 0.1}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.05})`,
+                      transform: `translateX(calc(-50% + ${translateX}px)) translateY(-50%) translateZ(${isCenter ? 90 : -70 - abs * 35}px) rotateY(${offset * -22 + dragInfluence * 0.1}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.05})`,
                       opacity: isVisible ? (isCenter ? 1 : 0.72 - abs * 0.18) : 0,
                       zIndex: isCenter ? 30 : 20 - abs,
                       pointerEvents: isCenter ? "auto" : "none",
