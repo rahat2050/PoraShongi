@@ -554,6 +554,75 @@ body {
   }
 }
 
+/* ---------- Premium teacher flip cards ---------- */
+.flip-card {
+  perspective: 1400px;
+}
+
+.flip-inner {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-front {
+  transform: rotateY(0deg);
+}
+
+.flip-back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform: rotateY(180deg);
+  pointer-events: none;
+}
+
+.flip-card[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card[data-flipped="true"] .flip-back {
+  pointer-events: auto;
+}
+
+/* Small rotate affordance next to the premium badge on the front face */
+.flip-hint {
+  opacity: 0.55;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease;
+}
+
+.flip-card[data-flipped="true"] .flip-hint {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* "ফিরে যেতে ট্যাপ করুন" hint — only meaningful on touch devices */
+.flip-back-hint {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .flip-back-hint {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+
+  .flip-card[data-flipped="true"] .flip-inner {
+    transform: none;
+  }
+}
+
 /* card hover lift (সব Card-এ consistent) */
 .card-hover {
   transition: transform 0.18s ease, box-shadow 0.18s ease;

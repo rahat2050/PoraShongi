@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { BadgeCheck, BookOpen, MapPin } from "lucide-react";
+import { BadgeCheck, BookOpen, MapPin, RotateCw } from "lucide-react";
 import { type TeacherPublic } from "@/types/index";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { FavoriteButton } from "@/components/shared/favorite-button";
+import { PremiumTeacherFlip } from "@/components/shared/premium-teacher-flip";
 import { formatDistance, formatTaka, modeLabel } from "@/lib/utils";
 
 export function TeacherCard({
@@ -23,7 +24,7 @@ export function TeacherCard({
     profileLocation || (teacher.teaching_mode === "online" || teacher.teaching_mode === "both" ? "অনলাইন" : "")
   );
 
-  return (
+  const card = (
     <Card className="group motion-card h-full transition-shadow hover:shadow-md">
       <CardContent className="p-5">
         <div className="flex items-start gap-4">
@@ -39,7 +40,12 @@ export function TeacherCard({
                 <BadgeCheck className="h-4 w-4 shrink-0 text-brand-600" aria-label="Verified" />
               )}
               {teacher.is_premium && (
-                <Badge variant="accent">★ Premium</Badge>
+                <>
+                  <Badge variant="accent">★ Premium</Badge>
+                  <span className="flip-hint inline-flex shrink-0 text-amber-600 dark:text-amber-400" title="আরও তথ্যের জন্য কার্ডটি উল্টান" aria-hidden>
+                    <RotateCw className="h-3.5 w-3.5" />
+                  </span>
+                </>
               )}
             </div>
             <p className="truncate text-sm text-slate-500">{teacher.headline || teacher.education || "টিউশন শিক্ষক"}</p>
@@ -91,6 +97,8 @@ export function TeacherCard({
       </CardContent>
     </Card>
   );
+
+  return teacher.is_premium ? <PremiumTeacherFlip teacher={teacher} front={card} /> : card;
 }
 
 function InfoItem({ label, value }: { label: string; value: string }) {

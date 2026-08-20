@@ -74,6 +74,22 @@ Dark/light toggle-এ icon-টি rotate+scale হয়ে বদলায় (
 
 **ছেড়ে দেওয়া হয়েছে (ইচ্ছাকৃত):** typing effect (a11y ঝুঁকি), full-page route overlay (SE/UX ঝুঁকি), video hero (performance), confetti burst (redirect-এ চোখে পড়ে না), auto-rotating testimonial (নির্ভরযোগ্য data নেই)।
 
+## ২.৬) Premium শিক্ষক ফ্লিপ কার্ড (Implemented ✅)
+
+**Premium শিক্ষকদের কার্ডে 3D flip** — hover (desktop) বা tap (mobile) করলে কার্ড উল্টে যায় এবং শিক্ষক সম্পর্কে **অতিরিক্ত তথ্য + প্রিমিয়াম সুবিধা** দেখায়:
+
+- **Front** (আগের মতো): নাম, ছবি, subject, অভিজ্ঞতা, ফি, রেটিং + `★ Premium` badge-এর পাশে ছোট `⟳` flip indicator
+- **Back** (উল্টে গেলে): premium গোল্ড-টিল ডিজাইনে — `👑 প্রিমিয়াম শিক্ষক` badge, bio, শিক্ষাগত যোগ্যতা, রেটিং+রিভিউ, উপলব্ধ দিন/সময়, এলাকা, subject chips, **প্রিমিয়াম সুবিধা** (যাচাইকৃত তথ্য · অগ্রাধিকার ম্যাচ · দ্রুত সাড়া · উন্নত দৃশ্যমানতা) এবং `সম্পূর্ণ প্রোফাইল দেখুন` CTA
+
+**নিরাপত্তা/অ্যাক্সেসিবিলিটি:**
+- Desktop (fine pointer): hover-এ flip; touch device: link/button ছাড়া ট্যাপ করলে flip (link গুলো স্বাভাবিক কাজ করে)
+- Back লুকানো থাকলে `inert` + `aria-hidden` — গোপন link ট্যাব/স্ক্রিনরিডারে আসে না
+- `prefers-reduced-motion`: ফ্লিপ বন্ধ — front-ই দেখা যায়
+- যেসব জায়গায় লাগানো হয়েছে: `/teachers` grid, dashboard favorites, teacher detail-এর "আরও" section, home-এর teacher sections (`teacher-card.tsx`, `home-teacher-section.tsx`)
+- ফাইল: `src/components/motion/flip-card.tsx` (generic), `src/components/shared/premium-teacher-flip.tsx` (premium back face)
+
+*নোট: Featured coverflow-এ flip intentionally লাগানো হয়নি — সেখানে কার্ড আগে থেকেই 3D তে ঘোরে (drag/swipe), দুটো মিলিয়ে gesture conflict হবে।*
+
 ## ৩) আরও যা যোগ করা যেতে পারে (menu — বাছাই করে বলুন, করে দেব)
 
 | # | অ্যানিমেশন | কোথায় | Effort | Impact |
