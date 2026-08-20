@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight, Mail, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Mail, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { siteConfig } from "@/config/site";
+import { developer } from "@/config/developer";
 
 const linkClass = "inline-flex min-h-9 items-center rounded-md text-slate-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300";
 
@@ -71,7 +72,20 @@ export function Footer() {
 
         <div data-footer-bottom className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {siteConfig.brandName} ({siteConfig.brandNameBangla})</p>
-          <p>Discover → Match → Connect → Manage → Trust</p>
+          <p className="flex flex-wrap items-center gap-1.5">
+            <span>Developed by</span>
+            <a
+              href={developer.links.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1 font-bold text-brand-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
+            >
+              {developer.name}
+              <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+            </a>
+            <span aria-hidden>·</span>
+            <span>Discover → Match → Connect → Manage → Trust</span>
+          </p>
         </div>
       </div>
     </footer>

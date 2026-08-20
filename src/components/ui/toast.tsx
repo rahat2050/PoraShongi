@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useState } from "react";
 import { CheckCircle2, Info, XCircle } from "lucide-react";
+import { ConfettiBurst } from "@/components/motion/confetti-burst";
 
 type ToastType = "success" | "danger" | "info";
 
@@ -47,9 +48,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={t.id}
             role="status"
-            className={`animate-message-in pointer-events-auto flex w-auto max-w-full items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium shadow-lg ${styles[t.type]}`}
+            className={`animate-message-in pointer-events-auto relative flex w-auto max-w-full items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium shadow-lg ${styles[t.type]}`}
           >
-            {icons[t.type]}
+            {t.type === "success" && <ConfettiBurst active count={14} radius={64} />}
+            <span className={t.type === "success" ? "check-pop" : undefined} aria-hidden>
+              {icons[t.type]}
+            </span>
             <span>{t.message}</span>
           </div>
         ))}

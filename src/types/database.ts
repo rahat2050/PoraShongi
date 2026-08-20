@@ -584,6 +584,7 @@ export interface Database {
       };
       toggle_own_account: { Args: { p_active: boolean }; Returns: undefined };
       top_teachers: { Args: { p_district?: string | null; p_limit?: number | null }; Returns: Json };
+      top_reviews: { Args: { p_limit?: number | null }; Returns: Json };
       recommend_teachers: { Args: { p_teacher_id: string; p_limit?: number | null }; Returns: Json };
       admin_analytics: { Args: Record<PropertyKey, never>; Returns: Json };
       record_site_visit: { Args: { p_is_unique?: boolean | null }; Returns: undefined };

@@ -97,6 +97,144 @@
   animation: message-in 180ms ease-out both;
 }
 
+/* Success check pop (toast icon + signup celebration) */
+@keyframes check-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.14); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.check-pop {
+  display: inline-flex;
+  transform-origin: center;
+  animation: check-pop 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Confetti particles emitted from a success toast/celebration centre */
+.confetti-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 2px;
+  will-change: transform, opacity;
+  animation: confetti-burst var(--confetti-duration, 800ms) cubic-bezier(0.16, 0.84, 0.32, 1) var(--confetti-delay, 0ms) both;
+}
+
+@keyframes confetti-burst {
+  0% {
+    transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%)
+      translate3d(var(--confetti-dx, 0px), var(--confetti-dy, 0px), 0)
+      rotate(var(--confetti-rotate, 180deg))
+      scale(0.55);
+    opacity: 0;
+  }
+}
+
+/* Auto-rotating review spotlight slide entrance */
+@keyframes spotlight-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.spotlight-in {
+  animation: spotlight-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Developer section — slow conic ring spinning behind the avatar */
+.developer-ring {
+  background: conic-gradient(from 0deg, #10b981, #f59e0b, #0ea5e9, #8b5cf6, #10b981);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  animation: developer-ring-spin 9s linear infinite;
+}
+
+@keyframes developer-ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Developer section — scroll-driven 3D entrance (progressive enhancement).
+ * The card flips in 3D and the copy slides in as the section scrolls into
+ * view. Unsupported browsers keep everything fully static/visible. */
+@supports (animation-timeline: view()) {
+  .developer-scroll-card {
+    animation: developer-card-enter 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+
+  .developer-scroll-copy {
+    animation: developer-copy-enter 1ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 38%;
+  }
+}
+
+@keyframes developer-card-enter {
+  from {
+    transform: perspective(1200px) rotateY(-26deg) translate3d(0, 64px, 0) scale(0.94);
+    opacity: 0.15;
+  }
+  to {
+    transform: perspective(1200px) rotateY(0deg) translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes developer-copy-enter {
+  from { transform: translate3d(-40px, 44px, 0); opacity: 0; }
+  to { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* Developer card — stylized 3D flip: springy overshoot + pop + light sweep.
+ * The rotation bounces slightly past 180° before settling, the card scales up
+ * mid-flip, and a diagonal light sweep flashes across as it turns over. */
+.flip-card.developer-flip {
+  perspective: 1600px;
+}
+
+.flip-card.developer-flip .flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 780ms cubic-bezier(0.34, 1.45, 0.64, 1);
+  will-change: transform;
+}
+
+.flip-card.developer-flip[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg) scale(1.045);
+}
+
+/* Diagonal light sweep across the card while it turns over */
+.developer-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+  transform: translateX(-130%) skewX(-12deg);
+}
+
+.flip-card.developer-flip[data-flipped="true"] .developer-shine {
+  animation: developer-shine-sweep 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes developer-shine-sweep {
+  from { transform: translateX(-130%) skewX(-12deg); }
+  to { transform: translateX(130%) skewX(-12deg); }
+}
+
+/* Back-face content staggers in right after the card flips */
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter {
+  animation: card-content-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter.dev-d1 { animation-delay: 60ms; }
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter.dev-d2 { animation-delay: 140ms; }
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter.dev-d3 { animation-delay: 220ms; }
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter.dev-d4 { animation-delay: 300ms; }
+.flip-card.developer-flip[data-flipped="true"] .dev-back-enter.dev-d5 { animation-delay: 380ms; }
+
 .hero-copy-enter {
   animation: hero-copy-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -627,10 +765,17 @@ body {
   .site-header[data-header-hidden="true"],
   .motion-parallax-slow,
   .motion-parallax-fast,
-  .card-content-in {
+  .card-content-in,
+  .check-pop,
+  .spotlight-in,
+  .confetti-particle,
+  .developer-ring,
+  .developer-scroll-card,
+  .developer-scroll-copy {
     animation: none !important;
     transform: none !important;
     transition: none !important;
+    opacity: 1 !important;
   }
 }
 

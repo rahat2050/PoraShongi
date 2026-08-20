@@ -1,10 +1,11 @@
 import "server-only";
-import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
+import { asJson, getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
 import {
   type Review,
   type ReviewPublic,
   type SearchResponse,
   type TeacherReputation,
+  type TestimonialPublic,
 } from "@/types/index";
 
 export async function getTeacherReputation(
@@ -31,6 +32,14 @@ export async function getTeacherReviews(
   });
   if (error) return fail(error.message);
   return ok(asJson<SearchResponse<ReviewPublic>>(data));
+}
+
+export async function topReviews(limit = 6): Promise<DataResult<TestimonialPublic[]>> {
+  const db = getPublicDb(300);
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("top_reviews", { p_limit: limit });
+  if (error) return fail(error.message);
+  return ok(asJson<TestimonialPublic[]>(data));
 }
 
 export async function getOwnReview(

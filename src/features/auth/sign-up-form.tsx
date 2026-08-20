@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormField } from "@/components/ui/form-field";
 import { Alert } from "@/components/ui/alert";
+import { SuccessBurst } from "@/components/motion/success-burst";
 
 interface SignUpFieldErrors {
   fullName?: string;
@@ -119,6 +120,9 @@ export function SignUpForm({ initialReferralCode = "" }: { initialReferralCode?:
   if (success) {
     return (
       <div className="space-y-4">
+        <div className="flex justify-center py-2">
+          <SuccessBurst particleCount={28} />
+        </div>
         <Alert variant="success" title="প্রায় শেষ!">{success}</Alert>
         {error && <Alert variant="danger">{error}</Alert>}
         <Button type="button" variant="outline" className="w-full" loading={resending} onClick={resendVerification}>
