@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,6 +24,9 @@ import {
 import { PointerTilt } from "@/components/motion/pointer-tilt";
 import { buttonStyles } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+// Stats demo targets (module-level so exhaustive-deps doesn't complain)
+const STAT_TARGETS = [1247, 589, 3421, 64] as const;
 
 // Mock teachers for coverflow
 const mockTeachers = [
@@ -401,15 +404,15 @@ function CoverflowDemo() {
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(0);
 
-  const next = () => setIdx((p) => (p + 1) % mockTeachers.length);
-  const prev = () => setIdx((p) => (p - 1 + mockTeachers.length) % mockTeachers.length);
+  const next = useCallback(() => setIdx((p) => (p + 1) % mockTeachers.length), []);
+  const prev = useCallback(() => setIdx((p) => (p - 1 + mockTeachers.length) % mockTeachers.length), []);
 
   // auto play
   useEffect(() => {
     if (isDragging) return;
     const t = setInterval(next, 3200);
     return () => clearInterval(t);
-  }, [isDragging]);
+  }, [isDragging, next]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
@@ -658,8 +661,6 @@ function StatsDemo() {
   const [inView, setInView] = useState(false);
   const [counts, setCounts] = useState([0, 0, 0, 0]);
 
-  const targets = [1247, 589, 3421, 64];
-
   useEffect(() => {
     const el = statsRef.current;
     if (!el) return;
@@ -681,7 +682,7 @@ function StatsDemo() {
     const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - p, 3);
-      setCounts(targets.map((t) => Math.floor(t * eased)));
+      setCounts(STAT_TARGETS.map((t) => Math.floor(t * eased)));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -709,7 +710,7 @@ function StatsDemo() {
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {targets.map((t, i) => (
+          {STAT_TARGETS.map((t, i) => (
             <div
               key={i}
               className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur transition-transform hover:scale-[1.02]"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Award, ChevronLeft, ChevronRight, Clock3, MapPin, Star } from "lucide-react";
 import type { TeacherPublic } from "@/types/index";
@@ -23,20 +23,25 @@ export function FeaturedCoverflow({
   const startX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Ensure idx stays valid if teachers length changes
-  useEffect(() => {
-    if (idx >= teachers.length) setIdx(0);
-  }, [teachers.length, idx]);
+  // Derived safe index — avoids setState-in-effect lint and keeps idx valid when teachers length changes
+  const safeIdx = teachers.length === 0 ? 0 : ((idx % teachers.length) + teachers.length) % teachers.length;
 
-  const next = () => setIdx((p) => (p + 1) % teachers.length);
-  const prev = () => setIdx((p) => (p - 1 + teachers.length) % teachers.length);
+  const next = useCallback(() => {
+    if (teachers.length === 0) return;
+    setIdx((p) => (p + 1) % teachers.length);
+  }, [teachers.length]);
 
-  // Auto-play, pause on drag or hover
+  const prev = useCallback(() => {
+    if (teachers.length === 0) return;
+    setIdx((p) => (p - 1 + teachers.length) % teachers.length);
+  }, [teachers.length]);
+
+  // Auto-play, pause on drag
   useEffect(() => {
     if (teachers.length <= 1 || isDragging) return;
     const t = window.setInterval(next, 3800);
     return () => window.clearInterval(t);
-  }, [isDragging, teachers.length]);
+  }, [isDragging, teachers.length, next]);
 
   // Keyboard
   useEffect(() => {
@@ -48,7 +53,7 @@ export function FeaturedCoverflow({
     };
     el.addEventListener("keydown", onKey);
     return () => el.removeEventListener("keydown", onKey);
-  }, [teachers.length]);
+  }, [next, prev]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
@@ -72,10 +77,9 @@ export function FeaturedCoverflow({
 
   if (teachers.length === 0) return null;
 
-  // Single teacher fallback to nice card
+  // Single teacher fallback
   if (teachers.length === 1) {
     const t = teachers[0];
-    const name = t.display_name || t.full_name || "শিক্ষক";
     return (
       <section className="bg-white dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">
@@ -151,13 +155,10 @@ export function FeaturedCoverflow({
           }}
           style={{ touchAction: "pan-y" }}
         >
-          {/* Desktop: 3D coverflow, Mobile: swipe */}
           <div className="relative mx-auto flex h-[420px] max-w-6xl items-center justify-center sm:h-[440px]">
-            {/* perspective container */}
             <div className="relative h-full w-full" style={{ perspective: "1400px", transformStyle: "preserve-3d" as const }}>
               {teachers.map((teacher, i) => {
-                let offset = i - idx;
-                // shortest circular distance for infinite feel
+                let offset = i - safeIdx;
                 const half = Math.floor(teachers.length / 2);
                 if (offset > half) offset -= teachers.length;
                 if (offset < -half) offset += teachers.length;
@@ -165,10 +166,7 @@ export function FeaturedCoverflow({
                 const abs = Math.abs(offset);
                 const isCenter = offset === 0;
                 const isVisible = abs <= 2;
-
-                // drag influence
                 const dragInfluence = isDragging ? dragX * 0.05 : 0;
-                // spread: 280px desktop, 200px handled via CSS? use 42% width
                 const translateX = offset * 300 + dragInfluence * 2;
 
                 return (
@@ -192,14 +190,11 @@ export function FeaturedCoverflow({
                 );
               })}
             </div>
-
-            {/* Mobile hint */}
             <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur sm:hidden">
               Swipe করে দেখুন
             </div>
           </div>
 
-          {/* Dots + counter */}
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-2">
               {teachers.map((_, i) => (
@@ -207,17 +202,17 @@ export function FeaturedCoverflow({
                   key={i}
                   onClick={() => setIdx(i)}
                   aria-label={`শিক্ষক ${i + 1} দেখুন`}
-                  aria-current={i === idx ? "true" : undefined}
+                  aria-current={i === safeIdx ? "true" : undefined}
                   className={cn(
                     "h-2.5 rounded-full transition-all",
-                    i === idx ? "w-8 bg-brand-700 dark:bg-brand-500" : "w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400",
+                    i === safeIdx ? "w-8 bg-brand-700 dark:bg-brand-500" : "w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400",
                   )}
                 />
               ))}
             </div>
             <div className="flex items-center gap-3 text-sm">
               <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400">
-                {String(idx + 1).padStart(2, "0")} / {String(teachers.length).padStart(2, "0")}
+                {String(safeIdx + 1).padStart(2, "0")} / {String(teachers.length).padStart(2, "0")}
               </span>
               <span className="hidden h-4 w-px bg-slate-200 dark:bg-slate-700 sm:block" aria-hidden />
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Drag করুন বা arrow চাপুন • Auto-play</p>
@@ -236,7 +231,7 @@ export function FeaturedCoverflow({
 }
 
 function TeacherCard({ teacher, featured }: { teacher: TeacherPublic; featured?: boolean }) {
-  const name = teacher.display_name || teacher.full_name || "শিক্ষক";
+  const displayName = teacher.display_name || teacher.full_name || "শিক্ষক";
   const location = [teacher.area, teacher.district].filter(Boolean).join(", ");
   const subjects = (teacher.subjects ?? []).slice(0, 3);
   const hasRating = Boolean(teacher.review_count && teacher.review_count > 0 && teacher.rating_avg != null);
@@ -248,16 +243,16 @@ function TeacherCard({ teacher, featured }: { teacher: TeacherPublic; featured?:
         "group flex min-h-[380px] flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-xl transition-all hover:shadow-2xl dark:bg-slate-800",
         featured ? "border-brand-200 dark:border-brand-800 shadow-[0_20px_60px_-20px_rgba(15,118,110,.35)]" : "border-slate-200 dark:border-slate-700",
       )}
-      aria-label={`${name}-এর প্রোফাইল দেখুন`}
+      aria-label={`${displayName}-এর প্রোফাইল দেখুন`}
     >
       <div className="h-1.5 w-full bg-gradient-to-r from-brand-700 via-brand-500 to-amber-400 opacity-80 group-hover:opacity-100" aria-hidden />
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start gap-3">
-          <Avatar src={teacher.avatar_url} name={name} size="lg" className="h-14 w-14 shrink-0 border-2 border-white shadow-md dark:border-slate-700" />
+          <Avatar src={teacher.avatar_url} name={displayName} size="lg" className="h-14 w-14 shrink-0 border-2 border-white shadow-md dark:border-slate-700" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
               <h3 className="truncate text-[15px] font-black leading-tight text-slate-900 group-hover:text-brand-800 dark:text-white dark:group-hover:text-brand-300">
-                {name}
+                {displayName}
               </h3>
               {teacher.verification_status === "verified" && (
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300" title="যাচাইকৃত">
