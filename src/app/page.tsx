@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, GraduationCap, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { homeFeed, siteStats } from "@/lib/data/features";
+import { topReviews } from "@/lib/data/reviews";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import { HomeTeacherSection } from "@/components/home/home-teacher-section";
 import { FeaturedCoverflow } from "@/components/home/featured-coverflow";
 import { HowItWorksDeck } from "@/components/home/how-it-works-deck";
 import { JourneyCoverflow } from "@/components/home/journey-coverflow";
+import { ReviewSpotlight } from "@/components/home/review-spotlight";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
 import { ScrollFan } from "@/components/motion/scroll-fan";
@@ -57,8 +59,9 @@ export default async function Home() {
   };
   let feed = emptyFeed;
   let stats: import("@/lib/data/features").SiteStats | null = null;
+  let testimonials: import("@/types/index").TestimonialPublic[] = [];
   if (isSupabaseConfigured()) {
-    const [feedRes, statsRes] = await Promise.all([homeFeed(), siteStats()]);
+    const [feedRes, statsRes, reviewsRes] = await Promise.all([homeFeed(), siteStats(), topReviews(6)]);
     const value = feedRes.data;
     feed = {
       teachers: value?.teachers ?? [],
@@ -67,6 +70,7 @@ export default async function Home() {
       tuitions: [],
     };
     stats = statsRes.data;
+    testimonials = reviewsRes.data ?? [];
   }
 
   const featuredIds = new Set(feed.featured_teachers.map((teacher) => teacher.id));
@@ -240,6 +244,8 @@ export default async function Home() {
       />
 
       <HowItWorksDeck />
+
+      {testimonials.length > 0 && <ReviewSpotlight reviews={testimonials} />}
 
       {/* Final CTA */}
       <section className="bg-slate-50 dark:bg-slate-950">

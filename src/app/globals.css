@@ -97,6 +97,53 @@
   animation: message-in 180ms ease-out both;
 }
 
+/* Success check pop (toast icon + signup celebration) */
+@keyframes check-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.14); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.check-pop {
+  display: inline-flex;
+  transform-origin: center;
+  animation: check-pop 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Confetti particles emitted from a success toast/celebration centre */
+.confetti-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 2px;
+  will-change: transform, opacity;
+  animation: confetti-burst var(--confetti-duration, 800ms) cubic-bezier(0.16, 0.84, 0.32, 1) var(--confetti-delay, 0ms) both;
+}
+
+@keyframes confetti-burst {
+  0% {
+    transform: translate(-50%, -50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%)
+      translate3d(var(--confetti-dx, 0px), var(--confetti-dy, 0px), 0)
+      rotate(var(--confetti-rotate, 180deg))
+      scale(0.55);
+    opacity: 0;
+  }
+}
+
+/* Auto-rotating review spotlight slide entrance */
+@keyframes spotlight-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.spotlight-in {
+  animation: spotlight-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .hero-copy-enter {
   animation: hero-copy-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -627,10 +674,14 @@ body {
   .site-header[data-header-hidden="true"],
   .motion-parallax-slow,
   .motion-parallax-fast,
-  .card-content-in {
+  .card-content-in,
+  .check-pop,
+  .spotlight-in,
+  .confetti-particle {
     animation: none !important;
     transform: none !important;
     transition: none !important;
+    opacity: 1 !important;
   }
 }
 

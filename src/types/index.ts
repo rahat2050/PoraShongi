@@ -204,6 +204,22 @@ export type ReviewPublic = {
   reviewer_role: UserRole;
 };
 
+/** Homepage review spotlight (top_reviews RPC)। */
+export type TestimonialPublic = {
+  id: string;
+  rating: number;
+  body: string;
+  verified: boolean;
+  created_at: string;
+  reviewer_name: string | null;
+  reviewer_display_name: string | null;
+  reviewer_avatar: string | null;
+  reviewer_role: UserRole;
+  teacher_id: string;
+  teacher_name: string | null;
+  teacher_display_name: string | null;
+};
+
 export type TeacherReputation = {
   verification_status: VerificationStatus;
   phone_verified: boolean;

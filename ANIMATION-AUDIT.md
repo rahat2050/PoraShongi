@@ -90,6 +90,14 @@ Dark/light toggle-এ icon-টি rotate+scale হয়ে বদলায় (
 
 *নোট: Featured coverflow-এ flip intentionally লাগানো হয়নি — সেখানে কার্ড আগে থেকেই 3D তে ঘোরে (drag/swipe), দুটো মিলিয়ে gesture conflict হবে।*
 
+## ২.৭) বাকি পলিশ রাউন্ড (Implemented ✅)
+
+ANIMATION-AUDIT-এর বাদ পড়া আইটেমগুলো এই রাউন্ডে যোগ হয়েছে — সব reduced-motion-safe, no-JS-safe, zero-dependency:
+
+1. **Profile completion progress ring** — বারের পাশাপাশি (এখন primary) একটা circular SVG ring, viewport-এ এলে 0 → X% fill হয় + কেন্দ্রে count-up। (`motion/progress-ring.tsx` + `profile-completion.tsx`)
+2. **Success confetti/checkmark burst** — success toast-এ check icon pop + হালকা confetti burst; signup-এর verify-email স্টেটে বড় checkmark pop + confetti celebration। (`motion/confetti-burst.tsx`, `motion/success-burst.tsx`, `ui/toast.tsx`, `features/auth/sign-up-form.tsx`)
+3. **Auto-rotating review spotlight (homepage)** — হোমে সত্যিকারের published review ঘুরে ঘুরে দেখায় (6.5s), hover/focus/tab-hidden-এ pause, prev/next + dots, `prefers-reduced-motion`-এ auto-rotate বন্ধ। Data আসে নতুন `top_reviews()` RPC থেকে (`0031_home_review_spotlight.sql`); migration ছাড়া সেকশনটি render হয় না, অন্য কিছু ভাঙে না। (`home/review-spotlight.tsx` + `lib/data/reviews.ts` + `app/page.tsx`)
+
 ## ৩) আরও যা যোগ করা যেতে পারে (menu — বাছাই করে বলুন, করে দেব)
 
 | # | অ্যানিমেশন | কোথায় | Effort | Impact |
@@ -104,10 +112,10 @@ Dark/light toggle-এ icon-টি rotate+scale হয়ে বদলায় (
 | 8 | Page route transition (slight slide+fade) | `template.tsx` | কম | মাঝারি |
 | 9 | Image/avatar hover zoom + subtle parallax | teacher/coaching cards | কম | কম |
 | 10 | Message chat bubble entrance (একটা keyframe আছে, chat-panel-এ লাগানো যায়) | `chat-panel.tsx` | কম | মাঝারি |
-| 11 | Scroll-triggered progress ring (profile completeness %) | dashboard | মাঝারি | মাঝারি |
+| 11 | Scroll-triggered progress ring (profile completeness %) | dashboard | মাঝারি | মাঝারি | ✅ §২.৭-এ করা হয়েছে |
 | 12 | Stagger reveal: coaching cards, tuitions detail, dashboard grids | আরও ৫-৬ পেজ | কম | মাঝারি |
-| 13 | Auto-rotating testimonial/review spotlight | home/review section | মাঝারি | মাঝারি |
-| 14 | Confetti/checkmark burst on signup/request success | auth/request forms | মাঝারি | কম |
+| 13 | Auto-rotating testimonial/review spotlight | home/review section | মাঝারি | মাঝারি | ✅ §২.৭-এ করা হয়েছে |
+| 14 | Confetti/checkmark burst on signup/request success | auth/request forms | মাঝারি | কম | ✅ §২.৭-এ করা হয়েছে |
 | 15 | Video-loop style hero background (subtle) | hero | বেশি | মাঝারি |
 | 16 | Parallax gradient blobs on scroll | home sections | মাঝারি | কম |
 | 17 | Typing effect for hero tagline | hero | মাঝারি | কম (a11y ঝুঁকি) |
