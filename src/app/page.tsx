@@ -15,6 +15,7 @@ import { FeaturedCoverflow } from "@/components/home/featured-coverflow";
 import { HowItWorksDeck } from "@/components/home/how-it-works-deck";
 import { JourneyCoverflow } from "@/components/home/journey-coverflow";
 import { ReviewSpotlight } from "@/components/home/review-spotlight";
+import { DeveloperSection } from "@/components/home/developer-section";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
 import { ScrollFan } from "@/components/motion/scroll-fan";
@@ -280,6 +281,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <DeveloperSection />
     </>
   );
 }
