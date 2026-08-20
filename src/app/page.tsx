@@ -11,8 +11,11 @@ import { VisitorJourney } from "@/components/home/visitor-journey";
 import { VisitorMobileCta } from "@/components/home/visitor-mobile-cta";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
 import { FeaturedCoverflow } from "@/components/home/featured-coverflow";
+import { HowItWorksDeck } from "@/components/home/how-it-works-deck";
+import { JourneyCoverflow } from "@/components/home/journey-coverflow";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
+import { ScrollFan } from "@/components/motion/scroll-fan";
 import type { HomeFeed } from "@/types/index";
 
 const roles = [
@@ -39,37 +42,6 @@ const roles = [
     desc: "নিজের প্রোফাইল তৈরি করুন, শিক্ষার্থী খুঁজুন এবং সময়সূচি পরিচালনা করুন।",
     href: "/tuitions",
     cta: "টিউশন সুযোগ দেখুন",
-  },
-] as const;
-
-const steps = [
-  {
-    n: "১",
-    title: "প্রয়োজন জানান",
-    desc: "ক্লাস, বিষয়, এলাকা ও বাজেট লিখুন।",
-    href: "/dashboard/tuitions/new",
-    cta: "টিউশন পোস্ট করুন",
-  },
-  {
-    n: "২",
-    title: "মিল দেখুন",
-    desc: "আপনার প্রয়োজনের সঙ্গে সবচেয়ে বেশি মিলে এমন শিক্ষক দেখুন।",
-    href: "/teachers",
-    cta: "ম্যাচ দেখুন",
-  },
-  {
-    n: "৩",
-    title: "অনুরোধ পাঠান",
-    desc: "পছন্দের শিক্ষককে টিউশনের অনুরোধ পাঠান।",
-    href: "/teachers",
-    cta: "শিক্ষক বাছুন",
-  },
-  {
-    n: "৪",
-    title: "শেখা শুরু করুন",
-    desc: "অনুরোধ গ্রহণ হলে সময় ঠিক করুন, উপস্থিতি রাখুন ও রিভিউ দিন।",
-    href: "/dashboard/schedule",
-    cta: "সময়সূচি খুলুন",
   },
 ] as const;
 
@@ -142,6 +114,7 @@ export default async function Home() {
       />
       <HeroSection teacher={heroTeacher} />
       <VisitorJourney />
+      <JourneyCoverflow />
       <VisitorMobileCta />
 
       {/* Role-based entry points */}
@@ -160,9 +133,9 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+          <ScrollFan className="mt-12 grid gap-5 md:grid-cols-3">
             {roles.map((role, index) => (
-              <PointerTilt key={role.key} maxRotation={5} maxLayerOffset={10} className="motion-reveal group rounded-[1.75rem]">
+              <PointerTilt key={role.key} maxRotation={5} maxLayerOffset={10} className="group h-full rounded-[1.75rem]">
                 <Link
                   href={role.href}
                   data-home-action={`role-${role.key}`}
@@ -211,7 +184,7 @@ export default async function Home() {
                 </Link>
               </PointerTilt>
             ))}
-          </div>
+          </ScrollFan>
         </div>
       </section>
 
@@ -265,70 +238,7 @@ export default async function Home() {
         teachers={recentTeachers}
       />
 
-      {/* How it works */}
-      <section id="how" className="relative overflow-hidden bg-white dark:bg-slate-900" aria-labelledby="how-title">
-        <div className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-amber-100/60 blur-3xl dark:bg-amber-900/10" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">
-          <div className="grid items-end gap-6 lg:grid-cols-[1fr_.65fr]">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-300">সহজ ও পরিষ্কার প্রক্রিয়া</p>
-              <h2 id="how-title" className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">চার ধাপে শেখার সঠিক সঙ্গী</h2>
-            </div>
-            <p className="max-w-xl text-base leading-7 text-slate-600 lg:justify-self-end dark:text-slate-300">
-              প্রয়োজন জানানো থেকে সময়সূচি পরিচালনা—প্রতিটি গুরুত্বপূর্ণ কাজের জন্য একটি পরিষ্কার পরবর্তী ধাপ।
-            </p>
-          </div>
-
-          <div className="relative mt-12">
-            <div className="pointer-events-none absolute left-[10%] right-[10%] top-7 hidden h-px bg-gradient-to-r from-transparent via-brand-300 to-transparent lg:block dark:via-brand-800" aria-hidden />
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {steps.map((step) => (
-                <PointerTilt key={step.n} maxRotation={4.5} maxLayerOffset={8} className="motion-reveal group rounded-[1.5rem]">
-                  <Link
-                    href={step.href}
-                    data-home-action={`step-${step.n}`}
-                    className="block rounded-[1.5rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
-                    aria-label={`${step.title}: ${step.cta}`}
-                  >
-                    <div className="relative flex min-h-64 flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,.45)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-brand-300 group-hover:shadow-[0_26px_60px_-32px_rgba(15,118,110,.38)] dark:border-slate-700 dark:bg-slate-800 dark:group-hover:border-brand-700">
-                      <div className="flex items-center justify-between gap-3">
-                        <div
-                          data-pointer-layer="0.45"
-                          className="pointer-tilt-layer relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-brand-700 text-lg font-black text-white shadow-lg shadow-brand-900/15 transition-transform group-hover:-rotate-3 group-hover:scale-105 dark:border-slate-800"
-                        >
-                          {step.n}
-                        </div>
-                        <span
-                          data-pointer-layer="0.2"
-                          className="pointer-tilt-layer text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400"
-                        >
-                          ধাপ {step.n}
-                        </span>
-                      </div>
-                      <h3
-                        data-pointer-layer="0.3"
-                        className="pointer-tilt-layer mt-6 text-lg font-bold text-slate-900 transition-colors group-hover:text-brand-800 dark:text-slate-100 dark:group-hover:text-brand-300"
-                      >
-                        {step.title}
-                      </h3>
-                      <p data-pointer-layer="0.2" className="pointer-tilt-layer mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                        {step.desc}
-                      </p>
-                      <span
-                        data-pointer-layer="0.35"
-                        className="pointer-tilt-layer mt-auto inline-flex items-center justify-between gap-3 border-t border-slate-200 pt-5 text-sm font-bold text-brand-800 dark:border-slate-700 dark:text-brand-300"
-                      >
-                        {step.cta}
-                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
-                      </span>
-                    </div>
-                  </Link>
-                </PointerTilt>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <HowItWorksDeck />
 
       {/* Final CTA */}
       <section className="bg-slate-50 dark:bg-slate-950">
@@ -336,6 +246,11 @@ export default async function Home() {
           <div className="motion-reveal motion-glow relative isolate overflow-hidden rounded-[2rem] border border-brand-700/50 bg-[linear-gradient(135deg,#042f2e_0%,#115e59_58%,#0f766e_100%)] px-6 py-12 shadow-[0_30px_90px_-40px_rgba(4,47,46,.8)] sm:px-10 lg:px-14 lg:py-14">
             <div className="pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
             <div className="pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
+            <div className="pointer-events-none absolute right-10 top-8 hidden gap-3 lg:flex" aria-hidden>
+              <span className="motion-float rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-brand-50 backdrop-blur">Discover</span>
+              <span className="motion-float motion-float-delay rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-amber-100 backdrop-blur">Match</span>
+              <span className="motion-float motion-float-delay-more rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-white/90 backdrop-blur">Connect</span>
+            </div>
             <div className="grid items-center gap-9 lg:grid-cols-[1fr_auto]">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-brand-100 backdrop-blur">

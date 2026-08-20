@@ -133,6 +133,51 @@ test("precise pointer updates cinematic hero compositor variables", async ({ bro
   }
 });
 
+test("scroll presentation deck keeps step routes and flips on scroll", async ({ page }) => {
+  await page.goto("/");
+  const deck = page.locator("[data-scroll-deck]");
+  await expect(deck).toHaveCount(1);
+  await expect(page.locator("[data-deck-slide]")).toHaveCount(4);
+  await expect(page.locator('[data-home-action="step-১"]')).toHaveAttribute("href", "/dashboard/tuitions/new");
+  await expect(page.locator('[data-home-action="step-২"]')).toHaveAttribute("href", "/teachers");
+  await expect(page.locator('[data-home-action="step-৩"]')).toHaveAttribute("href", "/teachers");
+  await expect(page.locator('[data-home-action="step-৪"]')).toHaveAttribute("href", "/dashboard/schedule");
+
+  const reduced = await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (reduced) {
+    await expect(deck).toHaveAttribute("data-scroll-deck-motion", "static");
+    return;
+  }
+
+  await expect(deck).toHaveAttribute("data-scroll-deck-motion", "enabled");
+  const first = page.locator("[data-deck-slide]").first();
+  await page.evaluate(() => {
+    const track = document.querySelector(".scroll-flip-track");
+    if (!track) return;
+    const top = window.scrollY + track.getBoundingClientRect().top;
+    window.scrollTo(0, top + window.innerHeight * 1.35);
+  });
+  await expect.poll(() => first.evaluate((element) => element.style.getPropertyValue("--slide-offset").trim())).not.toBe("0");
+});
+
+test("scroll presentation deck stays static when motion is reduced", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const deck = page.locator("[data-scroll-deck]");
+  await expect(deck).toHaveAttribute("data-scroll-deck-motion", "static");
+  await expect(page.locator("[data-deck-slide]").first()).toHaveCSS("transform", "none");
+});
+
+test("journey coverflow keeps five cinematic steps without duplicating hero journey hooks", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("[data-journey-coverflow]")).toHaveCount(1);
+  await expect(page.locator("[data-journey-rail]")).toHaveCount(5);
+  await expect(page.locator("a[data-journey-step]")).toHaveCount(5);
+  await expect(page.locator('[data-journey-rail="match"] a')).toHaveAttribute("href", "/teachers?sort=relevance");
+  await expect(page.locator("[data-scroll-progress]")).toHaveCount(1);
+  await expect(page.locator("[data-scroll-fan]")).toHaveCount(1);
+});
+
 test("hero teacher spotlight never substitutes fabricated profile data", async ({ page }) => {
   await page.goto("/");
   const teacher = page.locator("[data-hero-teacher]");

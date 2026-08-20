@@ -10,6 +10,7 @@ import { SettingsProvider } from "@/lib/settings";
 import { BackToTop } from "@/components/shared/back-to-top";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
 import { VisitorTracker } from "@/components/shared/visitor-tracker";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <SettingsProvider>
           <ToastProvider>
+            <ScrollProgress />
             <Announcement />
             <Header />
             <main id="main-content" className="flex flex-1 flex-col pb-14 md:pb-0">{children}</main>

@@ -38,7 +38,8 @@ export function HomeTeacherSection({
           {teachers.slice(0, 6).map((teacher) => {
             const name = teacher.display_name || teacher.full_name || "শিক্ষক";
             return (
-              <PointerTilt key={teacher.id} maxRotation={3.5} maxLayerOffset={9} className="motion-reveal group rounded-[1.5rem]">
+              <div key={teacher.id} className="motion-flip">
+              <PointerTilt maxRotation={3.5} maxLayerOffset={9} className="group rounded-[1.5rem]">
                 <Link
                   href={`/teachers/${teacher.id}`}
                   className="block rounded-[1.5rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-4"
@@ -83,6 +84,7 @@ export function HomeTeacherSection({
                   </div>
                 </Link>
               </PointerTilt>
+              </div>
             );
           })}
         </div>
