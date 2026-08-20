@@ -27,17 +27,24 @@ function StepCard({
   step,
   index,
   tabIndex = 0,
+  featured = false,
 }: {
   step: (typeof steps)[number];
   index: number;
   tabIndex?: number;
+  featured?: boolean;
 }) {
   const Icon = step.icon as LucideIcon;
   return (
     <Link
       href={step.href}
       tabIndex={tabIndex}
-      className="group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 text-slate-950 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+      className={cn(
+        "group flex min-h-[280px] flex-col overflow-hidden rounded-[1.75rem] border bg-white p-6 text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300",
+        featured
+          ? "border-brand-200/90 shadow-[0_0_0_1px_rgba(52,211,153,.35),0_40px_90px_-24px_rgba(16,185,129,.45)] ring-1 ring-emerald-300/40 dark:border-emerald-700/70 dark:bg-slate-800 dark:ring-emerald-300/30 dark:text-white"
+          : "border-slate-200 shadow-[0_24px_70px_-28px_rgba(0,0,0,.55)] dark:border-slate-600 dark:bg-slate-800 dark:text-white",
+      )}
       aria-label={`${step.label}: ${step.title}`}
     >
       <div className="flex items-center justify-between gap-3">
@@ -265,6 +272,12 @@ export function JourneyCoverflow() {
         }}
       >
         <div className="relative mx-auto flex h-[360px] max-w-5xl items-center justify-center sm:h-[400px]">
+          {/* Centre-stage glow that follows the active card */}
+          <div
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[22rem] w-[30rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/15 blur-[90px] dark:bg-emerald-400/20"
+            aria-hidden
+          />
+
           <div className="relative h-full w-full" style={{ perspective: "1400px", transformStyle: "preserve-3d" }}>
             {steps.map((step, index) => {
               const raw = index - position;
@@ -274,7 +287,7 @@ export function JourneyCoverflow() {
               while (offset < -half) offset += steps.length;
               const abs = Math.abs(offset);
               const isCenter = Math.abs(raw - Math.round(raw)) < 0.5;
-              const opacity = isCenter ? 1 : Math.max(0.22, 1 - abs * 0.3);
+              const opacity = isCenter ? 1 : Math.max(0.18, 1 - abs * 0.3);
 
               return (
                 <article
@@ -282,21 +295,37 @@ export function JourneyCoverflow() {
                   data-journey-rail={step.key}
                   className="absolute left-1/2 top-1/2 w-[min(20rem,86vw)] will-change-transform"
                   style={{
-                    transform: `translateX(calc(-50% + ${offset * STEP_X}px)) translateY(-50%) translateZ(${isCenter ? 80 : -90 - abs * 30}px) rotateY(${offset * -26}deg) scale(${isCenter ? 1 : 0.9})`,
+                    transform: `translateX(calc(-50% + ${offset * STEP_X}px)) translateY(-50%) translateZ(${isCenter ? 90 : -90 - abs * 30}px) rotateY(${offset * -26}deg) scale(${isCenter ? 1 : 0.88 - abs * 0.02})`,
                     opacity,
                     zIndex: isCenter ? 30 : 20 - abs,
                     pointerEvents: isCenter ? "auto" : "none",
+                    filter: isCenter ? "none" : `saturate(${Math.max(0.35, 1 - abs * 0.25)})`,
                   }}
                   aria-hidden={!isCenter}
                 >
-                  <StepCard step={step} index={index} tabIndex={isCenter ? 0 : -1} />
+                  <StepCard step={step} index={index} tabIndex={isCenter ? 0 : -1} featured={isCenter} />
                 </article>
               );
             })}
           </div>
+
+          {/* Soft edge fades so cards dissolve into the section */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-40 w-20 bg-gradient-to-r from-slate-950/90 to-transparent sm:w-32" aria-hidden />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-40 w-20 bg-gradient-to-l from-slate-950/90 to-transparent sm:w-32" aria-hidden />
+
+          {/* Glossy floor reflection hint */}
+          <div className="pointer-events-none absolute inset-x-8 bottom-1 z-30 h-14 bg-gradient-to-t from-emerald-300/20 to-transparent blur-md dark:from-emerald-300/15" aria-hidden />
         </div>
 
-        <div className="mt-6 flex items-center justify-center gap-2">
+        {/* Continuous glide progress */}
+        <div className="mx-auto mt-6 h-1 w-56 max-w-full overflow-hidden rounded-full bg-white/10" aria-hidden>
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-amber-300 transition-[width] duration-150 ease-linear"
+            style={{ width: `${Math.max(6, Math.min(100, ((position % steps.length) + steps.length) % steps.length * (100 / steps.length))) }%` }}
+          />
+        </div>
+
+        <div className="mt-4 flex items-center justify-center gap-2">
           {steps.map((step, index) => {
             const active = Math.abs(position - index) < 0.5;
             return (
