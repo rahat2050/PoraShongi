@@ -103,8 +103,8 @@ export function FeaturedCoverflow({
 
   return (
     <section className="relative overflow-hidden bg-white dark:bg-slate-900" aria-labelledby="featured-coverflow-title">
-      <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-brand-100/50 blur-3xl dark:bg-brand-900/10" aria-hidden />
-      <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-amber-100/40 blur-3xl dark:bg-amber-900/10" aria-hidden />
+      <div className="motion-parallax-slow pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-brand-100/50 blur-3xl dark:bg-brand-900/10" aria-hidden />
+      <div className="motion-parallax-fast pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-amber-100/40 blur-3xl dark:bg-amber-900/10" aria-hidden />
 
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">
         <div className="flex flex-wrap items-end justify-between gap-5">
@@ -248,7 +248,7 @@ function TeacherCard({ teacher, featured }: { teacher: TeacherPublic; featured?:
       <div className="h-1.5 w-full bg-gradient-to-r from-brand-700 via-brand-500 to-amber-400 opacity-80 group-hover:opacity-100" aria-hidden />
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start gap-3">
-          <Avatar src={teacher.avatar_url} name={displayName} size="lg" className="h-14 w-14 shrink-0 border-2 border-white shadow-md dark:border-slate-700" />
+          <Avatar src={teacher.avatar_url} name={displayName} size="lg" className="h-14 w-14 shrink-0 border-2 border-white shadow-md transition-transform duration-300 group-hover:scale-110 dark:border-slate-700" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
               <h3 className="truncate text-[15px] font-black leading-tight text-slate-900 group-hover:text-brand-800 dark:text-white dark:group-hover:text-brand-300">

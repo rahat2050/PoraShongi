@@ -7,6 +7,7 @@ import { listConversations } from "@/lib/data/messages";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Reveal } from "@/components/motion/reveal";
 import { formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "মেসেজ" };
@@ -41,10 +42,11 @@ export default async function MessagesPage() {
               <EmptyState icon={<MessageSquare className="h-6 w-6" aria-hidden />} title="কোনো কথোপকথন নেই" description="শিক্ষকের প্রোফাইল থেকে মেসেজ শুরু করুন।" />
             </div>
           ) : (
-            conversations.map(({ conversation, other, unread, lastMessage }) => {
+            conversations.map(({ conversation, other, unread, lastMessage }, index) => {
               const otherName = other?.display_name || other?.full_name || "সদস্য";
               return (
-                <Link key={conversation.id} href={`/messages/${conversation.id}`} className="flex items-center gap-3 border-b border-slate-100 p-4 transition-colors last:border-0 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+                <Reveal key={conversation.id} delay={Math.min(index * 50, 300)} direction="left" className="border-b border-slate-100 last:border-0 dark:border-slate-700">
+                <Link href={`/messages/${conversation.id}`} className="flex items-center gap-3 p-4 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800">
                   <Avatar src={other?.avatar_url ?? null} name={otherName} size="md" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
@@ -59,6 +61,7 @@ export default async function MessagesPage() {
                     <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-bold text-white">{unread}</span>
                   )}
                 </Link>
+                </Reveal>
               );
             })
           )}

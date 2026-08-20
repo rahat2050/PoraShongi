@@ -43,9 +43,9 @@ export function DashboardNav({ role }: { role: UserRole }) {
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2",
+              "flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm font-medium transition-all duration-200 hover:-translate-y-px active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2",
               active
-                ? "border-brand-700 bg-brand-700 text-white"
+                ? "border-brand-700 bg-brand-700 text-white shadow-sm"
                 : "border-slate-300 bg-white text-slate-700 hover:border-brand-500 hover:text-brand-800 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-brand-400 dark:hover:text-brand-300",
             )}
           >

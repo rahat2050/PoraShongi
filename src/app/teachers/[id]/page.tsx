@@ -13,6 +13,7 @@ import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/shared/setup-required";
 import { Avatar } from "@/components/ui/avatar";
+import { Reveal } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestSheet } from "@/components/shared/request-sheet";
@@ -164,6 +165,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
       />
+      <Reveal>
       <Card>
         <CardContent className="p-6 sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row">
@@ -250,6 +252,7 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
           </div>
         </CardContent>
       </Card>
+      </Reveal>
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <Card>
@@ -362,13 +365,14 @@ export default async function TeacherProfilePage({ params }: { params: Promise<{
         <div className="mt-8">
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">এই শিক্ষকের মতো আরও</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {similar.map((t) => (
-              <TeacherCard
-                key={t.id}
-                teacher={t}
-                canSave={canInteract}
-                initiallySaved={false}
-              />
+            {similar.map((t, index) => (
+              <Reveal key={t.id} delay={Math.min(index * 70, 280)} className="h-full">
+                <TeacherCard
+                  teacher={t}
+                  canSave={canInteract}
+                  initiallySaved={false}
+                />
+              </Reveal>
             ))}
           </div>
         </div>

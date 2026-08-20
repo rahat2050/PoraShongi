@@ -6,6 +6,7 @@ import { getCoachingCenter, listCoachingCourses } from "@/lib/data/ecosystem";
 import { getCurrentProfile } from "@/lib/auth/server-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/components/motion/reveal";
 import { CoachingCourseForm } from "@/features/ecosystem/course-form";
 import { formatTaka, isUuid } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ export default async function CoachingDetailPage({ params }: { params: Promise<{
         <ArrowLeft className="h-4 w-4" aria-hidden /> সব কোচিং সেন্টার
       </Link>
 
+      <Reveal>
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center gap-2">
@@ -59,6 +61,7 @@ export default async function CoachingDetailPage({ params }: { params: Promise<{
           )}
         </CardContent>
       </Card>
+      </Reveal>
 
       <Card className="mt-6">
         <CardHeader>
@@ -72,14 +75,16 @@ export default async function CoachingDetailPage({ params }: { params: Promise<{
             <p className="text-sm text-slate-400">কোনো কোর্স যোগ করা হয়নি।</p>
           ) : (
             <div className="divide-y divide-slate-100">
-              {courses.map((course) => (
-                <div key={course.id} className="flex items-center justify-between py-3">
+              {courses.map((course, index) => (
+                <Reveal key={course.id} delay={Math.min(index * 50, 250)} direction="left">
+                <div className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-slate-800">{course.title}</p>
                     {course.description && <p className="text-xs text-slate-500">{course.description}</p>}
                   </div>
                   <span className="text-sm font-semibold text-slate-700">{formatTaka(course.price)}</span>
                 </div>
+                </Reveal>
               ))}
             </div>
           )}

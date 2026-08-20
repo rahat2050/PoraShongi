@@ -119,7 +119,7 @@ export default async function Home() {
 
       {/* Role-based entry points */}
       <section className="relative overflow-hidden bg-white dark:bg-slate-900" aria-labelledby="role-entry-title">
-        <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-brand-100/60 blur-3xl dark:bg-brand-900/10" aria-hidden />
+        <div className="motion-parallax-fast pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-brand-100/60 blur-3xl dark:bg-brand-900/10" aria-hidden />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-24">
           <div className="grid items-end gap-6 lg:grid-cols-[1fr_.7fr]">
             <div>
@@ -200,6 +200,7 @@ export default async function Home() {
               <h2 id="popular-discovery-title" className="mt-4 text-3xl font-black tracking-tight text-slate-950 dark:text-white">এখন যা বেশি খোঁজা হচ্ছে</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">বর্তমান শিক্ষক ও টিউশন তথ্য থেকে জনপ্রিয় বিষয় ও ক্লাস দেখুন।</p>
             </div>
+            <PopularMarquee subjects={stats.popular_subjects ?? []} classes={stats.popular_classes ?? []} />
             <div className="mt-10 grid gap-5 md:grid-cols-2">
               <DiscoveryLinks
                 title="জনপ্রিয় বিষয়"
@@ -244,8 +245,8 @@ export default async function Home() {
       <section className="bg-slate-50 dark:bg-slate-950">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
           <div className="motion-reveal motion-glow relative isolate overflow-hidden rounded-[2rem] border border-brand-700/50 bg-[linear-gradient(135deg,#042f2e_0%,#115e59_58%,#0f766e_100%)] px-6 py-12 shadow-[0_30px_90px_-40px_rgba(4,47,46,.8)] sm:px-10 lg:px-14 lg:py-14">
-            <div className="pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
-            <div className="pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
+            <div className="motion-parallax-slow pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
+            <div className="motion-parallax-fast pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
             <div className="pointer-events-none absolute right-10 top-8 hidden gap-3 lg:flex" aria-hidden>
               <span className="motion-float rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-brand-50 backdrop-blur">Discover</span>
               <span className="motion-float motion-float-delay rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-amber-100 backdrop-blur">Match</span>
@@ -276,6 +277,45 @@ export default async function Home() {
     </>
   );
 }
+function PopularMarquee({
+  subjects,
+  classes,
+}: {
+  subjects: Array<{ subject: string; count: number }>;
+  classes: Array<{ class_level: string; count: number }>;
+}) {
+  const chips = [
+    ...subjects.map((item) => ({ label: item.subject, count: item.count, icon: "subject" as const })),
+    ...classes.map((item) => ({ label: item.class_level, count: item.count, icon: "class" as const })),
+  ];
+  if (chips.length === 0) return null;
+
+  return (
+    <div className="motion-marquee mt-10" aria-hidden>
+      <div className="motion-marquee-track">
+        {[0, 1].map((copy) => (
+          <div key={copy} className="flex items-center gap-3">
+            {chips.map((chip) => (
+              <span
+                key={`${copy}-${chip.label}`}
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              >
+                {chip.icon === "subject" ? (
+                  <Sparkles className="h-3.5 w-3.5 text-brand-600 dark:text-brand-300" aria-hidden />
+                ) : (
+                  <GraduationCap className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" aria-hidden />
+                )}
+                {chip.label}
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">{chip.count}</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DiscoveryLinks({
   title,
   items,

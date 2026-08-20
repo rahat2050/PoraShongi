@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { buttonStyles } from "@/components/ui/button";
+import { Reveal } from "@/components/motion/reveal";
 import { firstParam } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -73,7 +74,8 @@ export default async function LeaderboardPage({
           teachers.map((t, i) => {
             const name = t.display_name || t.full_name || "শিক্ষক";
             return (
-              <Card key={t.id} className="transition-shadow hover:shadow-md">
+              <Reveal key={t.id} delay={Math.min(i * 60, 300)}>
+              <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="flex items-center gap-4 p-4">
                   <span className="w-8 text-center text-xl font-bold">{MEDALS[i] ?? `${i + 1}`}</span>
                   <Link href={`/teachers/${t.id}`} aria-label={`${name}-এর সম্পূর্ণ প্রোফাইল দেখুন`}>
@@ -97,6 +99,7 @@ export default async function LeaderboardPage({
                   </div>
                 </CardContent>
               </Card>
+              </Reveal>
             );
           })
         )}

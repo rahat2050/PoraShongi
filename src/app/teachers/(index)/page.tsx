@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/shared/setup-required";
 import { TeacherFilters } from "@/components/shared/teacher-filters";
 import { TeacherCard } from "@/components/shared/teacher-card";
+import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { buildQueryString, firstParam } from "@/lib/utils";
@@ -130,8 +131,10 @@ export default async function TeachersPage({
             <p className="mb-4 text-sm text-slate-500">{total} জন শিক্ষক পাওয়া গেছে</p>
             {total > 0 && result.data ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {result.data.results.map((teacher) => (
-                  <TeacherCard key={teacher.id} teacher={teacher} canSave={canSave} initiallySaved={favoriteIds.has(teacher.id)} />
+                {result.data.results.map((teacher, index) => (
+                  <Reveal key={teacher.id} delay={Math.min(index * 70, 350)} className="h-full">
+                    <TeacherCard teacher={teacher} canSave={canSave} initiallySaved={favoriteIds.has(teacher.id)} />
+                  </Reveal>
                 ))}
               </div>
             ) : (

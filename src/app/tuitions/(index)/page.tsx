@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/shared/setup-required";
 import { TuitionFilters } from "@/components/shared/tuition-filters";
 import { TuitionCard } from "@/components/shared/tuition-card";
+import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { buttonStyles } from "@/components/ui/button";
@@ -99,7 +100,11 @@ export default async function TuitionsPage({
             <p className="mb-4 text-sm text-slate-500">{total}টি টিউশন পাওয়া গেছে</p>
             {total > 0 && result.data ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {result.data.results.map((tuition) => <TuitionCard key={tuition.id} tuition={tuition} />)}
+                {result.data.results.map((tuition, index) => (
+                  <Reveal key={tuition.id} delay={Math.min(index * 70, 350)} className="h-full">
+                    <TuitionCard tuition={tuition} />
+                  </Reveal>
+                ))}
               </div>
             ) : (
               <EmptyState

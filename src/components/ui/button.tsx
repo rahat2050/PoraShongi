@@ -5,7 +5,7 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "dan
 export type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-brand-600 text-white shadow-sm hover:bg-brand-700 focus-visible:ring-brand-500",
+  primary: "btn-shine bg-brand-600 text-white shadow-sm hover:bg-brand-700 focus-visible:ring-brand-500",
   secondary: "bg-accent-500 text-slate-950 shadow-sm hover:bg-accent-400 focus-visible:ring-accent-400",
   outline: "border border-slate-300 bg-white text-slate-700 shadow-sm hover:bg-slate-50 focus-visible:ring-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
   ghost: "text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400 dark:text-slate-200 dark:hover:bg-slate-800",
@@ -29,7 +29,7 @@ export function buttonStyles({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
+    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all duration-200 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100",
     variantClasses[variant],
     sizeClasses[size],
     className,

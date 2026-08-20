@@ -9,6 +9,7 @@ import { CoachingForm } from "@/features/ecosystem/coaching-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Reveal } from "@/components/motion/reveal";
 
 export const metadata: Metadata = {
   title: "কোচিং সেন্টার",
@@ -55,8 +56,9 @@ export default async function CoachingPage({
           />
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {centers.map((c) => (
-              <Card key={c.id} className="transition-shadow hover:shadow-md">
+            {centers.map((c, index) => (
+              <Reveal key={c.id} delay={Math.min(index * 70, 350)} className="h-full">
+              <Card className="h-full transition-shadow hover:shadow-md">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <h2 className="text-base font-semibold text-slate-900">{c.name}</h2>
@@ -69,6 +71,7 @@ export default async function CoachingPage({
                   </Link>
                 </CardContent>
               </Card>
+              </Reveal>
             ))}
           </div>
         )}

@@ -152,7 +152,7 @@ export function MobileNav() {
       </button>
 
       {open && createPortal(
-        <div id="mobile-navigation-panel" className="fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto border-t border-slate-200 bg-slate-50 px-4 py-4 shadow-2xl dark:border-slate-700 dark:bg-slate-950">
+        <div id="mobile-navigation-panel" className="animate-panel-in fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto border-t border-slate-200 bg-slate-50 px-4 py-4 shadow-2xl dark:border-slate-700 dark:bg-slate-950">
           <div className="mx-auto max-w-md space-y-5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {loading ? (
               <div className="h-24 animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-800" aria-label="অ্যাকাউন্ট লোড হচ্ছে" />
@@ -181,14 +181,15 @@ export function MobileNav() {
               <section aria-labelledby="account-menu-heading">
                 <h2 id="account-menu-heading" className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">আমার অ্যাকাউন্ট</h2>
                 <div className="grid grid-cols-2 gap-2">
-                  {commonUserLinks.map((item) => <MenuLink key={item.href} {...item} onNavigate={() => setOpen(false)} />)}
-                  {roleLinks.map((item) => <MenuLink key={item.href} {...item} onNavigate={() => setOpen(false)} />)}
+                  {commonUserLinks.map((item, index) => <MenuLink key={item.href} {...item} delay={index * 35} onNavigate={() => setOpen(false)} />)}
+                  {roleLinks.map((item, index) => <MenuLink key={item.href} {...item} delay={(commonUserLinks.length + index) * 35} onNavigate={() => setOpen(false)} />)}
                   {session.user.adminLevel && (
                     <MenuLink
                       href="/admin"
                       label={session.user.adminLevel === "super_admin" ? "সুপার অ্যাডমিন" : "অ্যাডমিন প্যানেল"}
                       icon={ShieldCheck}
                       accent
+                      delay={(commonUserLinks.length + roleLinks.length) * 35}
                       onNavigate={() => setOpen(false)}
                     />
                   )}
@@ -199,7 +200,7 @@ export function MobileNav() {
             <section aria-labelledby="explore-menu-heading">
               <h2 id="explore-menu-heading" className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">এক্সপ্লোর</h2>
               <div className="grid grid-cols-2 gap-2">
-                {publicLinks.map((item) => <MenuLink key={item.href} {...item} onNavigate={() => setOpen(false)} />)}
+                {publicLinks.map((item, index) => <MenuLink key={item.href} {...item} delay={index * 35} onNavigate={() => setOpen(false)} />)}
               </div>
             </section>
 
@@ -226,6 +227,7 @@ function MenuLink({
   icon: Icon,
   prominent = false,
   accent = false,
+  delay = 0,
   onNavigate,
 }: {
   href: string;
@@ -233,13 +235,15 @@ function MenuLink({
   icon: LucideIcon;
   prominent?: boolean;
   accent?: boolean;
+  delay?: number;
   onNavigate: () => void;
 }) {
   return (
     <Link
       href={href}
       onClick={onNavigate}
-      className={`flex min-h-12 items-center gap-2 rounded-xl border px-3 text-sm font-semibold transition-colors ${
+      style={{ animationDelay: `${delay}ms` }}
+      className={`mobile-menu-link flex min-h-12 items-center gap-2 rounded-xl border px-3 text-sm font-semibold transition-all duration-200 active:scale-[0.97] ${
         prominent
           ? "border-brand-300 bg-brand-700 text-white hover:bg-brand-800 dark:border-brand-700 dark:bg-brand-700"
           : accent

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { TuitionStatusBadge } from "@/components/shared/status-badge";
+import { CountUp } from "@/components/motion/count-up";
 import { formatDate, formatTaka, modeLabel } from "@/lib/utils";
 
 export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; action?: React.ReactNode }) {
@@ -12,7 +13,7 @@ export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; actio
   const featured = Boolean(tuition.is_featured && tuition.status === "open");
 
   return (
-    <Card className={`motion-card transition-all hover:shadow-md ${featured ? "border-amber-300 bg-gradient-to-br from-amber-50 to-white shadow-md ring-1 ring-amber-200 dark:border-amber-700 dark:from-amber-950/30 dark:to-slate-800 dark:ring-amber-900" : ""}`}>
+    <Card className={`group motion-card h-full transition-all hover:shadow-md ${featured ? "border-amber-300 bg-gradient-to-br from-amber-50 to-white shadow-md ring-1 ring-amber-200 dark:border-amber-700 dark:from-amber-950/30 dark:to-slate-800 dark:ring-amber-900" : ""}`}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -54,7 +55,11 @@ export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; actio
 
         <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-700">
           <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-            {formatTaka(tuition.budget)}
+            {typeof tuition.budget === "number" && tuition.budget > 0 ? (
+              <CountUp value={tuition.budget} duration={650} format={formatTaka} />
+            ) : (
+              formatTaka(tuition.budget)
+            )}
             {tuition.budget_negotiable && <span className="ml-1 text-xs font-normal text-slate-400">(আলোচনা সাপেক্ষ)</span>}
           </span>
           <Link href={`/tuitions/${tuition.id}`} className="text-sm font-medium text-brand-700 hover:underline">
@@ -63,7 +68,7 @@ export function TuitionCard({ tuition, action }: { tuition: TuitionPublic; actio
         </div>
 
         <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
-          <Avatar src={tuition.poster_avatar} name={tuition.poster_display_name ?? tuition.poster_name ?? undefined} size="sm" />
+          <Avatar src={tuition.poster_avatar} name={tuition.poster_display_name ?? tuition.poster_name ?? undefined} size="sm" className="transition-transform duration-300 group-hover:scale-110" />
           <span className="truncate">
             {tuition.poster_display_name || tuition.poster_name || "সদস্য"} · {formatDate(tuition.created_at)}
           </span>

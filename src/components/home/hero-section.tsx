@@ -76,8 +76,8 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
         }}
         aria-hidden
       />
-      <div className="pointer-events-none absolute -left-32 top-24 -z-10 h-80 w-80 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-800/20" aria-hidden />
-      <div className="pointer-events-none absolute -right-24 top-10 -z-10 h-96 w-96 rounded-full bg-amber-200/45 blur-3xl dark:bg-amber-700/10" aria-hidden />
+      <div className="motion-parallax-slow pointer-events-none absolute -left-32 top-24 -z-10 h-80 w-80 rounded-full bg-brand-200/50 blur-3xl dark:bg-brand-800/20" aria-hidden />
+      <div className="motion-parallax-fast pointer-events-none absolute -right-24 top-10 -z-10 h-96 w-96 rounded-full bg-amber-200/45 blur-3xl dark:bg-amber-700/10" aria-hidden />
 
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
@@ -89,7 +89,7 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
 
             <h1 className="mt-6 text-balance text-4xl font-black leading-[1.12] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl dark:text-white">
               সঠিক শিক্ষক খুঁজুন,
-              <span className="mt-1 block bg-gradient-to-r from-brand-700 via-emerald-600 to-teal-500 bg-clip-text text-transparent dark:from-brand-300 dark:via-emerald-300 dark:to-amber-300">
+              <span className="mt-1 block bg-gradient-to-r from-brand-700 via-emerald-600 to-teal-500 bg-clip-text text-transparent text-gradient-shimmer dark:from-brand-300 dark:via-emerald-300 dark:to-amber-300">
                 শেখার পথ সহজ করুন
               </span>
             </h1>
