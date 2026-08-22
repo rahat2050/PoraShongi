@@ -7,10 +7,20 @@ import { Search } from "lucide-react";
 export function VisitorMobileCta() {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const update = () => setVisible(window.scrollY > 520);
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      setVisible(window.scrollY > 520);
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    };
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
     <Link

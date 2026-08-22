@@ -72,7 +72,7 @@ export function ScrollFlipDeck({
       const rect = track.getBoundingClientRect();
       const scrollable = Math.max(track.offsetHeight - window.innerHeight, 1);
       const top = window.scrollY + rect.top + (max === 0 ? 0 : (target / max) * scrollable);
-      window.scrollTo({ top, behavior: "smooth" });
+      window.scrollTo({ top, behavior: "auto" });
     },
     [collectSlides, prefersReduced],
   );
@@ -254,7 +254,7 @@ export function ScrollFlipDeck({
         className="scroll-flip-track relative"
         style={{ height: slideCount > 1 ? `calc(${Math.max(slideCount, 1)} * 72svh)` : undefined }}
       >
-        <div className="scroll-flip-clip sticky top-16">
+        <div className="scroll-flip-clip sticky top-[var(--header-h,4rem)]">
           <div className="scroll-flip-stage mx-auto flex h-full max-w-7xl flex-col px-4 sm:px-6">
             <div className="flex items-center justify-between gap-3 pt-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-200">{label}</p>
@@ -265,7 +265,7 @@ export function ScrollFlipDeck({
               {children}
             </div>
 
-            <div className="flex flex-col gap-3 pb-6 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pb-[calc(1.5rem+3.5rem)] pt-4 sm:flex-row sm:items-center sm:justify-between md:pb-6">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-xs font-bold tabular-nums text-slate-200" aria-hidden>
                   {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, GraduationCap, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -11,13 +12,24 @@ import { HeroSection } from "@/components/home/hero-section";
 import { VisitorJourney } from "@/components/home/visitor-journey";
 import { VisitorMobileCta } from "@/components/home/visitor-mobile-cta";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
-import { FeaturedCoverflow } from "@/components/home/featured-coverflow";
 import { HowItWorksDeck } from "@/components/home/how-it-works-deck";
-import { JourneyCoverflow } from "@/components/home/journey-coverflow";
-import { ReviewSpotlight } from "@/components/home/review-spotlight";
-import { DeveloperSection } from "@/components/home/developer-section";
-import { DeveloperProjectsDeck } from "@/components/home/developer-projects-deck";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
+
+const FeaturedCoverflow = dynamic(() =>
+  import("@/components/home/featured-coverflow").then((mod) => mod.FeaturedCoverflow),
+);
+const JourneyCoverflow = dynamic(() =>
+  import("@/components/home/journey-coverflow").then((mod) => mod.JourneyCoverflow),
+);
+const ReviewSpotlight = dynamic(() =>
+  import("@/components/home/review-spotlight").then((mod) => mod.ReviewSpotlight),
+);
+const DeveloperSection = dynamic(() =>
+  import("@/components/home/developer-section").then((mod) => mod.DeveloperSection),
+);
+const DeveloperProjectsDeck = dynamic(() =>
+  import("@/components/home/developer-projects-deck").then((mod) => mod.DeveloperProjectsDeck),
+);
 import { PointerTilt } from "@/components/motion/pointer-tilt";
 import { ScrollFan } from "@/components/motion/scroll-fan";
 import type { HomeFeed } from "@/types/index";
@@ -256,13 +268,13 @@ export default async function Home() {
             <div className="motion-parallax-slow pointer-events-none absolute -right-20 -top-28 -z-10 h-80 w-80 rounded-full border-[48px] border-white/5" aria-hidden />
             <div className="motion-parallax-fast pointer-events-none absolute -bottom-36 left-1/3 -z-10 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
             <div className="pointer-events-none absolute right-10 top-8 hidden gap-3 lg:flex" aria-hidden>
-              <span className="motion-float rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-brand-50 backdrop-blur">Discover</span>
-              <span className="motion-float motion-float-delay rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-amber-100 backdrop-blur">Match</span>
-              <span className="motion-float motion-float-delay-more rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-[11px] font-bold text-white/90 backdrop-blur">Connect</span>
+              <span className="motion-float rounded-2xl border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-bold text-brand-50">Discover</span>
+              <span className="motion-float motion-float-delay rounded-2xl border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-bold text-amber-100">Match</span>
+              <span className="motion-float motion-float-delay-more rounded-2xl border border-white/15 bg-white/15 px-3 py-2 text-[11px] font-bold text-white/90">Connect</span>
             </div>
             <div className="grid items-center gap-9 lg:grid-cols-[1fr_auto]">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-brand-100 backdrop-blur">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/15 px-3 py-1.5 text-xs font-bold text-brand-100">
                   <Sparkles className="h-3.5 w-3.5 text-amber-300" aria-hidden /> আজই আপনার যাত্রা শুরু করুন
                 </span>
                 <h2 className="mt-5 max-w-3xl text-3xl font-black tracking-tight text-white sm:text-4xl">শিক্ষক খোঁজা থেকে শেখা পরিচালনা—সব এক জায়গায়</h2>

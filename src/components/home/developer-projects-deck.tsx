@@ -99,7 +99,7 @@ export function DeveloperProjectsDeck() {
                 {project.desc}
               </p>
 
-              <div className="mt-4 flex flex-wrap gap-1.5">
+              <div className="deck-chips mt-4 flex flex-wrap gap-1.5">
                 {project.tech.map((tech) => (
                   <span
                     key={tech}

@@ -82,7 +82,7 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pt-20">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
           <div className="hero-copy-enter text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3.5 py-2 text-xs font-semibold text-brand-800 shadow-sm backdrop-blur dark:border-brand-800 dark:bg-slate-900/70 dark:text-brand-200">
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/95 px-3.5 py-2 text-xs font-semibold text-brand-800 shadow-sm dark:border-brand-800 dark:bg-slate-900/90 dark:text-brand-200">
               <span className="h-2 w-2 rounded-full bg-brand-500" aria-hidden />
               বাংলাদেশের টিউশন মার্কেটপ্লেস
             </div>
@@ -102,7 +102,7 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
               <Link href="/teachers" className={buttonStyles({ size: "lg", className: "motion-glow h-13 rounded-xl px-7 shadow-lg shadow-brand-900/15" })}>
                 শিক্ষক খুঁজুন <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/tuitions" className={buttonStyles({ variant: "outline", size: "lg", className: "motion-glow h-13 rounded-xl border-slate-300 bg-white/80 px-7 backdrop-blur dark:bg-slate-900/70" })}>
+              <Link href="/tuitions" className={buttonStyles({ variant: "outline", size: "lg", className: "motion-glow h-13 rounded-xl border-slate-300 bg-white/95 px-7 dark:bg-slate-900/90" })}>
                 টিউশন সুযোগ দেখুন
               </Link>
             </div>
@@ -121,13 +121,13 @@ export function HeroSection({ teacher = null }: { teacher?: TeacherPublic | null
             <div className="pointer-events-none absolute -inset-5 -z-10 rounded-[2.5rem] bg-gradient-to-br from-brand-300/35 via-white/10 to-amber-300/30 blur-2xl dark:from-brand-700/25 dark:to-amber-600/10" aria-hidden />
             <PointerTilt className="relative" maxRotation={3.75} maxLayerOffset={11} scrollRange={10}>
               <div
-                className="pointer-tilt-layer pointer-events-none absolute -right-3 top-20 z-20 hidden items-center gap-2 rounded-full border border-white/80 bg-white/90 px-3 py-2 text-[11px] font-bold text-brand-800 shadow-lg backdrop-blur xl:flex dark:border-slate-700 dark:bg-slate-900/90 dark:text-brand-200"
+                className="pointer-tilt-layer pointer-events-none absolute -right-3 top-20 z-20 hidden items-center gap-2 rounded-full border border-white/80 bg-white/95 px-3 py-2 text-[11px] font-bold text-brand-800 shadow-lg xl:flex dark:border-slate-700 dark:bg-slate-900/95 dark:text-brand-200"
                 data-pointer-layer="0.8"
                 aria-hidden
               >
                 <ShieldCheck className="h-3.5 w-3.5" /> নিরাপদ সংযোগ
               </div>
-              <div className="hero-motion-surface relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/85 p-3 shadow-[0_32px_90px_-34px_rgba(4,47,46,.45)] backdrop-blur-xl dark:border-slate-700/80 dark:bg-slate-900/85">
+              <div className="hero-motion-surface relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/95 p-3 shadow-[0_32px_90px_-34px_rgba(4,47,46,.45)] dark:border-slate-700/80 dark:bg-slate-900/95">
                 <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/80 to-transparent" aria-hidden />
                 <div className="flex items-center justify-between border-b border-slate-200/80 px-3 pb-3 pt-1 dark:border-slate-700">
                   <div className="flex items-center gap-2.5">

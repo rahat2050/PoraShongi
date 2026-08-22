@@ -13,7 +13,7 @@ export function Footer() {
       <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" aria-hidden />
 
       <div className="relative mx-auto max-w-7xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-12 sm:px-6 md:py-16">
-        <div className="mb-12 flex flex-col gap-6 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="mb-12 flex flex-col gap-6 rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div>
             <p className="text-sm font-bold text-white">সাহায্য বা নিরাপত্তা নিয়ে প্রশ্ন আছে?</p>
             <p className="mt-1 text-sm text-slate-300">আমাদের সহায়তা ও নিরাপত্তা নির্দেশিকা দেখুন।</p>

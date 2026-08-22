@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex flex-1 flex-col">
       {profile.role !== "admin" && (
-        <div className="sticky top-16 z-30 border-b border-slate-200 bg-slate-50/95 backdrop-blur dark:border-slate-700 dark:bg-slate-950/95">
+        <div className="sticky top-[var(--header-h,4rem)] z-30 border-b border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-950">
           <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
             <DashboardNav role={profile.role} />
           </div>

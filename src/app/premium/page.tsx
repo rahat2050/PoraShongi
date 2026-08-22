@@ -20,7 +20,7 @@ export default function PremiumPage() {
         <p className="mt-4 text-sm font-bold uppercase tracking-[0.18em] text-brand-200">PoraSathi Premium</p>
         <h1 className="mt-3 text-4xl font-black">৳{premiumConfig.priceBdt} / {premiumConfig.durationDays} দিন</h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-brand-50/90">Automatic payment এখনো চালু নয়। Premium request ও activation-এর জন্য সরাসরি Admin-এর সঙ্গে WhatsApp-এ যোগাযোগ করুন।</p>
-        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={buttonStyles({ size: "lg", className: "mt-7 bg-emerald-700 text-white hover:bg-emerald-800 focus-visible:ring-white" })}>
+        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={buttonStyles({ size: "lg", className: "mt-7 max-w-full whitespace-normal bg-emerald-700 px-4 text-center text-white hover:bg-emerald-800 focus-visible:ring-white sm:whitespace-nowrap" })}>
           <MessageCircle className="h-5 w-5" aria-hidden /> WhatsApp-এ যোগাযোগ করুন
         </a>
         <p className="mt-3 text-xs text-brand-100">WhatsApp: {premiumConfig.whatsappDisplay}</p>

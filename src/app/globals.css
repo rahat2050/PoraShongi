@@ -277,7 +277,7 @@
 }
 
 .scroll-flip-clip {
-  height: calc(100svh - 5.25rem);
+  height: calc(100svh - var(--header-h, 4rem) - 3.5rem - env(safe-area-inset-bottom, 0px));
   overflow: hidden;
 }
 
@@ -358,7 +358,7 @@
 
 @media (min-width: 768px) {
   .scroll-flip-clip {
-    height: calc(100svh - 5.5rem);
+    height: calc(100svh - var(--header-h, 4rem) - 1.25rem);
   }
 
   .scroll-flip-slide {
@@ -408,6 +408,14 @@
 
   .deck-cta {
     padding-top: 0.75rem;
+  }
+
+  .deck-chips {
+    display: none;
+  }
+
+  .deck-tagline {
+    display: none;
   }
 }
 
@@ -541,6 +549,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
+  --header-h: 4rem;
 }
 
 body,
@@ -596,6 +605,22 @@ body {
 
 .reveal-item[data-reveal-hidden="true"] {
   opacity: 0;
+}
+
+.reveal-item[data-reveal-hidden="true"][data-reveal-dir="up"] {
+  transform: translateY(18px);
+}
+
+.reveal-item[data-reveal-hidden="true"][data-reveal-dir="down"] {
+  transform: translateY(-18px);
+}
+
+.reveal-item[data-reveal-hidden="true"][data-reveal-dir="left"] {
+  transform: translateX(18px);
+}
+
+.reveal-item[data-reveal-hidden="true"][data-reveal-dir="right"] {
+  transform: translateX(-18px);
 }
 
 /* Hero gradient headline — slow, subtle hue drift */
@@ -911,6 +936,8 @@ html:not(.dark) .text-slate-400 {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
   .motion-reveal,
   .motion-flip,

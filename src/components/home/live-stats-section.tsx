@@ -79,7 +79,7 @@ export function LiveStatsSection({ items }: { items: LiveStatItem[] }) {
                 key={item.key}
                 href={item.href}
                 data-home-action={`stat-${item.key}`}
-                className="motion-flip-up motion-card group flex min-h-52 flex-col rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-center shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-brand-300/60 hover:bg-white/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
+                className="motion-flip-up motion-card group flex min-h-52 flex-col rounded-2xl border border-white/10 bg-white/[0.08] p-4 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-300/60 hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
                 aria-label={`${item.label}: ${item.value}। ${item.actionLabel}`}
               >
                 <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-brand-200 transition-all group-hover:border-brand-300/40 group-hover:bg-brand-400 group-hover:text-brand-950">

@@ -48,7 +48,6 @@ export default async function TeachersPage({
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
-  // বর্তমান user-এর অবস্থান (GPS) থাকলেই radius/nearest ব্যবহার করা যাবে।
   const profile = await getCurrentProfile();
   const canUseDistance =
     typeof profile?.latitude === "number" &&
@@ -56,29 +55,30 @@ export default async function TeachersPage({
     typeof profile?.longitude === "number" &&
     Number.isFinite(profile.longitude);
   const effectiveSort = sort === "nearest" && !canUseDistance ? "relevance" : sort;
-
-  const result = await searchTeachers({
-    classLevel: classLevel || undefined,
-    subject: subject || undefined,
-    district: district || undefined,
-    area: area || undefined,
-    lat: profile?.latitude ?? undefined,
-    lon: profile?.longitude ?? undefined,
-    maxDistanceKm: radius ? Number(radius) : undefined,
-    mode: mode || undefined,
-    gender: gender || undefined,
-    minExperience: experience ? Number(experience) : undefined,
-    minRating: minRating ? Number(minRating) : undefined,
-    verified: verified === "1" ? true : undefined,
-    sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
-    page,
-    pageSize: PAGE_SIZE,
-  });
-
   const canSave = profile?.role === "student" || profile?.role === "guardian";
-  const favoriteIds = new Set(
-    canSave ? ((await listFavoriteTeacherIds(profile!.id)).data ?? []) : [],
-  );
+
+  const [result, favoriteResult] = await Promise.all([
+    searchTeachers({
+      classLevel: classLevel || undefined,
+      subject: subject || undefined,
+      district: district || undefined,
+      area: area || undefined,
+      lat: profile?.latitude ?? undefined,
+      lon: profile?.longitude ?? undefined,
+      maxDistanceKm: radius ? Number(radius) : undefined,
+      mode: mode || undefined,
+      gender: gender || undefined,
+      minExperience: experience ? Number(experience) : undefined,
+      minRating: minRating ? Number(minRating) : undefined,
+      verified: verified === "1" ? true : undefined,
+      sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
+      page,
+      pageSize: PAGE_SIZE,
+    }),
+    canSave && profile ? listFavoriteTeacherIds(profile.id) : Promise.resolve({ data: [] as string[] }),
+  ]);
+
+  const favoriteIds = new Set(favoriteResult.data ?? []);
 
   const total = result.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));

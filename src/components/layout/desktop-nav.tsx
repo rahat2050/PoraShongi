@@ -19,7 +19,7 @@ export function DesktopNav() {
 
   return (
     <nav
-      className="hidden items-center gap-1 rounded-2xl border border-slate-200/80 bg-slate-100/80 p-1 shadow-inner shadow-slate-900/5 backdrop-blur md:flex dark:border-slate-700 dark:bg-slate-800/80"
+      className="hidden items-center gap-1 rounded-2xl border border-slate-200/80 bg-slate-100/80 p-1 shadow-inner shadow-slate-900/5 md:flex dark:border-slate-700 dark:bg-slate-800/80"
       aria-label="প্রধান নেভিগেশন"
     >
       {items.map((item) => {

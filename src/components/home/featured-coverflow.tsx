@@ -7,6 +7,7 @@ import type { TeacherPublic } from "@/types/index";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/components/motion/reduced-motion";
 
 export function FeaturedCoverflow({
   teachers,
@@ -20,6 +21,9 @@ export function FeaturedCoverflow({
   const [idx, setIdx] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [tabHidden, setTabHidden] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
   const startX = useRef(0);
   const draggingRef = useRef(false);
   const suppressClickRef = useRef(false);
@@ -38,12 +42,18 @@ export function FeaturedCoverflow({
     setIdx((p) => (p - 1 + teachers.length) % teachers.length);
   }, [teachers.length]);
 
-  // Auto-play, pause on drag
   useEffect(() => {
-    if (teachers.length <= 1 || isDragging) return;
+    const sync = () => setTabHidden(document.hidden);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  useEffect(() => {
+    if (teachers.length <= 1 || isDragging || hovered || reducedMotion || tabHidden) return;
     const t = window.setInterval(next, 3800);
     return () => window.clearInterval(t);
-  }, [isDragging, teachers.length, next]);
+  }, [isDragging, hovered, reducedMotion, tabHidden, teachers.length, next]);
 
   // Keyboard
   useEffect(() => {
@@ -168,6 +178,10 @@ export function FeaturedCoverflow({
           aria-roledescription="carousel"
           aria-label="ফিচার্ড শিক্ষক ক্যারোসেল"
           className="relative mt-10 select-none outline-none"
+          onPointerEnter={() => setHovered(true)}
+          onPointerLeave={() => setHovered(false)}
+          onFocusCapture={() => setHovered(true)}
+          onBlurCapture={() => setHovered(false)}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={finishDrag}
@@ -228,7 +242,7 @@ export function FeaturedCoverflow({
               })}
             </div>
 
-            <div className="pointer-events-none absolute bottom-2 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-900/80 px-3 py-1 text-xs font-semibold text-white backdrop-blur sm:hidden">
+            <div className="pointer-events-none absolute bottom-2 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-900/90 px-3 py-1 text-xs font-semibold text-white sm:hidden">
               Swipe করে দেখুন
             </div>
           </div>

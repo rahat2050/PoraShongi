@@ -99,7 +99,7 @@ export function DeveloperSection() {
           {/* Copy */}
           <div className="developer-scroll-copy text-center lg:text-left">
             <Reveal direction="up">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-semibold text-brand-100 backdrop-blur">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-semibold text-brand-100">
                 <Sparkles className="h-3.5 w-3.5 text-amber-300" aria-hidden />
                 প্ল্যাটফর্মের নির্মাতা · Developer
               </div>
@@ -139,7 +139,7 @@ export function DeveloperSection() {
                 {developer.tech.map((tech) => (
                   <span
                     key={tech}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200 backdrop-blur"
+                    className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200"
                   >
                     {tech}
                   </span>
@@ -180,7 +180,7 @@ export function DeveloperSection() {
             <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {developer.stats.map((stat, index) => (
                 <Reveal key={stat.labelEn} direction="up" delay={200 + index * 90} className="h-full">
-                  <div className="motion-card flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.05] p-4 text-center backdrop-blur">
+                  <div className="motion-card flex h-full flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.08] p-4 text-center">
                     <p className="text-3xl font-black tracking-tight text-white">
                       <span className="inline-flex items-baseline justify-center">
                         <CountUp value={stat.value} duration={900} format={(n) => bengaliNumber.format(n)} />
@@ -201,19 +201,19 @@ export function DeveloperSection() {
             <PointerTilt className="relative" maxRotation={4.5} maxLayerOffset={12} scrollRange={10}>
               {/* Floating role badges — tilt with the card and drift gently */}
               <div
-                className="motion-float pointer-events-none absolute -left-4 -top-5 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/90 px-3.5 py-2 text-xs font-bold text-white shadow-xl backdrop-blur sm:-left-8"
+                className="motion-float pointer-events-none absolute -left-4 -top-5 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/95 px-3.5 py-2 text-xs font-bold text-white shadow-xl sm:-left-8"
                 aria-hidden
               >
                 <Code2 className="h-4 w-4 text-brand-300" /> Web Developer
               </div>
               <div
-                className="motion-float motion-float-delay pointer-events-none absolute -right-3 top-16 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/90 px-3.5 py-2 text-xs font-bold text-white shadow-xl backdrop-blur sm:-right-8"
+                className="motion-float motion-float-delay pointer-events-none absolute -right-3 top-16 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/95 px-3.5 py-2 text-xs font-bold text-white shadow-xl sm:-right-8"
                 aria-hidden
               >
                 <HeartPulse className="h-4 w-4 text-rose-400" /> Blood Donor
               </div>
               <div
-                className="motion-float motion-float-delay-more pointer-events-none absolute -bottom-4 left-6 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/90 px-3.5 py-2 text-xs font-bold text-white shadow-xl backdrop-blur"
+                className="motion-float motion-float-delay-more pointer-events-none absolute -bottom-4 left-6 z-20 flex items-center gap-2 rounded-full border border-white/15 bg-slate-900/95 px-3.5 py-2 text-xs font-bold text-white shadow-xl"
                 aria-hidden
               >
                 <ShieldCheck className="h-4 w-4 text-amber-300" /> BNCC Cadet
@@ -303,7 +303,7 @@ export function DeveloperSection() {
                         <Medal className="h-4 w-4" aria-hidden /> গুরুত্বপূর্ণ তথ্য
                       </h3>
 
-                      <dl className="dev-back-enter dev-d3 relative mt-3 space-y-2.5">
+                      <dl className="dev-back-enter dev-d3 relative mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto">
                         {developerFacts.map((fact) => (
                           <div key={fact.label} className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
                             <fact.icon className={cn("mt-0.5 h-4 w-4 shrink-0", fact.tone)} aria-hidden />
