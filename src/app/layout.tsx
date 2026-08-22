@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     locale: "bn_BD",
     title: `${siteConfig.brandName} (${siteConfig.brandNameBangla}) — ${siteConfig.tagline}`,
     description: siteConfig.description,
-    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: `${siteConfig.brandName} logo` }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${siteConfig.brandName} — ${siteConfig.tagline}` }],
   },
   twitter: {
     card: "summary",

@@ -111,6 +111,7 @@ export function JourneyCoverflow() {
   const [staticMode, setStaticMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [tabHidden, setTabHidden] = useState(false);
   const [hoverCard, setHoverCard] = useState<number | null>(null);
   const [position, setPosition] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -173,10 +174,17 @@ export function JourneyCoverflow() {
   }, []);
 
   useEffect(() => {
-    if (staticMode || isDragging || hovered) return;
+    const sync = () => setTabHidden(document.hidden);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  useEffect(() => {
+    if (staticMode || isDragging || hovered || tabHidden) return;
     const timer = window.setInterval(() => animateTo(targetRef.current + 1, 1.1), 3800);
     return () => window.clearInterval(timer);
-  }, [isDragging, staticMode, hovered, animateTo]);
+  }, [isDragging, staticMode, hovered, tabHidden, animateTo]);
 
   useEffect(() => {
     const stage = stageRef.current;

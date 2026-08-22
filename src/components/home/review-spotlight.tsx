@@ -50,7 +50,7 @@ export function ReviewSpotlight({ reviews }: { reviews: TestimonialPublic[] }) {
       document.removeEventListener("visibilitychange", onVisibility);
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
     };
-  }, [count, paused, reducedMotion]);
+  }, [count, paused, reducedMotion, index]);
 
   if (count === 0 || !active) return null;
 

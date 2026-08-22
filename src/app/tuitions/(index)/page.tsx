@@ -84,7 +84,7 @@ export default async function TuitionsPage({
     })}`;
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full min-h-[50vh] max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">টিউশন খুঁজুন</h1>
         <p className="mt-1 text-slate-500">শিক্ষার্থী ও অভিভাবকের প্রকাশিত টিউশন দেখুন।</p>

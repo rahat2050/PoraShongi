@@ -226,7 +226,7 @@ function ScrollytellingDemo() {
 
   return (
     <section ref={containerRef} className="relative bg-slate-950" style={{ height: "280vh" }}>
-      <div className="sticky top-0 flex h-[100vh] flex-col overflow-hidden">
+      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
         {/* Top bar */}
         <div className="border-b border-white/10 bg-slate-950 px-4 py-4 sm:px-6">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
@@ -340,7 +340,7 @@ function ScrollytellingDemo() {
                   </div>
 
                   {/* Flip stage */}
-                  <div className="relative mt-3 h-[340px] overflow-hidden rounded-2xl bg-slate-900 p-4">
+                  <div className="relative mt-3 h-[min(340px,45svh)] overflow-hidden rounded-2xl bg-slate-900 p-4">
                     {/* Animated background */}
                     <div className="absolute inset-0 opacity-20">
                       <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-emerald-500 blur-3xl" />
@@ -689,7 +689,7 @@ function StatsDemo() {
     return () => cancelAnimationFrame(raf);
   }, [inView]);
 
-  const labels = ["সংযুক্ত শিক্ষার্থী", "নিবন্ধিত শিক্ষক", "সফল সংযোগ", "জেলা কভারেজ"];
+  const labels = ["সংযুক্ত শিক্ষার্থী", "নিবন্ধিত শিক্��্ষক", "সফল সংযোগ", "জেলা কভারেজ"];
 
   return (
     <section ref={statsRef} className="relative overflow-hidden bg-slate-900 py-16 sm:py-20">

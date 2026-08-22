@@ -12,14 +12,6 @@ type RevealProps = {
   direction?: "up" | "down" | "left" | "right" | "none";
 };
 
-const DIRECTION_OFFSET: Record<NonNullable<RevealProps["direction"]>, string> = {
-  up: "translateY(22px)",
-  down: "translateY(-22px)",
-  left: "translateX(28px)",
-  right: "translateX(-28px)",
-  none: "none",
-};
-
 /**
  * Lightweight scroll-reveal wrapper. Content is fully visible during SSR and
  * for no-JS/reduced-motion users; interactive users get a staggered entrance
@@ -56,7 +48,6 @@ export function Reveal({ children, className, delay = 0, direction = "up" }: Rev
   }, []);
 
   const style = {
-    ...(hidden && direction !== "none" ? { transform: DIRECTION_OFFSET[direction] } : null),
     ...(hidden && delay > 0 ? { transitionDelay: `${delay}ms` } : null),
   } as CSSProperties;
 
@@ -64,6 +55,7 @@ export function Reveal({ children, className, delay = 0, direction = "up" }: Rev
     <div
       ref={ref}
       data-reveal-hidden={hidden || undefined}
+      data-reveal-dir={direction === "none" ? undefined : direction}
       className={cn("reveal-item", className)}
       style={style}
     >
