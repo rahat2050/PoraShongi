@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Clock, MapPin, Sparkles, User, Users, Wallet } from "lucide-react";
-import { getPublicTuition, hasAcceptedTuitionForTeacher } from "@/lib/data/tuitions";
+import { getPublicTuition, getPublicTuitionTeaser, hasAcceptedTuitionForTeacher } from "@/lib/data/tuitions";
 import { matchTeachersForTuition } from "@/lib/data/teachers";
 import { getCurrentUser, getCurrentProfile } from "@/lib/auth/server-auth";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -21,14 +21,35 @@ import { isTuitionSaved } from "@/lib/data/saved-tuitions";
 import { JoinBatchButton } from "@/features/features-actions-ui";
 import { isBatchMember } from "@/lib/data/features";
 import { buttonStyles } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { formatDate, formatTaka, isUuid, modeLabel } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
 
-export const metadata: Metadata = {
-  title: "টিউশন বিস্তারিত",
-  description: "টিউশনের বিস্তারিত দেখতে লগইন করুন।",
-  robots: { index: false, follow: false, nocache: true },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  if (!isUuid(id) || !isSupabaseConfigured()) {
+    return { title: "টিউশন বিস্তারিত", robots: { index: false, follow: true } };
+  }
+
+  const teaser = (await getPublicTuitionTeaser(id)).data;
+  if (!teaser) {
+    // Closed/assigned tuitions stay reachable for signed-in participants but
+    // must never be indexed as live opportunities.
+    return { title: "টিউশন বিস্তারিত", robots: { index: false, follow: true } };
+  }
+
+  const place = [teaser.area, teaser.district].filter(Boolean).join(", ");
+  return buildPageMetadata({
+    title: `${teaser.title} — ${teaser.subject}, ${teaser.class_level}${place ? ` · ${place}` : ""}`,
+    description: `${teaser.class_level} ${teaser.subject} টিউশন${place ? ` (${place})` : ""} · ${modeLabel(teaser.teaching_mode)} · ${formatTaka(teaser.budget)}। PoraSathi-তে আবেদন করুন।`,
+    path: `/tuitions/${id}`,
+  });
+}
 
 export default async function TuitionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -38,13 +59,11 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
 
   const user = await getCurrentUser();
   if (!user) {
-    return (
-      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-20 text-center sm:px-6">
-        <h1 className="text-2xl font-bold text-slate-900">লগইন প্রয়োজন</h1>
-        <p className="mt-2 text-slate-500">টিউশন দেখতে লগইন করুন।</p>
-        <Link href={`/login?next=/tuitions/${id}`} className={buttonStyles({ className: "mt-6" })}>লগইন করুন</Link>
-      </div>
-    );
+    // Anonymous visitors get an indexable teaser: enough to judge the
+    // opportunity, but no poster identity, requirements or meeting link.
+    const teaser = (await getPublicTuitionTeaser(id)).data;
+    if (!teaser) notFound();
+    return <PublicTuitionTeaser tuition={teaser} />;
   }
 
   const result = await getPublicTuition(id);
@@ -214,6 +233,99 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
       <span className="text-slate-400">{icon}</span>
       <span className="w-32 shrink-0 text-slate-500">{label}</span>
       <span className="font-medium text-slate-800">{value}</span>
+    </div>
+  );
+}
+
+/**
+ * Anonymous view of an open tuition.
+ *
+ * ইচ্ছাকৃতভাবে যা নেই: পোস্টদাতার নাম/ছবি, requirements (মুক্ত টেক্সটে ফোন বা
+ * ঠিকানা থাকতে পারে), meeting link, ব্যাচ যোগদান। এগুলো লগইনের পরে।
+ */
+function PublicTuitionTeaser({ tuition }: { tuition: import("@/types/index").TuitionTeaser }) {
+  const location = [tuition.area, tuition.district].filter(Boolean).join(", ");
+  const loginHref = `/login?next=${encodeURIComponent(`/tuitions/${tuition.id}`)}`;
+
+  return (
+    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">
+      <Breadcrumbs
+        items={[
+          { name: "হোম", path: "/" },
+          { name: "টিউশন", path: "/tuitions" },
+          { name: tuition.title },
+        ]}
+      />
+
+      <Reveal>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <TuitionStatusBadge status={tuition.status} />
+              {tuition.is_featured && (
+                <Badge variant="accent">
+                  <Sparkles className="h-3 w-3" aria-hidden /> Featured
+                </Badge>
+              )}
+              {tuition.is_batch && (
+                <Badge variant="info">
+                  <Users className="h-3 w-3" aria-hidden /> ব্যাচ
+                  {tuition.batch_size ? ` · ${tuition.seats_filled}/${tuition.batch_size}` : ""}
+                </Badge>
+              )}
+            </div>
+
+            <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">{tuition.title}</h1>
+
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              <Badge variant="brand">{tuition.class_level}</Badge>
+              <Badge variant="accent">{tuition.subject}</Badge>
+              <Badge variant="outline">{modeLabel(tuition.teaching_mode)}</Badge>
+            </div>
+
+            <div className="mt-6 space-y-3 text-sm">
+              {location && <Row icon={<MapPin className="h-4 w-4" aria-hidden />} label="এলাকা" value={location} />}
+              <Row
+                icon={<Wallet className="h-4 w-4" aria-hidden />}
+                label="বাজেট"
+                value={`${formatTaka(tuition.budget)}${tuition.budget_negotiable ? " (আলোচনা সাপেক্ষ)" : ""}`}
+              />
+              <Row
+                icon={<CalendarDays className="h-4 w-4" aria-hidden />}
+                label="দিন"
+                value={tuition.preferred_days?.length ? tuition.preferred_days.join(", ") : "যেকোনো দিন"}
+              />
+              <Row
+                icon={<Clock className="h-4 w-4" aria-hidden />}
+                label="সময়"
+                value={tuition.preferred_time || "যেকোনো সময়"}
+              />
+              <Row
+                icon={<User className="h-4 w-4" aria-hidden />}
+                label="পোস্ট হয়েছে"
+                value={formatDate(tuition.created_at)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </Reveal>
+
+      <div className="mt-6 rounded-2xl border border-brand-200 bg-brand-50 p-6 dark:border-brand-800 dark:bg-brand-950/40">
+        <h2 className="text-lg font-bold text-brand-950 dark:text-brand-100">এই টিউশনে আবেদন করতে চান?</h2>
+        <p className="mt-2 text-sm leading-7 text-brand-900 dark:text-brand-200">
+          পোস্টদাতার বিস্তারিত চাহিদা দেখতে ও আবেদন পাঠাতে শিক্ষক হিসেবে লগইন করুন। অ্যাকাউন্ট খোলা সম্পূর্ণ ফ্রি।
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link href={loginHref} className={buttonStyles()}>লগইন করে আবেদন করুন</Link>
+          <Link href="/register" className={buttonStyles({ variant: "outline" })}>শিক্ষক হিসেবে রেজিস্টার</Link>
+        </div>
+      </div>
+
+      <div className="mt-6 text-center">
+        <Link href="/tuitions" className="text-sm font-medium text-brand-700 hover:underline dark:text-brand-300">
+          ← সব খোলা টিউশন দেখুন
+        </Link>
+      </div>
     </div>
   );
 }

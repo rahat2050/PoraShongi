@@ -1,6 +1,12 @@
 import "server-only";
-import { asJson, getDb, ok, fail, type DataResult } from "@/lib/data/client";
-import { type SearchResponse, type Tuition, type TuitionPublic } from "@/types/index";
+import { asJson, getDb, getPublicDb, ok, fail, type DataResult } from "@/lib/data/client";
+import {
+  type PublicTuitionStats,
+  type SearchResponse,
+  type Tuition,
+  type TuitionPublic,
+  type TuitionTeaser,
+} from "@/types/index";
 
 export interface TuitionSearchFilters {
   classLevel?: string;
@@ -37,6 +43,55 @@ export async function searchTuitions(
   });
   if (error) return fail(error.message);
   return ok(asJson<SearchResponse<TuitionPublic>>(data));
+}
+
+/**
+ * Anonymous-safe open tuition listing used by the public /tuitions page and
+ * the homepage feed. Returns no poster identity — see 0034 migration.
+ */
+export async function searchPublicTuitions(
+  filters: TuitionSearchFilters,
+): Promise<DataResult<SearchResponse<TuitionTeaser>>> {
+  const db = getPublicDb(120);
+  if (!db) return fail("Supabase is not configured.");
+
+  const { data, error } = await db.rpc("public_tuitions_search", {
+    p_class: filters.classLevel || null,
+    p_subject: filters.subject || null,
+    p_district: filters.district || null,
+    p_area: filters.area || null,
+    p_min_budget: filters.minBudget ?? null,
+    p_max_budget: filters.maxBudget ?? null,
+    p_mode: filters.mode || null,
+    p_day: filters.day || null,
+    p_time: filters.time || null,
+    p_page: filters.page,
+    p_page_size: filters.pageSize,
+  });
+  if (error) return fail(error.message);
+  return ok(asJson<SearchResponse<TuitionTeaser>>(data));
+}
+
+/** Anonymous-safe single tuition (open only, no poster identity). */
+export async function getPublicTuitionTeaser(
+  tuitionId: string,
+): Promise<DataResult<TuitionTeaser | null>> {
+  const db = getPublicDb(120);
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("get_public_tuition_teaser", {
+    p_tuition_id: tuitionId,
+  });
+  if (error) return fail(error.message);
+  return ok(asJson<TuitionTeaser | null>(data));
+}
+
+/** Aggregate open-tuition counts for the homepage (no personal data). */
+export async function publicTuitionStats(): Promise<DataResult<PublicTuitionStats>> {
+  const db = getPublicDb(300);
+  if (!db) return fail("Supabase is not configured.");
+  const { data, error } = await db.rpc("public_tuition_stats");
+  if (error) return fail(error.message);
+  return ok(asJson<PublicTuitionStats>(data));
 }
 
 export async function getPublicTuition(

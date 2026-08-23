@@ -175,3 +175,35 @@ export function teacherItemListJsonLd(input: {
     })),
   };
 }
+
+/**
+ * ItemList of open tuition opportunities for the public /tuitions page.
+ *
+ * ⚠️ ইচ্ছাকৃতভাবে schema.org/JobPosting ব্যবহার করা হয়নি: JobPosting-এ
+ * hiringOrganization ও validThrough বাধ্যতামূলক, আর এগুলো ব্যক্তি-পোস্ট করা
+ * টিউশন — কোনো প্রতিষ্ঠান নয়। ভুল টাইপ দিলে Google structured-data
+ * penalty দিতে পারে, তাই সৎভাবে ItemList দেওয়া হয়েছে।
+ */
+export function tuitionItemListJsonLd(input: {
+  name: string;
+  path: string;
+  tuitions: Array<{ id: string; title: string; subject: string; class_level: string }>;
+  total: number;
+  page: number;
+  pageSize: number;
+}) {
+  const start = (input.page - 1) * input.pageSize;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: input.name,
+    url: absoluteUrl(input.path),
+    numberOfItems: input.total,
+    itemListElement: input.tuitions.map((tuition, index) => ({
+      "@type": "ListItem",
+      position: start + index + 1,
+      url: absoluteUrl(`/tuitions/${tuition.id}`),
+      name: tuition.title,
+    })),
+  };
+}

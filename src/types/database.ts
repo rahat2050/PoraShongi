@@ -556,10 +556,24 @@ export interface Database {
         Returns: Json;
       };
       tutor_lead_stats: { Args: Record<PropertyKey, never>; Returns: Json };
-      public_tuitions: {
-        Args: { p_limit?: number | null };
+      public_tuitions_search: {
+        Args: {
+          p_class?: string | null;
+          p_subject?: string | null;
+          p_district?: string | null;
+          p_area?: string | null;
+          p_min_budget?: number | null;
+          p_max_budget?: number | null;
+          p_mode?: string | null;
+          p_day?: string | null;
+          p_time?: string | null;
+          p_page?: number | null;
+          p_page_size?: number | null;
+        };
         Returns: Json;
       };
+      get_public_tuition_teaser: { Args: { p_tuition_id: string }; Returns: Json };
+      public_tuition_stats: { Args: Record<PropertyKey, never>; Returns: Json };
       search_tuitions: {
         Args: {
           p_class?: string | null;

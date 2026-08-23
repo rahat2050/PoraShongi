@@ -600,3 +600,36 @@ export type TutorLeadStats = {
   leads_total: number;
   leads_matched: number;
 };
+
+/**
+ * Anonymous-safe tuition listing row (public_tuitions_search RPC).
+ *
+ * TuitionPublic-এর তুলনায় এখানে ইচ্ছাকৃতভাবে poster identity, student_id,
+ * requirements ও meeting_link **নেই** — এগুলো লগইন করা ব্যবহারকারীর জন্য।
+ */
+export type TuitionTeaser = {
+  id: string;
+  title: string;
+  class_level: string;
+  subject: string;
+  district: string | null;
+  area: string | null;
+  budget: number | null;
+  budget_negotiable: boolean;
+  teaching_mode: string;
+  preferred_days: string[] | null;
+  preferred_time: string | null;
+  is_featured: boolean;
+  featured_until: string | null;
+  is_batch: boolean;
+  batch_size: number | null;
+  seats_filled: number;
+  status: TuitionStatus;
+  created_at: string;
+};
+
+export type PublicTuitionStats = {
+  open_total: number;
+  new_24h: number;
+  new_7d: number;
+};
