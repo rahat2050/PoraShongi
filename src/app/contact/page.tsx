@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "যোগাযোগ ও সহায়তা",
   description: "PoraSathi সহায়তা, গোপনীয়তা ও নিরাপত্তা যোগাযোগের তথ্য।",
-  alternates: { canonical: "/contact" },
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

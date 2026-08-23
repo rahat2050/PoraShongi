@@ -104,7 +104,7 @@ export async function listBlogPosts(limit = 20): Promise<DataResult<BlogPost[]>>
   if (!db) return fail("Supabase is not configured.");
   const { data, error } = await db
     .from("blog_posts")
-    .select("id,author_id,title,slug,excerpt,category,published,created_at")
+    .select("id,author_id,title,slug,excerpt,category,published,created_at,updated_at")
     .eq("published", true)
     .order("created_at", { ascending: false })
     .limit(limit);

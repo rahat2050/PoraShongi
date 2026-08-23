@@ -5,6 +5,7 @@ import { buildRatingBreakdown } from "../../src/lib/ratings";
 import { isMessageWithinRetention, MESSAGE_RETENTION_HOURS } from "../../src/lib/message-retention";
 import { createBlogSlug } from "../../src/lib/blog";
 import { getDhakaDateKey, isTrackableVisitorPath } from "../../src/lib/analytics/visitor";
+import { getSubjectLandingByName, toSeoSlug } from "../../src/config/seo";
 
 async function accessibilityViolations(page: Page) {
   await page.addScriptTag({ content: axeSource });
@@ -402,6 +403,40 @@ test("teacher rating breakdown uses only valid published values", () => {
     counts: { 1: 0, 2: 1, 3: 0, 4: 1, 5: 2 },
     percentages: { 1: 0, 2: 25, 3: 0, 4: 25, 5: 50 },
   });
+});
+
+test("SEO slugs stay stable for subjects and locations", () => {
+  expect(toSeoSlug("Higher Math")).toBe("higher-math");
+  expect(toSeoSlug("Cox's Bazar")).toBe("coxs-bazar");
+  expect(getSubjectLandingByName("English")?.path).toBe("/subjects/english");
+});
+
+test("public SEO landing pages are reachable and have a single H1", async ({ page, request }) => {
+  for (const path of ["/about", "/how-it-works", "/locations", "/subjects", "/teachers/sunamganj", "/teachers/sylhet", "/teachers/online", "/subjects/english"]) {
+    expect((await request.get(path)).status(), path).toBe(200);
+    await page.goto(path);
+    await expect(page.locator("h1")).toHaveCount(1);
+  }
+});
+
+test("legacy tutor URLs permanently redirect to teachers routes", async ({ request }) => {
+  const response = await request.get("/tutors/sunamganj", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+  expect(response.headers().location).toBe("/teachers/sunamganj");
+
+  const online = await request.get("/online-tutors", { maxRedirects: 0 });
+  expect(online.status()).toBe(308);
+  expect(online.headers().location).toBe("/teachers/online");
+});
+
+test("teacher filter combinations stay noindex while location pages stay indexable", async ({ page }) => {
+  await page.goto("/teachers?gender=female&sort=rating");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+
+  await page.goto("/teachers/sunamganj");
+  const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+  if (robots) expect(robots).not.toMatch(/noindex/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/teachers\/sunamganj\/?$/);
 });
 
 test("blog slugs cannot create broken nested routes", () => {

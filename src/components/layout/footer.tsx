@@ -41,8 +41,14 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-x-6 gap-y-9 text-sm sm:grid-cols-4">
             <FooterGroup title="প্ল্যাটফর্ম">
               <li><Link href="/teachers" className={linkClass}>শিক্ষক খুঁজুন</Link></li>
+              <li><Link href="/teachers/sunamganj" className={linkClass}>সুনামগঞ্জের শিক্ষক</Link></li>
+              <li><Link href="/teachers/sylhet" className={linkClass}>সিলেটের শিক্ষক</Link></li>
+              <li><Link href="/teachers/online" className={linkClass}>অনলাইন শিক্ষক</Link></li>
+              <li><Link href="/subjects" className={linkClass}>বিষয় অনুযায়ী শিক্ষক</Link></li>
               <li><Link href="/tuitions" className={linkClass}>টিউশন দেখুন</Link></li>
               <li><Link href="/leaderboard" className={linkClass}>সেরা শিক্ষক</Link></li>
+              <li><Link href="/how-it-works" className={linkClass}>কীভাবে কাজ করে</Link></li>
+              <li><Link href="/about" className={linkClass}>আমাদের সম্পর্কে</Link></li>
               <li><Link href="/blog" className={linkClass}>শিক্ষা ব্লগ</Link></li>
               <li><Link href="/coaching" className={linkClass}>কোচিং সেন্টার</Link></li>
               <li><Link href="/resources" className={linkClass}>শিক্ষা রিসোর্স</Link></li>

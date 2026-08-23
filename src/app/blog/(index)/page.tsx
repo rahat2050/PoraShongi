@@ -12,10 +12,19 @@ import { buttonStyles } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
 import { formatDate } from "@/lib/utils";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
 export const metadata: Metadata = {
-  title: "ব্লগ — পড়াশোনার টিপস",
-  description: "PoraSathi শিক্ষা ব্লগে প্রকাশিত পড়াশোনার টিপস ও গাইড।",
-  alternates: { canonical: "/blog" },
+  ...buildPageMetadata({
+    title: "Education Blog",
+    description: "PoraSathi শিক্ষা ব্লগে প্রকাশিত পড়াশোনার টিপস, পরীক্ষা গাইড ও শিক্ষকদের পরামর্শ।",
+    path: "/blog",
+  }),
+  alternates: {
+    canonical: "/blog",
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
 };
 export const dynamic = "force-dynamic";
 
@@ -30,6 +39,7 @@ export default async function BlogPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">
+      <Breadcrumbs items={[{ name: "হোম", path: "/" }, { name: "ব্লগ" }]} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <BookOpen className="h-6 w-6 text-brand-600" aria-hidden />

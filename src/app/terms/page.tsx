@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ContentList, ContentPage, ContentSection } from "@/components/shared/content-page";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "ব্যবহারের শর্তাবলি",
   description: "PoraSathi ব্যবহারকারীদের জন্য প্রযোজ্য শর্ত, দায়িত্ব ও নিষিদ্ধ আচরণ।",
-  alternates: { canonical: "/terms" },
-};
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

@@ -11,11 +11,22 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Reveal } from "@/components/motion/reveal";
 
-export const metadata: Metadata = {
-  title: "কোচিং সেন্টার",
-  description: "PoraSathi-তে প্রকাশিত কোচিং সেন্টার খুঁজুন।",
-  alternates: { canonical: "/coaching" },
-};
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const districtRaw = (await searchParams).district;
+  const district = typeof districtRaw === "string" ? districtRaw : undefined;
+  return buildPageMetadata({
+    title: "কোচিং সেন্টার",
+    description: "PoraSathi-তে প্রকাশিত কোচিং সেন্টার খুঁজুন।",
+    path: "/coaching",
+    robots: district ? { index: false, follow: true } : { index: true, follow: true },
+  });
+}
 export const dynamic = "force-dynamic";
 
 export default async function CoachingPage({

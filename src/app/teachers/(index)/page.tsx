@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { SearchX } from "lucide-react";
 import { searchTeachers } from "@/lib/data/teachers";
 import { listFavoriteTeacherIds } from "@/lib/data/favorites";
@@ -10,19 +11,70 @@ import { TeacherCard } from "@/components/shared/teacher-card";
 import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { TeacherDirectoryNav } from "@/components/seo/teacher-directory-nav";
+import { getFeaturedLocationByName, getSubjectLandingByName } from "@/config/seo";
+import { paginatedDirectoryMetadata } from "@/lib/seo/metadata";
 import { buildQueryString, firstParam } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "শিক্ষক খুঁজুন",
-  description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী PoraSathi-তে প্রকাশিত শিক্ষক খুঁজুন।",
-  alternates: { canonical: "/teachers" },
-  openGraph: {
-    type: "website",
-    url: "/teachers",
-    title: "শিক্ষক খুঁজুন — PoraSathi",
-    description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী শিক্ষক খুঁজুন।",
-  },
-};
+function readTeacherSearch(sp: Record<string, string | string[] | undefined>) {
+  return {
+    classLevel: firstParam(sp.class),
+    subject: firstParam(sp.subject),
+    district: firstParam(sp.district),
+    area: firstParam(sp.area),
+    mode: firstParam(sp.mode),
+    gender: firstParam(sp.gender),
+    experience: firstParam(sp.experience),
+    minRating: firstParam(sp.minRating),
+    verified: firstParam(sp.verified),
+    sort: firstParam(sp.sort) ?? "relevance",
+    radius: firstParam(sp.radius),
+    page: Math.max(1, Number(firstParam(sp.page) ?? "1") || 1),
+  };
+}
+
+function hasFacetFilters(filters: ReturnType<typeof readTeacherSearch>): boolean {
+  return Boolean(
+    filters.classLevel
+    || filters.subject
+    || filters.district
+    || filters.area
+    || filters.mode
+    || filters.gender
+    || filters.experience
+    || filters.minRating
+    || filters.verified
+    || filters.radius
+    || (filters.sort && filters.sort !== "relevance"),
+  );
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const filters = readTeacherSearch(await searchParams);
+  const faceted = hasFacetFilters(filters);
+
+  if (faceted) {
+    return paginatedDirectoryMetadata({
+      title: "শিক্ষক খুঁজুন",
+      description: "ক্লাস, বিষয়, মোড, অভিজ্ঞতা ও এলাকা অনুযায়ী PoraSathi-তে প্রকাশিত শিক্ষক খুঁজুন।",
+      path: "/teachers",
+      page: 1,
+      robots: { index: false, follow: true },
+    });
+  }
+
+  return paginatedDirectoryMetadata({
+    title: "Find Tutors in Bangladesh",
+    description: "বাংলাদেশে প্রাইভেট শিক্ষক ও হোম টিউটর খুঁজুন। সুনামগঞ্জ, সিলেট ও অন্য জেলায় ক্লাস, বিষয় ও মাধ্যম অনুযায়ী প্রকাশিত প্রোফাইল দেখুন।",
+    path: "/teachers",
+    page: filters.page,
+  });
+}
 
 const PAGE_SIZE = 12;
 
@@ -45,6 +97,21 @@ export default async function TeachersPage({
   const sort = firstParam(sp.sort) ?? "relevance";
   const radius = firstParam(sp.radius);
   const page = Math.max(1, Number(firstParam(sp.page) ?? "1") || 1);
+
+  const extraFacets = Boolean(
+    classLevel || area || gender || experience || minRating || verified || radius || (sort && sort !== "relevance"),
+  );
+  if (page <= 1 && !extraFacets) {
+    if (district && !subject && !mode) {
+      const location = getFeaturedLocationByName(district);
+      if (location) redirect(location.path);
+    }
+    if (subject && !district && !mode) {
+      const subjectPage = getSubjectLandingByName(subject);
+      if (subjectPage) redirect(subjectPage.path);
+    }
+    if (mode === "online" && !district && !subject) redirect("/teachers/online");
+  }
 
   if (!isSupabaseConfigured()) return <SetupRequired />;
 
@@ -101,9 +168,11 @@ export default async function TeachersPage({
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+      <Breadcrumbs items={[{ name: "হোম", path: "/" }, { name: "শিক্ষক" }]} />
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">শিক্ষক খুঁজুন</h1>
-        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা, মাধ্যম ও অভিজ্ঞতা অনুযায়ী শিক্ষক খুঁজুন।</p>
+        <h1 className="text-2xl font-bold text-slate-900">বাংলাদেশে শিক্ষক খুঁজুন</h1>
+        <p className="mt-1 text-slate-500">ক্লাস, বিষয়, এলাকা, মাধ্যম ও অভিজ্ঞতা অনুযায়ী প্রকাশিত শিক্ষক দেখুন। সুনামগঞ্জ, সিলেট ও অনলাইন শিক্ষকের জন্য স্থিতিশীল পাতা আছে।</p>
+        <TeacherDirectoryNav current="teachers" />
       </div>
 
       <TeacherFilters

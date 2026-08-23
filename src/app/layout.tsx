@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { getSiteUrl, siteConfig } from "@/config/site";
+import { DEFAULT_OG_IMAGE } from "@/config/seo";
+import { siteConfig } from "@/config/site";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Announcement } from "@/components/layout/announcement";
@@ -11,35 +12,44 @@ import { BackToTop } from "@/components/shared/back-to-top";
 import { ServiceWorkerRegister } from "@/components/shared/service-worker-register";
 import { VisitorTracker } from "@/components/shared/visitor-tracker";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { JsonLd } from "@/components/seo/json-ld";
+import { websiteGraph } from "@/lib/seo/jsonld";
+import { googleSiteVerification, metadataBaseUrl } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
+  metadataBase: metadataBaseUrl(),
   title: {
-    default: `${siteConfig.brandName} (${siteConfig.brandNameBangla}) — ${siteConfig.tagline}`,
+    default: siteConfig.defaultTitle,
     template: `%s · ${siteConfig.brandName}`,
   },
   description: siteConfig.description,
   applicationName: siteConfig.brandName,
+  authors: [{ name: siteConfig.brandName }],
+  creator: siteConfig.brandName,
+  publisher: siteConfig.branding,
+  category: "education",
+  robots: { index: true, follow: true },
+  verification: googleSiteVerification(),
   openGraph: {
     type: "website",
     url: "/",
     siteName: siteConfig.brandName,
     locale: "bn_BD",
-    title: `${siteConfig.brandName} (${siteConfig.brandNameBangla}) — ${siteConfig.tagline}`,
+    title: siteConfig.defaultTitle,
     description: siteConfig.description,
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${siteConfig.brandName} — ${siteConfig.tagline}` }],
+    images: [DEFAULT_OG_IMAGE],
   },
   twitter: {
-    card: "summary",
-    title: `${siteConfig.brandName} — ${siteConfig.tagline}`,
+    card: "summary_large_image",
+    title: siteConfig.defaultTitle,
     description: siteConfig.description,
-    images: ["/icon-512.png"],
+    images: [DEFAULT_OG_IMAGE.url],
   },
-  keywords: ["tuition", "Bangladesh", "শিক্ষক", "শিক্ষার্থী", "টিউশন", "PoraSathi", "পড়াসাথী", "FS Coaching"],
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
@@ -83,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <SettingsProvider>
           <ToastProvider>
+            <JsonLd data={websiteGraph()} />
             <ScrollProgress />
             <Announcement />
             <Header />

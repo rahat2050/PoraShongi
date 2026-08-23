@@ -36,12 +36,14 @@ export const siteConfig = {
   tagline: "সঠিক শিক্ষক, সুন্দর শেখার সঙ্গী",
   taglineEnglish: "The Right Teacher, A Beautiful Learning Companion",
   branding: "A platform by FS Coaching",
+  defaultTitle: "PoraSathi – Find Tutors & Tuition in Bangladesh | পড়াসাথী",
   description:
-    "PoraSathi (পড়াসাথী) — বাংলাদেশের শিক্ষার্থী/অভিভাবক এবং যোগ্য শিক্ষককে যুক্ত করার trusted প্ল্যাটফর্ম। শিক্ষক খুঁজুন, tuition দিন, schedule manage করুন।",
+    "PoraSathi (পড়াসাথী) — বাংলাদেশে প্রাইভেট শিক্ষক ও হোম টিউশন খুঁজুন। সুনামগঞ্জ ও সিলেট থেকে শুরু করে শিক্ষার্থী, অভিভাবক এবং যোগ্য শিক্ষককে নিরাপদে যুক্ত করে।",
   /** সাইটের উপরে ছোট ঘোষণা — খালি রাখলে দেখাবে না। */
   announcement: null as { text: string; href?: string } | null,
   url: getSiteUrl(),
   locale: "bn-BD",
+  contactEmail: "hello@porasathi.com",
 } as const;
 
 export type SiteConfig = typeof siteConfig;

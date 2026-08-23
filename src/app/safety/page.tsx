@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ContentList, ContentPage, ContentSection } from "@/components/shared/content-page";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "নিরাপত্তা নির্দেশিকা",
   description: "শিক্ষার্থী, অভিভাবক ও শিক্ষকের নিরাপদ যোগাযোগ ও সাক্ষাতের নির্দেশিকা।",
-  alternates: { canonical: "/safety" },
-};
+  path: "/safety",
+});
 
 export default function SafetyPage() {
   return (

@@ -5,11 +5,13 @@ import { getPremiumWhatsAppUrl, premiumConfig } from "@/config/premium";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonStyles } from "@/components/ui/button";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "Premium",
   description: "PoraSathi Premium সম্পর্কে WhatsApp-এ Admin-এর সঙ্গে যোগাযোগ করুন।",
-  alternates: { canonical: "/premium" },
-};
+  path: "/premium",
+});
 
 export default function PremiumPage() {
   const whatsappUrl = getPremiumWhatsAppUrl();

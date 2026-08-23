@@ -14,17 +14,21 @@ import { buttonStyles } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
 import { firstParam } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "সেরা শিক্ষক",
-  description: "ভেরিফাইড, সম্পন্ন টিউশন ও পর্যাপ্ত রিভিউ থাকা শিক্ষকদের প্রমাণভিত্তিক র‍্যাঙ্কিং।",
-  alternates: { canonical: "/leaderboard" },
-  openGraph: {
-    type: "website",
-    url: "/leaderboard",
-    title: "সেরা শিক্ষক — PoraSathi",
-    description: "ভেরিফাইড ও পর্যাপ্ত কার্যক্রম থাকা শিক্ষকদের প্রমাণভিত্তিক র‍্যাঙ্কিং।",
-  },
-};
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const district = firstParam((await searchParams).district);
+  return buildPageMetadata({
+    title: "সেরা শিক্ষক",
+    description: "ভেরিফাইড, সম্পন্ন টিউশন ও পর্যাপ্ত রিভিউ থাকা শিক্ষকদের প্রমাণভিত্তিক র‍্যাঙ্কিং।",
+    path: "/leaderboard",
+    robots: district ? { index: false, follow: true } : { index: true, follow: true },
+  });
+}
 export const dynamic = "force-dynamic";
 
 const MEDALS = ["🥇", "🥈", "🥉"];

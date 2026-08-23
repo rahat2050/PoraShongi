@@ -1,28 +1,50 @@
 import type { MetadataRoute } from "next";
+import { FEATURED_LOCATIONS, SUBJECT_LANDINGS, teacherProfilePath } from "@/config/seo";
 import { getSiteUrl } from "@/config/site";
-import { isSupabaseConfigured } from "@/lib/env";
-import { searchTeachers } from "@/lib/data/teachers";
-import { listBlogPosts } from "@/lib/data/features";
 import { listCoachingCenters } from "@/lib/data/ecosystem";
+import { listBlogPosts } from "@/lib/data/features";
+import { searchTeachers } from "@/lib/data/teachers";
+import { isSupabaseConfigured } from "@/lib/env";
 
 export const revalidate = 3600;
 
-/** Sitemap of useful public landing pages and currently published teachers. */
+function entry(
+  path: string,
+  extras: Omit<MetadataRoute.Sitemap[number], "url"> = {},
+): MetadataRoute.Sitemap[number] {
+  const base = getSiteUrl().replace(/\/+$/, "");
+  return {
+    url: path === "/" ? `${base}/` : `${base}${path}`,
+    ...extras,
+  };
+}
+
+/** Canonical, public, indexable URLs only. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = getSiteUrl();
   const entries: MetadataRoute.Sitemap = [
-    { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/teachers`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${base}/leaderboard`, changeFrequency: "daily", priority: 0.7 },
-    { url: `${base}/blog`, changeFrequency: "weekly", priority: 0.6 },
-    { url: `${base}/coaching`, changeFrequency: "weekly", priority: 0.6 },
-    { url: `${base}/resources`, changeFrequency: "weekly", priority: 0.6 },
-    { url: `${base}/premium`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/safety`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/verification`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/contact`, changeFrequency: "yearly", priority: 0.4 },
+    entry("/", { changeFrequency: "weekly", priority: 1 }),
+    entry("/teachers", { changeFrequency: "daily", priority: 0.9 }),
+    entry("/teachers/online", { changeFrequency: "daily", priority: 0.8 }),
+    entry("/locations", { changeFrequency: "weekly", priority: 0.8 }),
+    entry("/subjects", { changeFrequency: "weekly", priority: 0.8 }),
+    ...FEATURED_LOCATIONS.map((location) =>
+      entry(location.path, { changeFrequency: "daily", priority: 0.85 }),
+    ),
+    ...SUBJECT_LANDINGS.map((subject) =>
+      entry(subject.path, { changeFrequency: "weekly", priority: 0.7 }),
+    ),
+    entry("/how-it-works", { changeFrequency: "monthly", priority: 0.7 }),
+    entry("/about", { changeFrequency: "monthly", priority: 0.6 }),
+    entry("/leaderboard", { changeFrequency: "daily", priority: 0.6 }),
+    entry("/blog", { changeFrequency: "weekly", priority: 0.6 }),
+    entry("/coaching", { changeFrequency: "weekly", priority: 0.5 }),
+    entry("/resources", { changeFrequency: "weekly", priority: 0.5 }),
+    entry("/premium", { changeFrequency: "monthly", priority: 0.4 }),
+    entry("/safety", { changeFrequency: "monthly", priority: 0.5 }),
+    entry("/verification", { changeFrequency: "monthly", priority: 0.4 }),
+    entry("/contact", { changeFrequency: "yearly", priority: 0.4 }),
+    entry("/privacy", { changeFrequency: "yearly", priority: 0.3 }),
+    entry("/terms", { changeFrequency: "yearly", priority: 0.3 }),
   ];
 
   if (!isSupabaseConfigured()) return entries;
@@ -31,19 +53,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listBlogPosts(100),
     listCoachingCenters(),
   ]);
+
   for (const post of postsResult.data ?? []) {
-    entries.push({
-      url: `${base}/blog/${encodeURIComponent(post.slug)}`,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    });
+    entries.push(
+      entry(`/blog/${encodeURIComponent(post.slug)}`, {
+        changeFrequency: "monthly",
+        priority: 0.5,
+        ...(post.updated_at || post.created_at
+          ? { lastModified: new Date(post.updated_at || post.created_at) }
+          : {}),
+      }),
+    );
   }
+
   for (const center of centersResult.data ?? []) {
-    entries.push({
-      url: `${base}/coaching/${center.id}`,
-      changeFrequency: "weekly",
-      priority: 0.5,
-    });
+    entries.push(
+      entry(`/coaching/${center.id}`, {
+        changeFrequency: "weekly",
+        priority: 0.45,
+        ...(center.updated_at || center.created_at
+          ? { lastModified: new Date(center.updated_at || center.created_at) }
+          : {}),
+      }),
+    );
   }
 
   const pageSize = 50;
@@ -56,11 +88,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     total = result.data.total;
     for (const teacher of result.data.results) {
-      entries.push({
-        url: `${base}/teachers/${teacher.id}`,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      });
+      entries.push(
+        entry(teacherProfilePath(teacher.id), {
+          changeFrequency: "weekly",
+          priority: 0.7,
+          ...(teacher.created_at ? { lastModified: new Date(teacher.created_at) } : {}),
+        }),
+      );
     }
     page += 1;
   } while ((page - 1) * pageSize < total && page <= 100);
