@@ -28,6 +28,7 @@ function readTeacherSearch(sp: Record<string, string | string[] | undefined>) {
     experience: firstParam(sp.experience),
     minRating: firstParam(sp.minRating),
     verified: firstParam(sp.verified),
+    trial: firstParam(sp.trial),
     sort: firstParam(sp.sort) ?? "relevance",
     radius: firstParam(sp.radius),
     page: Math.max(1, Number(firstParam(sp.page) ?? "1") || 1),
@@ -45,6 +46,7 @@ function hasFacetFilters(filters: ReturnType<typeof readTeacherSearch>): boolean
     || filters.experience
     || filters.minRating
     || filters.verified
+    || filters.trial
     || filters.radius
     || (filters.sort && filters.sort !== "relevance"),
   );
@@ -94,12 +96,13 @@ export default async function TeachersPage({
   const experience = firstParam(sp.experience);
   const minRating = firstParam(sp.minRating);
   const verified = firstParam(sp.verified);
+  const trial = firstParam(sp.trial);
   const sort = firstParam(sp.sort) ?? "relevance";
   const radius = firstParam(sp.radius);
   const page = Math.max(1, Number(firstParam(sp.page) ?? "1") || 1);
 
   const extraFacets = Boolean(
-    classLevel || area || gender || experience || minRating || verified || radius || (sort && sort !== "relevance"),
+    classLevel || area || gender || experience || minRating || verified || trial || radius || (sort && sort !== "relevance"),
   );
   if (page <= 1 && !extraFacets) {
     if (district && !subject && !mode) {
@@ -138,6 +141,7 @@ export default async function TeachersPage({
       minExperience: experience ? Number(experience) : undefined,
       minRating: minRating ? Number(minRating) : undefined,
       verified: verified === "1" ? true : undefined,
+      trial: trial === "1" ? true : undefined,
       sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
       page,
       pageSize: PAGE_SIZE,
@@ -161,6 +165,7 @@ export default async function TeachersPage({
       experience,
       minRating,
       verified,
+      trial,
       sort: effectiveSort !== "relevance" ? effectiveSort : undefined,
       radius: canUseDistance ? radius : undefined,
       page: p > 1 ? p : undefined,
@@ -186,6 +191,7 @@ export default async function TeachersPage({
           experience,
           minRating,
           verified,
+          trial,
           sort: effectiveSort,
           radius: canUseDistance ? radius : undefined,
         }}

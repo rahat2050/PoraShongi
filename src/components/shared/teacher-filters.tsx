@@ -27,6 +27,7 @@ type CurrentFilters = {
   experience?: string;
   minRating?: string;
   verified?: string;
+  trial?: string;
   sort?: string;
   radius?: string;
 };
@@ -48,6 +49,7 @@ export function TeacherFilters({
     current.experience,
     current.minRating,
     current.verified,
+    current.trial,
     current.radius,
   ].filter(Boolean).length;
   const [mobileOpen, setMobileOpen] = useState(activeCount > 0);
@@ -152,6 +154,10 @@ export function TeacherFilters({
             <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input type="checkbox" name="verified" value="1" defaultChecked={current.verified === "1"} className="h-5 w-5 rounded border-slate-300 accent-brand-600" />
               শুধু যাচাইকৃত শিক্ষক
+            </label>
+            <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+              <input type="checkbox" name="trial" value="1" defaultChecked={current.trial === "1"} className="h-5 w-5 rounded border-slate-300 accent-brand-600" />
+              ডেমো ক্লাস আছে
             </label>
             <FilterField label="সাজান" htmlFor="teacher-sort" compact>
               <Select id="teacher-sort" name="sort" defaultValue={current.sort ?? "relevance"} className="w-auto min-w-[10rem]">

@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { BadgeCheck, BookOpen, MapPin, RotateCw } from "lucide-react";
+import { BadgeCheck, BookOpen, GraduationCap, MapPin, RotateCw, Sparkles } from "lucide-react";
 import { type TeacherPublic } from "@/types/index";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 import { PremiumTeacherFlip } from "@/components/shared/premium-teacher-flip";
-import { formatDistance, formatTaka, modeLabel } from "@/lib/utils";
+import { formatDistance, formatTaka, modeLabel, notableInstitution } from "@/lib/utils";
 import { locationPathForDistrict, subjectPathForName } from "@/config/seo";
 
 export function TeacherCard({
@@ -24,6 +24,12 @@ export function TeacherCard({
   const location = distance ?? (
     profileLocation || (teacher.teaching_mode === "online" || teacher.teaching_mode === "both" ? "অনলাইন" : "")
   );
+  const trialLabel = teacher.trial_available
+    ? teacher.trial_price && teacher.trial_price > 0
+      ? `ডেমো ${formatTaka(teacher.trial_price)}`
+      : "ফ্রি ডেমো"
+    : null;
+  const institutionBadge = notableInstitution(teacher.institution);
 
   const card = (
     <Card className="group motion-card h-full transition-shadow hover:shadow-md">
@@ -90,9 +96,23 @@ export function TeacherCard({
           <InfoItem label="রেটিং" value={teacher.review_count ? `★ ${teacher.rating_avg}` : "নতুন"} />
         </dl>
 
-        {(teacher.experience_years != null && teacher.experience_years >= 5) ||
+        {trialLabel ||
+        institutionBadge ||
+        (teacher.experience_years != null && teacher.experience_years >= 5) ||
         (teacher.rating_avg != null && teacher.rating_avg >= 4.5) ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
+            {trialLabel && (
+              <Badge variant="success">
+                <Sparkles className="h-3 w-3" aria-hidden />
+                {trialLabel}
+              </Badge>
+            )}
+            {institutionBadge && (
+              <Badge variant="info">
+                <GraduationCap className="h-3 w-3" aria-hidden />
+                {institutionBadge}
+              </Badge>
+            )}
             {teacher.experience_years != null && teacher.experience_years >= 5 && (
               <Badge variant="info">অভিজ্ঞ</Badge>
             )}

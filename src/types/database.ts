@@ -25,6 +25,7 @@ import {
   type TrialRequest,
   type Tuition,
   type TuitionRequest,
+  type TutorLead,
   type TuitionStatus,
   type VerificationStatus,
   type VisitorDailyStat,
@@ -83,6 +84,16 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Omit<VisitorDailyStat, "visit_date">>;
+        Relationships: [];
+      };
+      tutor_leads: {
+        Row: TutorLead;
+        Insert: Partial<TutorLead> & {
+          contact_name: string;
+          contact_phone: string;
+          class_level: string;
+        };
+        Update: Partial<TutorLead>;
         Relationships: [];
       };
       student_profiles: {
@@ -514,7 +525,39 @@ export interface Database {
           p_sort?: string | null;
           p_page?: number | null;
           p_page_size?: number | null;
+          p_trial?: boolean | null;
         };
+        Returns: Json;
+      };
+      submit_tutor_lead: {
+        Args: {
+          p_contact_name: string;
+          p_contact_phone: string;
+          p_class_level: string;
+          p_subjects: string[];
+          p_teaching_mode?: string | null;
+          p_district?: string | null;
+          p_area?: string | null;
+          p_preferred_days?: string[] | null;
+          p_preferred_time?: string | null;
+          p_budget?: number | null;
+          p_note?: string | null;
+          p_contact_email?: string | null;
+          p_ip_hash?: string | null;
+        };
+        Returns: Json;
+      };
+      admin_list_tutor_leads: {
+        Args: { p_status?: string | null; p_limit?: number | null };
+        Returns: Json;
+      };
+      admin_update_tutor_lead: {
+        Args: { p_lead_id: string; p_status: string; p_admin_note?: string | null };
+        Returns: Json;
+      };
+      tutor_lead_stats: { Args: Record<PropertyKey, never>; Returns: Json };
+      public_tuitions: {
+        Args: { p_limit?: number | null };
         Returns: Json;
       };
       search_tuitions: {

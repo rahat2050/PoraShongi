@@ -33,6 +33,39 @@ export function modeLabel(mode?: string | null): string {
   return mode;
 }
 
+/**
+ * Recognised institution short-forms shown as a card badge.
+ *
+ * এটা শুধু **প্রদর্শনের** সংক্ষিপ্ত রূপ — কোনো যাচাই নয়। শিক্ষক নিজে যা লিখেছেন
+ * সেটাই দেখানো হয়, তাই ব্যাজের পাশে verification tier আলাদা থাকে।
+ */
+const NOTABLE_INSTITUTIONS: ReadonlyArray<{ match: RegExp; label: string }> = [
+  { match: /\b(buet|bangladesh university of engineering)/i, label: "BUET" },
+  { match: /\b(du|dhaka university|university of dhaka|ঢাকা বিশ্ববিদ্যালয়)/i, label: "DU" },
+  { match: /\b(ru|rajshahi university|রাজশাহী বিশ্ববিদ্যালয়)/i, label: "RU" },
+  { match: /\b(cu|chittagong university|chattogram university)/i, label: "CU" },
+  { match: /\b(ju|jahangirnagar university)/i, label: "JU" },
+  { match: /\b(sust|shahjalal university)/i, label: "SUST" },
+  { match: /\b(kuet|khulna university of engineering)/i, label: "KUET" },
+  { match: /\b(cuet|chittagong university of engineering)/i, label: "CUET" },
+  { match: /\b(ruet|rajshahi university of engineering)/i, label: "RUET" },
+  { match: /\bmedical college|\bmbbs\b|মেডিকেল/i, label: "Medical" },
+  { match: /\b(nsu|north south university)/i, label: "NSU" },
+  { match: /\b(brac university|bracu)/i, label: "BRACU" },
+  { match: /\b(iut|islamic university of technology)/i, label: "IUT" },
+];
+
+/** Return a short institution badge label, or null when nothing matches. */
+export function notableInstitution(institution?: string | null): string | null {
+  if (!institution) return null;
+  const value = institution.trim();
+  if (!value) return null;
+  for (const { match, label } of NOTABLE_INSTITUTIONS) {
+    if (match.test(value)) return label;
+  }
+  return null;
+}
+
 export function buildQueryString(
   params: Record<string, string | number | boolean | null | undefined>,
 ): string {

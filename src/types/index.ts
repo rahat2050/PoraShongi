@@ -442,6 +442,7 @@ export type TeacherPublic = {
   premium_until?: string | null;
   headline: string | null;
   education: string | null;
+  institution?: string | null;
   subjects: string[] | null;
   classes_taught: string[] | null;
   experience_years: number | null;
@@ -453,6 +454,8 @@ export type TeacherPublic = {
   bio: string | null;
   rating_avg: number | null;
   review_count: number | null;
+  trial_available?: boolean | null;
+  trial_price?: number | null;
   distance_km: number | null;
   created_at?: string;
 };
@@ -567,3 +570,33 @@ export interface SearchResponse<T> {
   page_size: number;
   results: T[];
 }
+
+/** Public "শিক্ষক চাই" lead (login-free hire request). */
+export type TutorLeadStatus = "new" | "contacted" | "matched" | "closed" | "spam";
+
+export type TutorLead = {
+  id: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string | null;
+  class_level: string;
+  subjects: string[];
+  district: string | null;
+  area: string | null;
+  teaching_mode: string;
+  preferred_days: string[];
+  preferred_time: string | null;
+  budget: number | null;
+  note: string | null;
+  status: TutorLeadStatus;
+  admin_note: string | null;
+  claimed_by: string | null;
+  converted_tuition_id: string | null;
+  created_at: string;
+};
+
+export type TutorLeadStats = {
+  leads_24h: number;
+  leads_total: number;
+  leads_matched: number;
+};
