@@ -8,6 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { formatDate } from "@/lib/utils";
 import { getSiteUrl } from "@/config/site";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { JsonLd } from "@/components/seo/json-ld";
+import { articleJsonLd } from "@/lib/seo/jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = (await getPost(slug)).data;
   if (!post) notFound();
-  return {
+  return buildPageMetadata({
     title: post.title,
     description: post.excerpt ?? post.title,
-    alternates: { canonical: `/blog/${post.slug}` },
-  };
+    path: `/blog/${post.slug}`,
+    ogType: "article",
+    publishedTime: post.created_at,
+    modifiedTime: post.updated_at || post.created_at,
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -31,6 +38,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:px-6">
+      <JsonLd
+        data={articleJsonLd({
+          title: post.title,
+          path: `/blog/${post.slug}`,
+          description: post.excerpt ?? post.title,
+          datePublished: post.created_at,
+          dateModified: post.updated_at || post.created_at,
+        })}
+      />
+      <Breadcrumbs items={[{ name: "হোম", path: "/" }, { name: "ব্লগ", path: "/blog" }, { name: post.title }]} />
       <Link href="/blog" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700">
         <ArrowLeft className="h-4 w-4" aria-hidden /> সব পোস্ট
       </Link>

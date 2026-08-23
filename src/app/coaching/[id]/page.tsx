@@ -9,15 +9,32 @@ import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/motion/reveal";
 import { CoachingCourseForm } from "@/features/ecosystem/course-form";
 import { formatTaka, isUuid } from "@/lib/utils";
+import { cache } from "react";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 
-export const metadata: Metadata = { title: "Coaching Center" };
 export const dynamic = "force-dynamic";
+
+const getCenter = cache((id: string) => getCoachingCenter(id));
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  if (!isUuid(id)) notFound();
+  const center = (await getCenter(id)).data;
+  if (!center) notFound();
+  const location = [center.area, center.district].filter(Boolean).join(", ");
+  return buildPageMetadata({
+    title: location ? `${center.name} – Coaching in ${location}` : center.name,
+    description: center.description || `${center.name} coaching center on PoraSathi.`,
+    path: `/coaching/${center.id}`,
+  });
+}
 
 export default async function CoachingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!isUuid(id)) notFound();
 
-  const center = (await getCoachingCenter(id)).data;
+  const center = (await getCenter(id)).data;
   if (!center) notFound();
 
   const [coursesResult, profile] = await Promise.all([
@@ -29,6 +46,7 @@ export default async function CoachingDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">
+      <Breadcrumbs items={[{ name: "হোম", path: "/" }, { name: "কোচিং", path: "/coaching" }, { name: center.name }]} />
       <Link href="/coaching" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700">
         <ArrowLeft className="h-4 w-4" aria-hidden /> সব কোচিং সেন্টার
       </Link>

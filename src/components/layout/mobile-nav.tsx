@@ -49,6 +49,8 @@ interface MobileSession {
 
 const publicLinks = [
   { href: "/teachers", label: "শিক্ষক খুঁজুন", icon: Compass },
+  { href: "/teachers/online", label: "অনলাইন শিক্ষক", icon: Compass },
+  { href: "/about", label: "আমাদের সম্পর্কে", icon: Sparkles },
   { href: "/tuitions", label: "টিউশন খুঁজুন", icon: ScrollText },
   { href: "/leaderboard", label: "সেরা শিক্ষক", icon: Trophy },
   { href: "/blog", label: "শিক্ষা ব্লগ", icon: BookOpen },

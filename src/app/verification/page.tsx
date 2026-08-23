@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ContentList, ContentPage, ContentSection } from "@/components/shared/content-page";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "শিক্ষক ভেরিফিকেশন",
   description: "PoraSathi শিক্ষক ভেরিফিকেশন ব্যাজের অর্থ ও সীমাবদ্ধতা।",
-  alternates: { canonical: "/verification" },
-};
+  path: "/verification",
+});
 
 export default function VerificationPage() {
   return (

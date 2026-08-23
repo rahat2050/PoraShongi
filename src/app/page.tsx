@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, GraduationCap, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { FEATURED_LOCATIONS, SUBJECT_LANDINGS, getSubjectLandingByName } from "@/config/seo";
 import { siteConfig } from "@/config/site";
+import { FaqList } from "@/components/seo/faq-list";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { homeFeed, siteStats } from "@/lib/data/features";
 import { topReviews } from "@/lib/data/reviews";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -61,7 +64,14 @@ const roles = [
   },
 ] as const;
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = {
+  ...buildPageMetadata({
+    title: siteConfig.defaultTitle,
+    description: siteConfig.description,
+    path: "/",
+  }),
+  title: { absolute: siteConfig.defaultTitle },
+};
 export const revalidate = 300;
 
 export default async function Home() {
@@ -101,35 +111,8 @@ export default async function Home() {
     { key: "districts", label: "জেলা কভারেজ", value: stats?.districts ?? 0, href: "/teachers", actionLabel: "এলাকাভিত্তিক খুঁজুন" },
   ];
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${siteConfig.url}/#organization`,
-        name: siteConfig.brandName,
-        alternateName: siteConfig.brandNameBangla,
-        url: siteConfig.url,
-        logo: `${siteConfig.url}/icon-512.png`,
-        email: "hello@porasathi.com",
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${siteConfig.url}/#website`,
-        name: siteConfig.brandName,
-        url: siteConfig.url,
-        inLanguage: "bn-BD",
-        publisher: { "@id": `${siteConfig.url}/#organization` },
-      },
-    ],
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
-      />
       <HeroSection teacher={heroTeacher} />
       <VisitorJourney />
       <JourneyCoverflow />
@@ -225,7 +208,8 @@ export default async function Home() {
                 items={(stats.popular_subjects ?? []).map((item) => ({
                   label: item.subject,
                   count: item.count,
-                  href: `/teachers?subject=${encodeURIComponent(item.subject)}`,
+                  href: getSubjectLandingByName(item.subject)?.path
+                    ?? `/teachers?subject=${encodeURIComponent(item.subject)}`,
                 }))}
               />
               <DiscoveryLinks
@@ -257,7 +241,69 @@ export default async function Home() {
         teachers={recentTeachers}
       />
 
+      <section className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900" aria-labelledby="local-discovery-title">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+          <div className="max-w-2xl">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-300">এলাকা ও বিষয়</p>
+            <h2 id="local-discovery-title" className="mt-3 text-3xl font-black tracking-tight text-slate-950 dark:text-white">
+              সুনামগঞ্জ, সিলেট ও বিষয় অনুযায়ী খুঁজুন
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+              স্থিতিশীল পাতা থেকে প্রকাশিত শিক্ষক দেখুন। ফিল্টার মিলিয়ে তৈরি হওয়া অস্থায়ী খোঁজ সার্চে ইনডেক্স করা হয় না।
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {FEATURED_LOCATIONS.map((location) => (
+              <Link
+                key={location.slug}
+                href={location.path}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-colors hover:border-brand-300 hover:bg-brand-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-brand-700"
+              >
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{location.possessiveBn} শিক্ষক</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{location.blurb}</p>
+              </Link>
+            ))}
+          </div>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {SUBJECT_LANDINGS.slice(0, 10).map((subject) => (
+              <li key={subject.slug}>
+                <Link
+                  href={subject.path}
+                  className="inline-flex min-h-10 items-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                >
+                  {subject.name} tutors
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link href="/subjects" className="inline-flex min-h-10 items-center px-3 text-sm font-semibold text-brand-700 underline dark:text-brand-300">
+                সব বিষয়
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <HowItWorksDeck />
+
+      <div className="mx-auto w-full max-w-3xl px-4 pb-4 sm:px-6">
+        <FaqList
+          items={[
+            {
+              question: "PoraSathi-তে শিক্ষক কীভাবে খুঁজব?",
+              answer: "শিক্ষক খোঁজার পাতায় ক্লাস, বিষয় ও জেলা বেছে প্রকাশিত প্রোফাইল দেখুন। সুনামগঞ্জ ও সিলেটের জন্য আলাদা পাতাও আছে। যোগাযোগের সময় লগইন লাগে।",
+            },
+            {
+              question: "শিক্ষকরা কীভাবে টিউশন পান?",
+              answer: "প্রোফাইল প্রকাশ করুন, তারপর লগইন করে টিউশন সুযোগ দেখুন। খোলা টিউশন তালিকা পাবলিক সার্চে রাখা হয় না।",
+            },
+            {
+              question: "অনলাইন শিক্ষক কি পাওয়া যায়?",
+              answer: "হ্যাঁ। অনলাইন বা দুইভাবে পড়ানো প্রকাশিত প্রোফাইল /teachers/online পাতায় আছে। সরাসরি হোম টিউটর সুনামগঞ্জ ও সিলেট পাতায় খুঁজুন।",
+            },
+          ]}
+        />
+      </div>
 
       {testimonials.length > 0 && <ReviewSpotlight reviews={testimonials} />}
 

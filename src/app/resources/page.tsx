@@ -10,7 +10,17 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { buttonStyles } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
 
-export const metadata: Metadata = { title: "শিক্ষা রিসোর্স", description: "শিক্ষকদের শেয়ার করা link-based শিক্ষা রিসোর্স।", alternates: { canonical: "/resources" } };
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string,string|string[]|undefined>> }): Promise<Metadata> {
+  const subject = firstParam((await searchParams).subject);
+  return buildPageMetadata({
+    title: "শিক্ষা রিসোর্স",
+    description: "শিক্ষকদের শেয়ার করা link-based শিক্ষা রিসোর্স।",
+    path: "/resources",
+    robots: subject ? { index: false, follow: true } : { index: true, follow: true },
+  });
+}
 export const revalidate = 300;
 
 export default async function ResourcesPage({ searchParams }: { searchParams: Promise<Record<string,string|string[]|undefined>> }) {

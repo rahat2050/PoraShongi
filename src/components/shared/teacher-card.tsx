@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 import { PremiumTeacherFlip } from "@/components/shared/premium-teacher-flip";
 import { formatDistance, formatTaka, modeLabel } from "@/lib/utils";
+import { locationPathForDistrict, subjectPathForName } from "@/config/seo";
 
 export function TeacherCard({
   teacher,
@@ -29,7 +30,7 @@ export function TeacherCard({
       <CardContent className="p-5">
         <div className="flex items-start gap-4">
           <Link href={`/teachers/${teacher.id}`} aria-label={`${name} দেখুন`}>
-            <Avatar src={teacher.avatar_url} name={name} size="lg" className="transition-transform duration-300 group-hover:scale-110" />
+            <Avatar src={teacher.avatar_url} name={name} alt="" size="lg" className="transition-transform duration-300 group-hover:scale-110" />
           </Link>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
@@ -52,7 +53,13 @@ export function TeacherCard({
             {location && (
               <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-400">
                 <MapPin className="h-3 w-3" aria-hidden />
-                {distance ? <span className="font-medium text-brand-700">{distance}</span> : location}
+                {distance ? (
+                  <span className="font-medium text-brand-700">{distance}</span>
+                ) : locationPathForDistrict(teacher.district) ? (
+                  <Link href={locationPathForDistrict(teacher.district)!} className="hover:text-brand-700 hover:underline">
+                    {location}
+                  </Link>
+                ) : location}
               </p>
             )}
           </div>
@@ -60,9 +67,16 @@ export function TeacherCard({
         </div>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {teacher.subjects?.slice(0, 4).map((s) => (
-            <Badge key={s} variant="brand">{s}</Badge>
-          ))}
+          {teacher.subjects?.slice(0, 4).map((s) => {
+            const href = subjectPathForName(s);
+            return href ? (
+              <Link key={s} href={href}>
+                <Badge variant="brand">{s}</Badge>
+              </Link>
+            ) : (
+              <Badge key={s} variant="brand">{s}</Badge>
+            );
+          })}
           {teacher.subjects && teacher.subjects.length > 4 && (
             <Badge variant="outline">+{teacher.subjects.length - 4} আরও</Badge>
           )}
@@ -91,7 +105,7 @@ export function TeacherCard({
         <div className="mt-4 border-t border-slate-100 pt-4">
           <Link href={`/teachers/${teacher.id}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">
             <BookOpen className="h-4 w-4" aria-hidden />
-            সম্পূর্ণ প্রোফাইল দেখুন
+            {name}-এর প্রোফাইল দেখুন
           </Link>
         </div>
       </CardContent>

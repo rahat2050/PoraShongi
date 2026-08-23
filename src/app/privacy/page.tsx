@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ContentList, ContentPage, ContentSection } from "@/components/shared/content-page";
 
-export const metadata: Metadata = {
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export const metadata: Metadata = buildPageMetadata({
   title: "গোপনীয়তা নীতি",
   description: "PoraSathi কী তথ্য সংগ্রহ করে, কেন ব্যবহার করে এবং কীভাবে আপনার গোপনীয়তা রক্ষা করে।",
-  alternates: { canonical: "/privacy" },
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

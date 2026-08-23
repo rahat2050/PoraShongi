@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Compass, GraduationCap } from "lucide-react";
 import { buttonStyles } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "পেজ পাওয়া যায়নি",
+  robots: { index: false, follow: true },
+};
 
 /** সুন্দর 404 — ব্যবহারকারী হারিয়ে গেলে পথ দেখায়। */
 export default function NotFound() {
@@ -21,6 +27,9 @@ export default function NotFound() {
         <Link href="/teachers" className={buttonStyles({ variant: "outline" })}>
           <Compass className="h-4 w-4" aria-hidden /> শিক্ষক খুঁজুন
         </Link>
+        <Link href="/teachers/sunamganj" className={buttonStyles({ variant: "ghost" })}>সুনামগঞ্জ</Link>
+        <Link href="/teachers/sylhet" className={buttonStyles({ variant: "ghost" })}>সিলেট</Link>
+        <Link href="/how-it-works" className={buttonStyles({ variant: "ghost" })}>কীভাবে কাজ করে</Link>
       </div>
     </div>
   );
