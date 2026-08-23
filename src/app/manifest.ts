@@ -16,6 +16,13 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#f8fafc",
     theme_color: "#0f766e",
     categories: ["education", "productivity"],
+    // Listed so Chrome shows a richer install prompt instead of the minimal
+    // "Add to home screen" sheet.
+    shortcuts: [
+      { name: "শিক্ষক খুঁজুন", short_name: "শিক্ষক", url: "/teachers" },
+      { name: "টিউশন দেখুন", short_name: "টিউশন", url: "/tuitions" },
+      { name: "টিউটর চেয়ে আবেদন", short_name: "আবেদন", url: "/hire-tutor" },
+    ],
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
