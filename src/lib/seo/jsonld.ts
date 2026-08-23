@@ -1,5 +1,5 @@
 import { absoluteUrl } from "@/config/seo";
-import { siteConfig } from "@/config/site";
+import { contactConfig, siteConfig, socialLinks } from "@/config/site";
 
 export type BreadcrumbItem = {
   name: string;
@@ -19,7 +19,30 @@ export function websiteGraph() {
         url,
         logo: absoluteUrl("/icon-512.png"),
         email: siteConfig.contactEmail,
+        telephone: `+${contactConfig.hotlineE164}`,
         description: siteConfig.description,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: contactConfig.addressLocality,
+          addressRegion: contactConfig.addressRegion,
+          addressCountry: contactConfig.addressCountry,
+        },
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "customer support",
+            telephone: `+${contactConfig.hotlineE164}`,
+            email: siteConfig.contactEmail,
+            areaServed: "BD",
+            availableLanguage: ["bn", "en"],
+          },
+        ],
+        // Only profiles that represent the organisation itself. The LinkedIn
+        // and GitHub entries in socialLinks are the developer's personal
+        // accounts, and wa.me is a chat deep link — neither belongs in sameAs.
+        sameAs: socialLinks
+          .filter((link) => link.key === "facebook")
+          .map((link) => link.href),
         areaServed: {
           "@type": "Country",
           name: "Bangladesh",
