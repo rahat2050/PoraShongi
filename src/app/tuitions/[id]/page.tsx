@@ -171,7 +171,7 @@ export default async function TuitionDetailPage({ params }: { params: Promise<{ 
                 href={tuition.meeting_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={buttonStyles({ className: "mt-3 bg-emerald-600 hover:bg-emerald-700" })}
+                className={buttonStyles({ className: "mt-3 bg-emerald-700 hover:bg-emerald-800" })}
               >
                 Join Class →
               </a>

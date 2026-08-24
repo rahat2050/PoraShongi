@@ -41,7 +41,7 @@ export default function HireTutorPage() {
             <a href={getHotlineTelUrl()} className={buttonStyles({ className: "bg-white text-brand-950 hover:bg-brand-50 focus-visible:ring-white" })}>
               <PhoneCall className="h-4 w-4" aria-hidden /> কল করুন {contactConfig.hotlineDisplay}
             </a>
-            <a href={getWhatsAppUrl("আসসালামু আলাইকুম, আমার একজন শিক্ষক প্রয়োজন।")} target="_blank" rel="noopener noreferrer" className={buttonStyles({ className: "bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:ring-emerald-300" })}>
+            <a href={getWhatsAppUrl("আসসালামু আলাইকুম, আমার একজন শিক্ষক প্রয়োজন।")} target="_blank" rel="noopener noreferrer" className={buttonStyles({ className: "bg-emerald-700 text-white hover:bg-emerald-800 focus-visible:ring-emerald-300" })}>
               WhatsApp-এ লিখুন
             </a>
           </div>
