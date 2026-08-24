@@ -15,13 +15,29 @@ async function accessibilityViolations(page: Page) {
         run: (
           context: Document,
           options: unknown,
-        ) => Promise<{ violations: Array<{ id: string; nodes: unknown[] }> }>;
+        ) => Promise<{
+          violations: Array<{
+            id: string;
+            nodes: Array<{ target: unknown[]; failureSummary?: string; html?: string }>;
+          }>;
+        }>;
       };
     }).axe;
     const result = await axe.run(document, {
       runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
     });
-    return result.violations.map((violation) => ({ id: violation.id, nodes: violation.nodes.length }));
+    // Report the offending selector and axe's summary (which for colour
+    // contrast includes the measured ratio and both colours). Without this the
+    // CI failure is just a count, which is not actionable from the log alone.
+    return result.violations.map((violation) => ({
+      id: violation.id,
+      nodes: violation.nodes.length,
+      details: violation.nodes.slice(0, 3).map((node) => ({
+        target: node.target.join(" "),
+        summary: (node.failureSummary ?? "").replace(/\s+/g, " ").trim(),
+        html: (node.html ?? "").slice(0, 200),
+      })),
+    }));
   });
 }
 
