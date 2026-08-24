@@ -29,7 +29,10 @@ export function Footer() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <a href={getHotlineTelUrl()} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-4 text-sm font-bold text-slate-950 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300">
+            {/* The footer forces a `dark` context, so the dark: variants must
+                be repeated or Tailwind's dark button styles win and drop this
+                to 1.37:1 contrast. */}
+            <a href={getHotlineTelUrl()} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-4 text-sm font-bold text-slate-950 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 dark:bg-white dark:text-slate-950 dark:hover:bg-brand-50">
               <Phone className="h-4 w-4" aria-hidden /> কল করুন
             </a>
             <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-bold text-white transition-colors hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
