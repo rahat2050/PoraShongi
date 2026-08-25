@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { FEATURED_LOCATIONS, SUBJECT_LANDINGS, teacherProfilePath } from "@/config/seo";
 import { getSiteUrl } from "@/config/site";
 import { listCoachingCenters } from "@/lib/data/ecosystem";
+import { searchPublicTuitions } from "@/lib/data/tuitions";
 import { listBlogPosts } from "@/lib/data/features";
 import { searchTeachers } from "@/lib/data/teachers";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -23,7 +24,9 @@ function entry(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     entry("/", { changeFrequency: "weekly", priority: 1 }),
+    entry("/hire-tutor", { changeFrequency: "monthly", priority: 0.95 }),
     entry("/teachers", { changeFrequency: "daily", priority: 0.9 }),
+    entry("/tuitions", { changeFrequency: "daily", priority: 0.9 }),
     entry("/teachers/online", { changeFrequency: "daily", priority: 0.8 }),
     entry("/locations", { changeFrequency: "weekly", priority: 0.8 }),
     entry("/subjects", { changeFrequency: "weekly", priority: 0.8 }),
@@ -39,6 +42,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry("/blog", { changeFrequency: "weekly", priority: 0.6 }),
     entry("/coaching", { changeFrequency: "weekly", priority: 0.5 }),
     entry("/resources", { changeFrequency: "weekly", priority: 0.5 }),
+    entry("/app", { changeFrequency: "monthly", priority: 0.5 }),
+    entry("/affiliate", { changeFrequency: "monthly", priority: 0.5 }),
+    entry("/careers", { changeFrequency: "monthly", priority: 0.35 }),
     entry("/premium", { changeFrequency: "monthly", priority: 0.4 }),
     entry("/safety", { changeFrequency: "monthly", priority: 0.5 }),
     entry("/verification", { changeFrequency: "monthly", priority: 0.4 }),
@@ -74,6 +80,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...(center.updated_at || center.created_at
           ? { lastModified: new Date(center.updated_at || center.created_at) }
           : {}),
+      }),
+    );
+  }
+
+  // Open tuition detail pages are indexable teasers (see 0034 migration).
+  const tuitionResult = await searchPublicTuitions({ page: 1, pageSize: 50 });
+  for (const tuition of tuitionResult.data?.results ?? []) {
+    entries.push(
+      entry(`/tuitions/${tuition.id}`, {
+        changeFrequency: "daily",
+        priority: 0.6,
+        ...(tuition.created_at ? { lastModified: new Date(tuition.created_at) } : {}),
       }),
     );
   }

@@ -1,5 +1,5 @@
 import { absoluteUrl } from "@/config/seo";
-import { siteConfig } from "@/config/site";
+import { contactConfig, siteConfig, socialLinks } from "@/config/site";
 
 export type BreadcrumbItem = {
   name: string;
@@ -19,7 +19,30 @@ export function websiteGraph() {
         url,
         logo: absoluteUrl("/icon-512.png"),
         email: siteConfig.contactEmail,
+        telephone: `+${contactConfig.hotlineE164}`,
         description: siteConfig.description,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: contactConfig.addressLocality,
+          addressRegion: contactConfig.addressRegion,
+          addressCountry: contactConfig.addressCountry,
+        },
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "customer support",
+            telephone: `+${contactConfig.hotlineE164}`,
+            email: siteConfig.contactEmail,
+            areaServed: "BD",
+            availableLanguage: ["bn", "en"],
+          },
+        ],
+        // Only profiles that represent the organisation itself. The LinkedIn
+        // and GitHub entries in socialLinks are the developer's personal
+        // accounts, and wa.me is a chat deep link — neither belongs in sameAs.
+        sameAs: socialLinks
+          .filter((link) => link.key === "facebook")
+          .map((link) => link.href),
         areaServed: {
           "@type": "Country",
           name: "Bangladesh",
@@ -172,6 +195,38 @@ export function teacherItemListJsonLd(input: {
       position: start + index + 1,
       url: absoluteUrl(`/teachers/${teacher.id}`),
       name: teacher.display_name?.trim() || teacher.full_name?.trim() || "শিক্ষক",
+    })),
+  };
+}
+
+/**
+ * ItemList of open tuition opportunities for the public /tuitions page.
+ *
+ * ⚠️ ইচ্ছাকৃতভাবে schema.org/JobPosting ব্যবহার করা হয়নি: JobPosting-এ
+ * hiringOrganization ও validThrough বাধ্যতামূলক, আর এগুলো ব্যক্তি-পোস্ট করা
+ * টিউশন — কোনো প্রতিষ্ঠান নয়। ভুল টাইপ দিলে Google structured-data
+ * penalty দিতে পারে, তাই সৎভাবে ItemList দেওয়া হয়েছে।
+ */
+export function tuitionItemListJsonLd(input: {
+  name: string;
+  path: string;
+  tuitions: Array<{ id: string; title: string; subject: string; class_level: string }>;
+  total: number;
+  page: number;
+  pageSize: number;
+}) {
+  const start = (input.page - 1) * input.pageSize;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: input.name,
+    url: absoluteUrl(input.path),
+    numberOfItems: input.total,
+    itemListElement: input.tuitions.map((tuition, index) => ({
+      "@type": "ListItem",
+      position: start + index + 1,
+      url: absoluteUrl(`/tuitions/${tuition.id}`),
+      name: tuition.title,
     })),
   };
 }

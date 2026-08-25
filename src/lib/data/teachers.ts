@@ -20,6 +20,8 @@ export interface TeacherSearchFilters {
   minExperience?: number;
   minRating?: number;
   verified?: boolean;
+  /** শুধু ফ্রি/সাশ্রয়ী ডেমো ক্লাস দেন এমন শিক্ষক। */
+  trial?: boolean;
   sort?: "relevance" | "nearest" | "rating" | "experience" | "newest";
   page: number;
   pageSize: number;
@@ -47,6 +49,7 @@ export async function searchTeachers(
     p_sort: filters.sort || "relevance",
     p_page: filters.page,
     p_page_size: filters.pageSize,
+    p_trial: filters.trial ?? null,
   });
 
   if (error) return fail(error.message);

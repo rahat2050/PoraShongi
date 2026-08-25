@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { FaqList } from "@/components/seo/faq-list";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { homeFeed, siteStats } from "@/lib/data/features";
+import { publicTuitionStats, searchPublicTuitions } from "@/lib/data/tuitions";
 import { topReviews } from "@/lib/data/reviews";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buttonStyles } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { VisitorMobileCta } from "@/components/home/visitor-mobile-cta";
 import { HomeTeacherSection } from "@/components/home/home-teacher-section";
 import { HowItWorksDeck } from "@/components/home/how-it-works-deck";
 import { LiveStatsSection, type LiveStatItem } from "@/components/home/live-stats-section";
+import { LiveTuitionFeed } from "@/components/home/live-tuition-feed";
 
 const FeaturedCoverflow = dynamic(() =>
   import("@/components/home/featured-coverflow").then((mod) => mod.FeaturedCoverflow),
@@ -84,8 +86,16 @@ export default async function Home() {
   let feed = emptyFeed;
   let stats: import("@/lib/data/features").SiteStats | null = null;
   let testimonials: import("@/types/index").TestimonialPublic[] = [];
+  let openTuitions: import("@/types/index").TuitionTeaser[] = [];
+  let tuitionStats: import("@/types/index").PublicTuitionStats | null = null;
   if (isSupabaseConfigured()) {
-    const [feedRes, statsRes, reviewsRes] = await Promise.all([homeFeed(), siteStats(), topReviews(6)]);
+    const [feedRes, statsRes, reviewsRes, tuitionRes, tuitionStatsRes] = await Promise.all([
+      homeFeed(),
+      siteStats(),
+      topReviews(6),
+      searchPublicTuitions({ page: 1, pageSize: 6 }),
+      publicTuitionStats(),
+    ]);
     const value = feedRes.data;
     feed = {
       teachers: value?.teachers ?? [],
@@ -95,6 +105,8 @@ export default async function Home() {
     };
     stats = statsRes.data;
     testimonials = reviewsRes.data ?? [];
+    openTuitions = tuitionRes.data?.results ?? [];
+    tuitionStats = tuitionStatsRes.data;
   }
 
   const featuredIds = new Set(feed.featured_teachers.map((teacher) => teacher.id));
@@ -240,6 +252,8 @@ export default async function Home() {
         description="সম্প্রতি সম্পূর্ণ করে প্রকাশ করা শিক্ষক প্রোফাইল।"
         teachers={recentTeachers}
       />
+
+      <LiveTuitionFeed tuitions={openTuitions} stats={tuitionStats} />
 
       <section className="border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900" aria-labelledby="local-discovery-title">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">

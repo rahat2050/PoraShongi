@@ -15,13 +15,29 @@ async function accessibilityViolations(page: Page) {
         run: (
           context: Document,
           options: unknown,
-        ) => Promise<{ violations: Array<{ id: string; nodes: unknown[] }> }>;
+        ) => Promise<{
+          violations: Array<{
+            id: string;
+            nodes: Array<{ target: unknown[]; failureSummary?: string; html?: string }>;
+          }>;
+        }>;
       };
     }).axe;
     const result = await axe.run(document, {
       runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
     });
-    return result.violations.map((violation) => ({ id: violation.id, nodes: violation.nodes.length }));
+    // Report the offending selector and axe's summary (which for colour
+    // contrast includes the measured ratio and both colours). Without this the
+    // CI failure is just a count, which is not actionable from the log alone.
+    return result.violations.map((violation) => ({
+      id: violation.id,
+      nodes: violation.nodes.length,
+      details: violation.nodes.slice(0, 3).map((node) => ({
+        target: node.target.join(" "),
+        summary: (node.failureSummary ?? "").replace(/\s+/g, " ").trim(),
+        html: (node.html ?? "").slice(0, 200),
+      })),
+    }));
   });
 }
 
@@ -35,6 +51,10 @@ const accessibilityPages = [
   ["contact", "/contact"],
   ["resources", "/resources"],
   ["premium", "/premium"],
+  ["hire-tutor", "/hire-tutor"],
+  ["app", "/app"],
+  ["affiliate", "/affiliate"],
+  ["careers", "/careers"],
 ] as const;
 
 for (const [name, path] of accessibilityPages) {
@@ -141,9 +161,12 @@ test("scroll presentation deck keeps step routes and flips on scroll", async ({ 
   const deck = page.locator("#how");
   await expect(deck).toHaveCount(1);
   await expect(page.locator("#how [data-deck-slide]")).toHaveCount(4);
-  await expect(page.locator('[data-home-action="step-১"]')).toHaveAttribute("href", "/dashboard/tuitions/new");
+  // Demo-first funnel: step ১ points at the public, login-free lead form and
+  // step ৩ at the free-demo filter, so a first-time visitor is never asked to
+  // register before seeing value.
+  await expect(page.locator('[data-home-action="step-১"]')).toHaveAttribute("href", "/hire-tutor");
   await expect(page.locator('[data-home-action="step-২"]')).toHaveAttribute("href", "/teachers");
-  await expect(page.locator('[data-home-action="step-৩"]')).toHaveAttribute("href", "/teachers");
+  await expect(page.locator('[data-home-action="step-৩"]')).toHaveAttribute("href", "/teachers?trial=1");
   await expect(page.locator('[data-home-action="step-৪"]')).toHaveAttribute("href", "/dashboard/schedule");
 
   const reduced = await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -335,9 +358,9 @@ test("homepage action cards all lead to real product routes", async ({ page, req
     "stat-tuitions": "/tuitions",
     "stat-verified": "/teachers?verified=1",
     "stat-districts": "/teachers",
-    "step-১": "/dashboard/tuitions/new",
+    "step-১": "/hire-tutor",
     "step-২": "/teachers",
-    "step-৩": "/teachers",
+    "step-৩": "/teachers?trial=1",
     "step-৪": "/dashboard/schedule",
   };
 
