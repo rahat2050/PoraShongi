@@ -70,6 +70,9 @@ export type TeacherProfile = {
   profile_views: number;
   trial_available: boolean;
   trial_price: number;
+  medium: string | null;
+  students_taught: number | null;
+  classes_completed: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -187,6 +190,7 @@ export type Review = {
   rating: number;
   body: string | null;
   verified: boolean;
+  video_url: string | null;
   status: "published" | "hidden" | "removed";
   created_at: string;
   updated_at: string;
@@ -197,6 +201,8 @@ export type ReviewPublic = {
   rating: number;
   body: string | null;
   verified: boolean;
+  /** ঐচ্ছিক ভিডিও টেস্টিমোনিয়াল (শুধু YouTube/Vimeo — DB constraint-এ সীমিত)। */
+  video_url?: string | null;
   created_at: string;
   reviewer_name: string | null;
   reviewer_display_name: string | null;
@@ -210,6 +216,7 @@ export type TestimonialPublic = {
   rating: number;
   body: string;
   verified: boolean;
+  video_url?: string | null;
   created_at: string;
   reviewer_name: string | null;
   reviewer_display_name: string | null;
@@ -456,6 +463,10 @@ export type TeacherPublic = {
   review_count: number | null;
   trial_available?: boolean | null;
   trial_price?: number | null;
+  medium?: string | null;
+  /** শিক্ষকের নিজের ঘোষণা — প্ল্যাটফর্মে মাপা নয়। */
+  students_taught?: number | null;
+  classes_completed?: number | null;
   distance_km: number | null;
   created_at?: string;
 };
@@ -492,6 +503,9 @@ export type TeacherDetail = {
   profile_views?: number;
   trial_available?: boolean;
   trial_price?: number | null;
+  medium?: string | null;
+  students_taught?: number | null;
+  classes_completed?: number | null;
   created_at: string;
 };
 
@@ -600,6 +614,63 @@ export type TutorLeadStats = {
   leads_total: number;
   leads_matched: number;
 };
+
+// ---------------------------------------------------------------------------
+// Tutor Gigs — শিক্ষকের নিজের তৈরি fixed-price প্যাকেজ (migration 0037)
+// ---------------------------------------------------------------------------
+export type GigStatus = "draft" | "published" | "hidden" | "removed";
+
+/** শিক্ষকের নিজের দৃশ্যমান gig (draft সহ) — list_my_gigs RPC। */
+export type TutorGigOwn = {
+  id: string;
+  teacher_id: string;
+  title: string;
+  description: string;
+  subjects: string[];
+  class_levels: string[];
+  teaching_mode: string;
+  duration_weeks: number;
+  sessions_per_week: number;
+  price: number;
+  includes_trial: boolean;
+  status: GigStatus;
+  is_flagged: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+/** পাবলিক gig কার্ড (public_gigs_search RPC)। */
+export type TutorGigPublic = {
+  id: string;
+  teacher_id: string;
+  title: string;
+  description: string;
+  subjects: string[];
+  class_levels: string[];
+  teaching_mode: string;
+  duration_weeks: number;
+  sessions_per_week: number;
+  price: number;
+  includes_trial: boolean;
+  created_at: string;
+  updated_at: string;
+  teacher_display_name: string | null;
+  teacher_full_name: string | null;
+  teacher_avatar: string | null;
+  teacher_district: string | null;
+  teacher_area: string | null;
+  teacher_verification_status: VerificationStatus;
+  teacher_institution: string | null;
+  teacher_rating_avg: number | null;
+  teacher_review_count: number | null;
+};
+
+/** gig বিস্তারিত (get_public_gig RPC) — কার্ডের সবকিছু + শিক্ষকের অতিরিক্ত তথ্য। */
+export type TutorGigDetail = TutorGigPublic & {
+  teacher_headline: string | null;
+  teacher_experience_years: number | null;
+};
+
 
 /**
  * Anonymous-safe tuition listing row (public_tuitions_search RPC).

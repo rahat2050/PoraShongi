@@ -7,6 +7,7 @@ import { submitReview } from "@/features/reviews/actions";
 import { RATING_LABELS } from "@/lib/ratings";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { FormField } from "@/components/ui/form-field";
 
@@ -15,12 +16,13 @@ export function ReviewForm({
   existingReview,
 }: {
   teacherId: string;
-  existingReview?: { rating: number; body: string | null } | null;
+  existingReview?: { rating: number; body: string | null; video_url?: string | null } | null;
 }) {
   const router = useRouter();
   const [rating, setRating] = useState(existingReview?.rating ?? 0);
   const [hover, setHover] = useState(0);
   const [body, setBody] = useState(existingReview?.body ?? "");
+  const [videoUrl, setVideoUrl] = useState(existingReview?.video_url ?? "");
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "danger"; text: string } | null>(null);
   const selectedLabel = rating > 0 ? RATING_LABELS[rating] : "একটি স্টার রেটিং বাছুন";
@@ -35,7 +37,12 @@ export function ReviewForm({
     }
 
     setPending(true);
-    const result = await submitReview({ teacherId, rating, body: body || undefined });
+    const result = await submitReview({
+      teacherId,
+      rating,
+      body: body || undefined,
+      videoUrl: videoUrl.trim() || undefined,
+    });
     setPending(false);
     if (!result.ok) {
       setMessage({ type: "danger", text: result.error });
@@ -100,6 +107,23 @@ export function ReviewForm({
         />
       </FormField>
       <p id="teacher-review-count" className="-mt-3 text-right text-xs text-slate-500 dark:text-slate-400">{bengaliNumber.format(body.length)}/২০০০</p>
+
+      <FormField
+        label="ভিডিও টেস্টিমোনিয়াল (ঐচ্ছিক)"
+        htmlFor="teacher-review-video"
+        hint="YouTube বা Vimeo লিংক। ভিডিও আপনার চ্যানেলে থাকবে — এখানে শুধু লিংক দেখানো হয়, এমবেড করা হয় না।"
+      >
+        <Input
+          id="teacher-review-video"
+          type="url"
+          inputMode="url"
+          autoComplete="off"
+          placeholder="https://www.youtube.com/watch?v=…"
+          value={videoUrl}
+          onChange={(event) => setVideoUrl(event.target.value)}
+          maxLength={300}
+        />
+      </FormField>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
         <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">

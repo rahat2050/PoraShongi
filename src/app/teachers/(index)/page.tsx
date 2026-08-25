@@ -29,6 +29,8 @@ function readTeacherSearch(sp: Record<string, string | string[] | undefined>) {
     minRating: firstParam(sp.minRating),
     verified: firstParam(sp.verified),
     trial: firstParam(sp.trial),
+    medium: firstParam(sp.medium),
+    institution: firstParam(sp.institution),
     sort: firstParam(sp.sort) ?? "relevance",
     radius: firstParam(sp.radius),
     page: Math.max(1, Number(firstParam(sp.page) ?? "1") || 1),
@@ -97,12 +99,15 @@ export default async function TeachersPage({
   const minRating = firstParam(sp.minRating);
   const verified = firstParam(sp.verified);
   const trial = firstParam(sp.trial);
+  const medium = firstParam(sp.medium);
+  const institution = firstParam(sp.institution);
   const sort = firstParam(sp.sort) ?? "relevance";
   const radius = firstParam(sp.radius);
   const page = Math.max(1, Number(firstParam(sp.page) ?? "1") || 1);
 
   const extraFacets = Boolean(
-    classLevel || area || gender || experience || minRating || verified || trial || radius || (sort && sort !== "relevance"),
+    classLevel || area || gender || experience || minRating || verified || trial || medium
+    || institution || radius || (sort && sort !== "relevance"),
   );
   if (page <= 1 && !extraFacets) {
     if (district && !subject && !mode) {
@@ -142,6 +147,8 @@ export default async function TeachersPage({
       minRating: minRating ? Number(minRating) : undefined,
       verified: verified === "1" ? true : undefined,
       trial: trial === "1" ? true : undefined,
+      medium: medium || undefined,
+      institution: institution?.trim() || undefined,
       sort: effectiveSort as "relevance" | "nearest" | "rating" | "experience" | "newest",
       page,
       pageSize: PAGE_SIZE,

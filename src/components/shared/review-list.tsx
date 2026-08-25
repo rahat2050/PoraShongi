@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BadgeCheck, ChevronDown, ChevronUp, MessageSquareText } from "lucide-react";
+import { BadgeCheck, ChevronDown, ChevronUp, ExternalLink, MessageSquareText, Play } from "lucide-react";
 import { type ReviewPublic } from "@/types/index";
 import { RATING_LABELS } from "@/lib/ratings";
 import { Avatar } from "@/components/ui/avatar";
@@ -46,6 +46,20 @@ export function ReviewList({ reviews, initialLimit = 6 }: { reviews: ReviewPubli
                     <MessageSquareText className="h-3.5 w-3.5" aria-hidden /> শুধু স্টার রেটিং দেওয়া হয়েছে
                   </p>
                 )}
+
+                {review.video_url ? (
+                  // এমবেড নয়, শুধু লিংক — থার্ড-পার্টি iframe/কুকি আমাদের পেজে লোড হয় না।
+                  <a
+                    href={review.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
+                  >
+                    <Play className="h-4 w-4" aria-hidden />
+                    ভিডিওতে অভিজ্ঞতা দেখুন
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                  </a>
+                ) : null}
               </div>
             </div>
           </article>

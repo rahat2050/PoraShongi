@@ -3,7 +3,18 @@ import Link from "next/link";
 export function TeacherDirectoryNav({
   current,
 }: {
-  current?: "teachers" | "online" | "sunamganj" | "sylhet" | "subjects" | "district" | "exams" | "locations";
+  current?:
+    | "teachers"
+    | "online"
+    | "sunamganj"
+    | "sylhet"
+    | "subjects"
+    | "district"
+    | "exams"
+    | "locations"
+    | "medium"
+    | "institutions"
+    | "gigs";
 }) {
   const links = [
     { href: "/teachers", label: "সব শিক্ষক", key: "teachers" },
@@ -13,6 +24,9 @@ export function TeacherDirectoryNav({
     { href: "/teachers/online", label: "অনলাইন শিক্ষক", key: "online" },
     { href: "/subjects", label: "বিষয়", key: "subjects" },
     { href: "/exams", label: "পরীক্ষা ও শ্রেণি", key: "exams" },
+    { href: "/medium", label: "মাধ্যম", key: "medium" },
+    { href: "/institutions", label: "প্রতিষ্ঠান", key: "institutions" },
+    { href: "/gigs", label: "শিক্ষক প্যাকেজ", key: "gigs" },
   ] as const;
 
   return (

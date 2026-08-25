@@ -115,6 +115,11 @@ export function Footer() {
               <li><Link href="/teachers/sylhet" className={linkClass}>সিলেটের শিক্ষক</Link></li>
               <li><Link href="/teachers/online" className={linkClass}>অনলাইন শিক্ষক</Link></li>
               <li><Link href="/subjects" className={linkClass}>বিষয় অনুযায়ী শিক্ষক</Link></li>
+              <li><Link href="/exams" className={linkClass}>পরীক্ষা অনুযায়ী শিক্ষক</Link></li>
+              <li><Link href="/medium" className={linkClass}>মাধ্যম অনুযায়ী শিক্ষক</Link></li>
+              <li><Link href="/institutions" className={linkClass}>প্রতিষ্ঠান অনুযায়ী শিক্ষক</Link></li>
+              <li><Link href="/locations" className={linkClass}>সব জেলার শিক্ষক</Link></li>
+              <li><Link href="/gigs" className={linkClass}>শিক্ষক প্যাকেজ</Link></li>
               <li><Link href="/tuitions" className={linkClass}>টিউশন দেখুন</Link></li>
               <li><Link href="/leaderboard" className={linkClass}>সেরা শিক্ষক</Link></li>
               <li><Link href="/how-it-works" className={linkClass}>কীভাবে কাজ করে</Link></li>

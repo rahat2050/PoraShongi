@@ -38,6 +38,18 @@ export const studentProfileSchema = z.object({
   bio: optionalText(600),
 });
 
+/** ঐচ্ছিক অঋণাত্মক পূর্ণসংখ্যা (ফর্মে স্ট্রিং হিসেবে আসে)। */
+function optionalCount(max: number, message: string) {
+  return z
+    .string()
+    .optional()
+    .refine(
+      (v) => v === undefined || v === "" || (Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= max),
+      message,
+    )
+    .transform((v) => (!v || v === "" ? null : Number(v)));
+}
+
 export const teacherProfileSchema = z.object({
   headline: optionalText(160),
   bio: optionalText(1200),
@@ -68,6 +80,11 @@ export const teacherProfileSchema = z.object({
   availableTime: optionalText(80),
   teachingStyle: optionalText(500),
   languages: z.array(z.string()).optional(),
+  /** পড়ানোর মাধ্যম (কারিকুলাম) — migration 0035। */
+  medium: z.string().optional(),
+  /** স্ব-ঘোষিত পরিসংখ্যান; সীমা DB constraint-এর সাথে মিল রাখা। */
+  studentsTaught: optionalCount(9999, "শিক্ষার্থী সংখ্যা ০–৯৯৯৯ এর মধ্যে দিন।"),
+  classesCompleted: optionalCount(99999, "ক্লাস সংখ্যা ০–৯৯৯৯৯ এর মধ্যে দিন।"),
 });
 
 export const guardianProfileSchema = z.object({

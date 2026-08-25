@@ -7,16 +7,36 @@ import { requireProfile } from "@/lib/auth/server-auth";
 import { failure, success, type ActionResult } from "@/features/types";
 import { type Report } from "@/types/index";
 
+/**
+ * ভিডিও টেস্টিমোনিয়ালের লিংক। DB constraint-এর (migration 0036) সাথে একই
+ * allowlist — youtube.com / youtu.be / vimeo.com, অবশ্যই https।
+ * অন্য যেকোনো লিংক এখানেই আটকায়, ফলে থার্ড-পার্টি embed ঢুকতে পারে না।
+ */
+const videoUrlSchema = z
+  .string()
+  .trim()
+  .url("সঠিক লিংক দিন (https:// দিয়ে শুরু)।")
+  .max(300, "লিংকটি অনেক লম্বা।")
+  .refine(
+    (value) =>
+      /^https:\/\/((www|m)\.)?(youtube\.com\/(watch\?\S+|shorts\/[A-Za-z0-9_-]{6,}|embed\/[A-Za-z0-9_-]{6,})|youtu\.be\/[A-Za-z0-9_-]{6,}|vimeo\.com\/[0-9]{4,})/.test(
+        value,
+      ),
+    "শুধু YouTube বা Vimeo লিংক দেওয়া যাবে।",
+  );
+
 const reviewInputSchema = z.object({
   teacherId: z.string().uuid("শিক্ষকের পরিচয় সঠিক নয়।"),
   rating: z.number().int().min(1).max(5),
   body: z.string().trim().max(2000, "রিভিউ সর্বোচ্চ ২০০০ অক্ষরের হতে পারে।").optional(),
+  videoUrl: videoUrlSchema.optional(),
 });
 
 export async function submitReview(input: {
   teacherId: string;
   rating: number;
   body?: string;
+  videoUrl?: string;
 }): Promise<ActionResult<{ updated: boolean }>> {
   const profile = await requireProfile();
   if (profile.role !== "student" && profile.role !== "guardian") {
@@ -55,6 +75,7 @@ export async function submitReview(input: {
     tuition_id: interaction.tuition_id,
     rating: parsed.data.rating,
     body: parsed.data.body || null,
+    video_url: parsed.data.videoUrl || null,
   };
   const { error } = existing
     ? await supabase

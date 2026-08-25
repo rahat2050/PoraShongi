@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 import { PremiumTeacherFlip } from "@/components/shared/premium-teacher-flip";
 import { formatDistance, formatTaka, modeLabel, notableInstitution } from "@/lib/utils";
+import { mediumLabel } from "@/config/options";
 import { locationPathForDistrict, subjectPathForName } from "@/config/seo";
 
 export function TeacherCard({
@@ -30,6 +31,7 @@ export function TeacherCard({
       : "ফ্রি ডেমো"
     : null;
   const institutionBadge = notableInstitution(teacher.institution);
+  const mediumName = mediumLabel(teacher.medium) ?? "—";
 
   const card = (
     <Card className="group motion-card h-full transition-shadow hover:shadow-md">
@@ -92,9 +94,22 @@ export function TeacherCard({
           <InfoItem label="ক্লাস" value={teacher.classes_taught?.slice(0, 3).join(", ") || "—"} />
           <InfoItem label="অভিজ্ঞতা" value={teacher.experience_years != null ? `${teacher.experience_years} বছর` : "—"} />
           <InfoItem label="মোড" value={modeLabel(teacher.teaching_mode)} />
+          <InfoItem label="মাধ্যম" value={mediumName} />
           <InfoItem label="ফি" value={formatTaka(teacher.expected_salary)} />
           <InfoItem label="রেটিং" value={teacher.review_count ? `★ ${teacher.rating_avg}` : "নতুন"} />
+          {teacher.students_taught != null ? (
+            <InfoItem label="শিক্ষার্থী" value={`${teacher.students_taught}+`} />
+          ) : null}
+          {teacher.classes_completed != null ? (
+            <InfoItem label="ক্লাস পড়িয়েছেন" value={`${teacher.classes_completed}+`} />
+          ) : null}
         </dl>
+
+        {teacher.students_taught != null || teacher.classes_completed != null ? (
+          <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
+            শিক্ষার্থী ও ক্লাস সংখ্যা শিক্ষকের নিজের ঘোষণা।
+          </p>
+        ) : null}
 
         {trialLabel ||
         institutionBadge ||

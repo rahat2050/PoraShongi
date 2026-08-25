@@ -26,6 +26,8 @@ import {
   type Tuition,
   type TuitionRequest,
   type TutorLead,
+  type TutorGigOwn,
+  type GigStatus,
   type TuitionStatus,
   type VerificationStatus,
   type VisitorDailyStat,
@@ -96,6 +98,28 @@ export interface Database {
         Update: Partial<TutorLead>;
         Relationships: [];
       };
+      tutor_gigs: {
+        Row: TutorGigOwn;
+        Insert: {
+          id?: string;
+          teacher_id: string;
+          title: string;
+          description: string;
+          subjects?: string[];
+          class_levels?: string[];
+          teaching_mode?: string;
+          duration_weeks?: number;
+          sessions_per_week?: number;
+          price: number;
+          includes_trial?: boolean;
+          status?: GigStatus;
+          is_flagged?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<TutorGigOwn, "id" | "created_at"> & { created_at?: string }>;
+        Relationships: [];
+      };
       student_profiles: {
         Row: StudentProfile;
         Insert: {
@@ -139,6 +163,9 @@ export interface Database {
           profile_views?: number;
           trial_available?: boolean;
           trial_price?: number;
+          medium?: string | null;
+          students_taught?: number | null;
+          classes_completed?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -289,6 +316,7 @@ export interface Database {
           rating: number;
           body?: string | null;
           verified?: boolean;
+          video_url?: string | null;
           status?: Review["status"];
           created_at?: string;
           updated_at?: string;
@@ -507,6 +535,21 @@ export interface Database {
     Views: Record<never, never>;
     Functions: {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      public_gigs_search: {
+        Args: {
+          p_subject?: string | null;
+          p_class?: string | null;
+          p_mode?: string | null;
+          p_max_price?: number | null;
+          p_district?: string | null;
+          p_sort?: string | null;
+          p_page?: number | null;
+          p_page_size?: number | null;
+        };
+        Returns: Json;
+      };
+      get_public_gig: { Args: { p_gig_id: string }; Returns: Json };
+      list_my_gigs: { Args: Record<PropertyKey, never>; Returns: Json };
       verification_tier: { Args: { p_user_id: string }; Returns: string };
       search_teachers: {
         Args: {
@@ -526,6 +569,8 @@ export interface Database {
           p_page?: number | null;
           p_page_size?: number | null;
           p_trial?: boolean | null;
+          p_medium?: string | null;
+          p_institution?: string | null;
         };
         Returns: Json;
       };

@@ -42,7 +42,15 @@ SQL Editor দিয়ে করলে `supabase/migrations`-এর ফাই�
 3. `0015_public_content_read.sql`
 4. `0016_profile_publication.sql`
 
-Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। ৪৮ ঘণ্টার message auto-delete চালু করতে `0025_message_retention.sql`-ও প্রয়োগ করা বাধ্যতামূলক। সিকিউরিটি হার্ডনিংয়ের জন্য `0030_security_hardening.sql` অবশ্যই প্রয়োগ করুন (meeting link/student ID লিক, review tampering, admin analytics guard, tuition state machine, message rate limit)। হোমপেজের review spotlight চালু করতে `0031_home_review_spotlight.sql` প্রয়োগ করুন — না করলে নতুন হোম UI deploy হলেও সেকশনটি শুধু দেখাবে না (অন্য কিছু ভাঙবে না)। আগে database backup নিন।
+Migration প্রয়োগ না করলে নতুন UI deploy হলেও location filtering, leaderboard, public content policy এবং profile publication rules ঠিক হবে না। ৪৮ ঘণ্টার message auto-delete চালু করতে `0025_message_retention.sql`-ও প্রয়োগ করা বাধ্যতামূলক। সিকিউরিটি হার্ডনিংয়ের জন্য `0030_security_hardening.sql` অবশ্যই প্রয়োগ করুন (meeting link/student ID লিক, review tampering, admin analytics guard, tuition state machine, message rate limit)। হোমপেজের review spotlight চালু করতে `0031_home_review_spotlight.sql` প্রয়োগ করুন — না করলে নতুন হোম UI deploy হলেও সেকশনটি শুধু দেখাবে না (অন্য কিছু ভাঙবে না)।
+
+**প্রতিযোগী-গ্যাপ ধাপ ৩–৪ (2026-08-25)** — নিচের তিনটি migration **ক্রমে** প্রয়োগ করতে হবে:
+
+1. `0035_teaching_medium_institution.sql` — `teacher_profiles`-এ `medium`, `students_taught`, `classes_completed` কলাম; `search_teachers`-এ `p_medium` ও `p_institution` ফিল্টার। **এটি না চালালে মাধ্যম/প্রতিষ্ঠান ফিল্টার ও `/medium`, `/institutions` ল্যান্ডিং পেজ কাজ করবে না** (RPC signature বদলেছে, তাই পুরনো কল fail করবে — একসাথে deploy করুন)।
+2. `0036_review_video_testimonial.sql` — `reviews`-এ `video_url` (শুধু YouTube/Vimeo allowlist)।
+3. `0037_tutor_gigs.sql` — নতুন `tutor_gigs` টেবিল + RLS + `public_gigs_search` / `get_public_gig` / `list_my_gigs` RPC। এটি না চালালে `/gigs` ও `/dashboard/gigs` error দেখাবে।
+
+আগে database backup নিন।
 
 ### 3. Run
 

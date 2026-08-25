@@ -1,4 +1,4 @@
-import { CLASS_LEVELS, DISTRICTS, SUBJECTS } from "@/config/options";
+import { CLASS_LEVELS, DISTRICTS, NOTABLE_INSTITUTIONS, SUBJECTS, TEACHING_MEDIUMS } from "@/config/options";
 import { DISTRICT_INFO, banglaPossessive } from "@/config/districts";
 import { getSiteUrl, siteConfig } from "@/config/site";
 
@@ -149,10 +149,51 @@ export const EXAM_LANDINGS = [
 
 export type ExamLanding = (typeof EXAM_LANDINGS)[number];
 
+/**
+ * মাধ্যমভিত্তিক ল্যান্ডিং — Eudika-র /english-medium-tutors-in-bangladesh,
+ * /a-level-tutors-in-dhaka-এর সমতুল্য। `medium` সরাসরি
+ * `search_teachers(p_medium)`-এ যায় (migration 0035)।
+ */
+export const MEDIUM_LANDINGS = TEACHING_MEDIUMS.filter((medium) => medium.value !== "other").map(
+  (medium) => {
+    // URL-এ আন্ডারস্কোর থাকে না — toSeoSlug() সেটাকে হাইফেন করে, তাই
+    // slug ও path দুটোই হাইফেন-ভিত্তিক হতে হবে, নাহলে লুকআপ ব্যর্থ হয়ে 404 দেয়।
+    const slug = medium.value.replace(/_/g, "-");
+    return {
+      name: medium.short,
+      nameBn: medium.label,
+      medium: medium.value,
+      slug,
+      path: `/medium/${slug}`,
+      blurb: `${medium.label}-এ পড়ান এমন প্রকাশিত শিক্ষক প্রোফাইল দেখুন — যোগ্যতা, অভিজ্ঞতা, এলাকা ও পড়ানোর ধরন মিলিয়ে বেছে নিন।`,
+    };
+  },
+);
+
+export type MediumLanding = (typeof MEDIUM_LANDINGS)[number];
+
+/**
+ * প্রতিষ্ঠানভিত্তিক ল্যান্ডিং — Eudika-র /buet-home-tutor-in-dhaka-এর সমতুল্য।
+ * `keyword` দিয়ে `search_teachers(p_institution)`-এ ILIKE চলে, তাই শিক্ষকের
+ * প্রোফাইলে "BUET", "Bangladesh University of Engineering..." — যেকোনো বানান থাকলেও মেলে।
+ */
+export const INSTITUTION_LANDINGS = NOTABLE_INSTITUTIONS.map((institution) => ({
+  name: institution.en,
+  nameBn: institution.label,
+  keyword: institution.keyword,
+  slug: institution.slug,
+  path: `/institutions/${institution.slug}`,
+  blurb: `${institution.label} (${institution.en})-এর শিক্ষার্থী বা প্রাক্তন শিক্ষার্থী যারা প্রাইভেট পড়ান, সেই প্রকাশিত প্রোফাইলগুলো এখানে।`,
+}));
+
+export type InstitutionLanding = (typeof INSTITUTION_LANDINGS)[number];
+
 /** হোমপেজের ট্রেন্ডিং স্ট্রিপ ও ফুটারে ব্যবহৃত সব SEO ল্যান্ডিং একসাথে। */
 export type DirectoryLanding =
   | { kind: "district"; landing: DistrictLanding }
-  | { kind: "exam"; landing: ExamLanding };
+  | { kind: "exam"; landing: ExamLanding }
+  | { kind: "medium"; landing: MediumLanding }
+  | { kind: "institution"; landing: InstitutionLanding };
 
 const featuredBySlug = new Map<string, FeaturedLocation>(FEATURED_LOCATIONS.map((item) => [item.slug, item]));
 const featuredByName = new Map<string, FeaturedLocation>(FEATURED_LOCATIONS.map((item) => [item.name.toLowerCase(), item]));
@@ -160,6 +201,10 @@ const subjectBySlug = new Map<string, SubjectLanding>(SUBJECT_LANDINGS.map((item
 const subjectByName = new Map<string, SubjectLanding>(SUBJECT_LANDINGS.map((item) => [item.name.toLowerCase(), item]));
 
 const examBySlug = new Map<string, ExamLanding>(EXAM_LANDINGS.map((item) => [item.slug, item]));
+const mediumBySlug = new Map<string, MediumLanding>(MEDIUM_LANDINGS.map((item) => [item.slug, item]));
+const institutionBySlug = new Map<string, InstitutionLanding>(
+  INSTITUTION_LANDINGS.map((item) => [item.slug, item]),
+);
 const districtBySlug = new Map<string, DistrictLanding>(DISTRICT_LANDINGS.map((item) => [item.slug, item]));
 const districtByName = new Map<string, DistrictLanding>(
   DISTRICT_LANDINGS.map((item) => [item.name.toLowerCase(), item]),
@@ -187,6 +232,14 @@ export function getDistrictLandingByName(name: string): DistrictLanding | undefi
 
 export function getExamLandingBySlug(slug: string): ExamLanding | undefined {
   return examBySlug.get(toSeoSlug(slug));
+}
+
+export function getMediumLandingBySlug(slug: string): MediumLanding | undefined {
+  return mediumBySlug.get(toSeoSlug(slug));
+}
+
+export function getInstitutionLandingBySlug(slug: string): InstitutionLanding | undefined {
+  return institutionBySlug.get(toSeoSlug(slug));
 }
 
 /** শ্রেণির নাম থেকে ল্যান্ডিং পেজ — না থাকলে null (তখন ফিল্টার লিংক ব্যবহার হবে)। */

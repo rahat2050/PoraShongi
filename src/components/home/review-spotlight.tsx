@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ArrowRight, BadgeCheck, ChevronLeft, ChevronRight, ExternalLink, Play, Quote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RATING_LABELS } from "@/lib/ratings";
 import { usePrefersReducedMotion } from "@/components/motion/reduced-motion";
@@ -104,6 +104,19 @@ export function ReviewSpotlight({ reviews }: { reviews: TestimonialPublic[] }) {
                 <blockquote className="mt-4 line-clamp-4 min-h-24 text-base font-medium leading-7 text-slate-700 dark:text-slate-200 sm:text-lg sm:leading-8">
                   {active.body}
                 </blockquote>
+                {active.video_url ? (
+                  // থাম্বনেইল-স্টাইল লিংক, এমবেড নয় — থার্ড-পার্টি iframe লোড হয় না।
+                  <a
+                    href={active.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
+                  >
+                    <Play className="h-4 w-4" aria-hidden />
+                    ভিডিওতে গল্পটি দেখুন
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                  </a>
+                ) : null}
                 <figcaption className="mt-6 flex flex-wrap items-center gap-3">
                   <Avatar
                     src={active.reviewer_avatar}

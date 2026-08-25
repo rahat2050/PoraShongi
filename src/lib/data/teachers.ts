@@ -22,6 +22,10 @@ export interface TeacherSearchFilters {
   verified?: boolean;
   /** শুধু ফ্রি/সাশ্রয়ী ডেমো ক্লাস দেন এমন শিক্ষক। */
   trial?: boolean;
+  /** পড়ানোর মাধ্যম (bangla / english / o_a_level …) — migration 0035। */
+  medium?: string;
+  /** প্রতিষ্ঠানের নামের অংশ — ILIKE দিয়ে মেলে (BUET, "dhaka university" …)। */
+  institution?: string;
   sort?: "relevance" | "nearest" | "rating" | "experience" | "newest";
   page: number;
   pageSize: number;
@@ -50,6 +54,8 @@ export async function searchTeachers(
     p_page: filters.page,
     p_page_size: filters.pageSize,
     p_trial: filters.trial ?? null,
+    p_medium: filters.medium || null,
+    p_institution: filters.institution || null,
   });
 
   if (error) return fail(error.message);

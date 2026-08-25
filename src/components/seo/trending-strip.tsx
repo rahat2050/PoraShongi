@@ -1,6 +1,12 @@
 import Link from "next/link";
-import { GraduationCap, MapPin, Sparkles } from "lucide-react";
-import { DISTRICT_LANDINGS, EXAM_LANDINGS, SUBJECT_LANDINGS } from "@/config/seo";
+import { BookOpen, GraduationCap, Landmark, MapPin, Sparkles } from "lucide-react";
+import {
+  DISTRICT_LANDINGS,
+  EXAM_LANDINGS,
+  INSTITUTION_LANDINGS,
+  MEDIUM_LANDINGS,
+  SUBJECT_LANDINGS,
+} from "@/config/seo";
 
 /** হোমে সবসময় দেখানো জেলা — বাকিগুলো `/locations` থেকে পাওয়া যায়। */
 const PROMOTED_DISTRICTS = [
@@ -18,7 +24,11 @@ const PROMOTED_DISTRICTS = [
   "Jashore",
 ] as const;
 
-type TrendChip = { label: string; href: string; icon: "subject" | "exam" | "district" };
+type TrendChip = {
+  label: string;
+  href: string;
+  icon: "subject" | "exam" | "district" | "medium" | "institution";
+};
 
 function buildChips(): TrendChip[] {
   const districts = new Map(DISTRICT_LANDINGS.map((item) => [item.name, item]));
@@ -41,12 +51,26 @@ function buildChips(): TrendChip[] {
     icon: "subject" as const,
   }));
 
-  return [...examChips, ...subjectChips, ...districtChips];
+  const mediumChips: TrendChip[] = MEDIUM_LANDINGS.map((medium) => ({
+    label: `${medium.nameBn} শিক্ষক`,
+    href: medium.path,
+    icon: "medium" as const,
+  }));
+
+  const institutionChips: TrendChip[] = INSTITUTION_LANDINGS.slice(0, 6).map((institution) => ({
+    label: `${institution.nameBn}-এর শিক্ষক`,
+    href: institution.path,
+    icon: "institution" as const,
+  }));
+
+  return [...examChips, ...subjectChips, ...mediumChips, ...institutionChips, ...districtChips];
 }
 
 function ChipIcon({ icon }: { icon: TrendChip["icon"] }) {
   if (icon === "subject") return <Sparkles className="h-3.5 w-3.5 text-brand-600 dark:text-brand-300" aria-hidden />;
   if (icon === "exam") return <GraduationCap className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" aria-hidden />;
+  if (icon === "medium") return <BookOpen className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" aria-hidden />;
+  if (icon === "institution") return <Landmark className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" aria-hidden />;
   return <MapPin className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden />;
 }
 

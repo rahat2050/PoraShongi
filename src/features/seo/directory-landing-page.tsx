@@ -9,6 +9,8 @@ import { TeacherDirectoryNav } from "@/components/seo/teacher-directory-nav";
 import {
   DISTRICT_LANDINGS,
   EXAM_LANDINGS,
+  INSTITUTION_LANDINGS,
+  MEDIUM_LANDINGS,
   SUBJECT_LANDINGS,
   type DirectoryLanding,
 } from "@/config/seo";
@@ -31,6 +33,8 @@ export const fetchDirectoryTeachers = cache(
       ? searchTeachers({
           ...(landing.kind === "district" ? { district: landing.landing.name } : {}),
           ...(landing.kind === "exam" ? { classLevel: landing.landing.classLevel } : {}),
+          ...(landing.kind === "medium" ? { medium: landing.landing.medium } : {}),
+          ...(landing.kind === "institution" ? { institution: landing.landing.keyword } : {}),
           page,
           pageSize: DIRECTORY_PAGE_SIZE,
           sort: "relevance",
@@ -46,12 +50,24 @@ function landingTitle(landing: DirectoryLanding): string {
   if (landing.kind === "district") {
     return `Private Tutors & Home Tuition in ${landing.landing.name}`;
   }
+  if (landing.kind === "medium") {
+    return `${landing.landing.name} Tutors in Bangladesh`;
+  }
+  if (landing.kind === "institution") {
+    return `${landing.landing.name} Tutors & Home Teachers in Bangladesh`;
+  }
   return `${landing.landing.name} Tutors & Coaching in Bangladesh`;
 }
 
 function landingDescription(landing: DirectoryLanding): string {
   if (landing.kind === "district") {
     return `${landing.landing.nameBn} (${landing.landing.name}) জেলায় প্রাইভেট শিক্ষক, হোম টিউটর ও অনলাইন শিক্ষক খুঁজুন। PoraSathi-তে প্রকাশিত প্রোফাইল দেখে নিরাপদে সংযোগ করুন।`;
+  }
+  if (landing.kind === "medium") {
+    return `${landing.landing.nameBn} (${landing.landing.name}) শিক্ষক খুঁজুন। PoraSathi-তে প্রকাশিত প্রোফাইলে যোগ্যতা, অভিজ্ঞতা, এলাকা ও পড়ানোর ধরন দেখে নিরাপদে সংযোগ করুন।`;
+  }
+  if (landing.kind === "institution") {
+    return `${landing.landing.nameBn} (${landing.landing.name})-এর শিক্ষার্থী বা প্রাক্তন শিক্ষার্থী যারা প্রাইভেট পড়ান — সেই প্রকাশিত শিক্ষক প্রোফাইল PoraSathi-তে দেখুন।`;
   }
   return `${landing.landing.nameBn} (${landing.landing.name}) প্রস্তুতির জন্য প্রকাশিত শিক্ষক প্রোফাইল দেখুন। বিষয়, অভিজ্ঞতা, মাধ্যম ও এলাকা মিলিয়ে PoraSathi-তে শিক্ষক বেছে নিন।`;
 }
@@ -96,7 +112,11 @@ export async function DirectoryLandingPage({
   const heading =
     landing.kind === "district"
       ? `${landing.landing.possessiveBn} প্রাইভেট শিক্ষক ও টিউশন`
-      : `${landing.landing.nameBn} প্রস্তুতির শিক্ষক`;
+      : landing.kind === "medium"
+        ? `${landing.landing.nameBn} শিক্ষক`
+        : landing.kind === "institution"
+          ? `${landing.landing.nameBn}-এর শিক্ষক`
+          : `${landing.landing.nameBn} প্রস্তুতির শিক্ষক`;
 
   const intro =
     landing.kind === "district"
@@ -110,11 +130,23 @@ export async function DirectoryLandingPage({
           { name: "শিক্ষক", path: "/teachers" },
           { name: landing.landing.nameBn },
         ]
-      : [
-          { name: "হোম", path: "/" },
-          { name: "পরীক্ষা", path: "/exams" },
-          { name: landing.landing.nameBn },
-        ];
+      : landing.kind === "medium"
+        ? [
+            { name: "হোম", path: "/" },
+            { name: "মাধ্যম", path: "/medium" },
+            { name: landing.landing.nameBn },
+          ]
+        : landing.kind === "institution"
+          ? [
+              { name: "হোম", path: "/" },
+              { name: "প্রতিষ্ঠান", path: "/institutions" },
+              { name: landing.landing.nameBn },
+            ]
+          : [
+              { name: "হোম", path: "/" },
+              { name: "পরীক্ষা", path: "/exams" },
+              { name: landing.landing.nameBn },
+            ];
 
   // একই বিভাগের পার্শ্ববর্তী জেলা — আন্তঃসংযোগ বাড়াতে (Eudika-র প্রধান কৌশল)।
   const siblingDistricts =
@@ -125,6 +157,12 @@ export async function DirectoryLandingPage({
       : DISTRICT_LANDINGS.slice(0, 12);
 
   const otherExams = EXAM_LANDINGS.filter((item) => item.slug !== (landing.kind === "exam" ? landing.landing.slug : null));
+  const otherMediums = MEDIUM_LANDINGS.filter(
+    (item) => item.slug !== (landing.kind === "medium" ? landing.landing.slug : null),
+  );
+  const otherInstitutions = INSTITUTION_LANDINGS.filter(
+    (item) => item.slug !== (landing.kind === "institution" ? landing.landing.slug : null),
+  );
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
@@ -145,7 +183,17 @@ export async function DirectoryLandingPage({
         </p>
       ) : null}
 
-      <TeacherDirectoryNav current={landing.kind === "district" ? "district" : "exams"} />
+      <TeacherDirectoryNav
+        current={
+          landing.kind === "district"
+            ? "district"
+            : landing.kind === "medium"
+              ? "medium"
+              : landing.kind === "institution"
+                ? "institutions"
+                : "exams"
+        }
+      />
 
       <p className="mt-3 max-w-3xl leading-8 text-slate-600 dark:text-slate-300">
         লগইন ছাড়াই প্রকাশিত প্রোফাইল দেখা যায়। পছন্দের শিক্ষককে অনুরোধ পাঠাতে অ্যাকাউন্ট লাগে।
@@ -185,7 +233,7 @@ export async function DirectoryLandingPage({
           emptyTitle={
             landing.kind === "district"
               ? `${landing.landing.nameBn}-এ এখন প্রকাশিত শিক্ষক নেই`
-              : `${landing.landing.nameBn} প্রস্তুতির জন্য এখন প্রকাশিত শিক্ষক নেই`
+              : `${landing.landing.nameBn}-এ এখন প্রকাশিত শিক্ষক নেই`
           }
           emptyDescription="নতুন শিক্ষক প্রোফাইল প্রকাশ করলে এখানে দেখা যাবে। ইতিমধ্যে অন্য এলাকা বা অনলাইন শিক্ষক দেখতে পারেন।"
           listName={landingTitle(landing)}
@@ -224,6 +272,46 @@ export async function DirectoryLandingPage({
                   className="inline-flex min-h-10 items-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                 >
                   {exam.nameBn} ({exam.name})
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {otherMediums.length > 0 && (
+        <section className="mt-8" aria-labelledby="directory-mediums-heading">
+          <h2 id="directory-mediums-heading" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            মাধ্যম অনুযায়ী শিক্ষক
+          </h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {otherMediums.map((medium) => (
+              <li key={medium.slug}>
+                <Link
+                  href={medium.path}
+                  className="inline-flex min-h-10 items-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                >
+                  {medium.nameBn} ({medium.name})
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {otherInstitutions.length > 0 && (
+        <section className="mt-8" aria-labelledby="directory-institutions-heading">
+          <h2 id="directory-institutions-heading" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            প্রতিষ্ঠান অনুযায়ী শিক্ষক
+          </h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {otherInstitutions.map((institution) => (
+              <li key={institution.slug}>
+                <Link
+                  href={institution.path}
+                  className="inline-flex min-h-10 items-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:border-brand-300 hover:text-brand-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                >
+                  {institution.nameBn} ({institution.name})
                 </Link>
               </li>
             ))}
@@ -274,12 +362,26 @@ export async function DirectoryLandingPage({
               ]
             : [
                 {
-                  question: `${landing.landing.nameBn} প্রস্তুতির জন্য শিক্ষক কীভাবে খুঁজব?`,
-                  answer: `এই পাতায় ${landing.landing.name} স্তরের পড়াশোনায় আগ্রহী প্রকাশিত শিক্ষক প্রোফাইল আছে। বিষয় বা জেলা যোগ করে আরও নির্দিষ্ট করতে পারেন।`,
+                  question:
+                    landing.kind === "medium"
+                      ? `${landing.landing.nameBn} শিক্ষক কীভাবে খুঁজব?`
+                      : landing.kind === "institution"
+                        ? `${landing.landing.nameBn}-এর শিক্ষক কীভাবে খুঁজব?`
+                        : `${landing.landing.nameBn} প্রস্তুতির জন্য শিক্ষক কীভাবে খুঁজব?`,
+                  answer:
+                    landing.kind === "medium"
+                      ? `এই পাতায় ${landing.landing.nameBn}-এ পড়ান এমন প্রকাশিত শিক্ষক প্রোফাইল আছে। প্রোফাইলে যোগ্যতা, অভিজ্ঞতা ও এলাকা লেখা থাকে। বিষয় বা জেলা যোগ করে আরও নির্দিষ্ট করতে পারেন।`
+                      : landing.kind === "institution"
+                        ? `শিক্ষকরা প্রোফাইলে নিজের শিক্ষাগত প্রতিষ্ঠানের নাম লেখেন। এই পাতায় ${landing.landing.keyword} নামটি প্রোফাইলে আছে এমন প্রকাশিত শিক্ষক দেখানো হয়। নামের বানান ভিন্ন হলে শিক্ষক খোঁজার পাতায় প্রতিষ্ঠানের নাম লিখে খুঁজতে পারেন।`
+                        : `এই পাতায় ${landing.landing.name} স্তরের পড়াশোনায় আগ্রহী প্রকাশিত শিক্ষক প্রোফাইল আছে। বিষয় বা জেলা যোগ করে আরও নির্দিষ্ট করতে পারেন।`,
                 },
                 {
                   question: "অনলাইনে কি পড়ানো হয়?",
                   answer: "অনেক শিক্ষক অনলাইন, সরাসরি বা দুইভাবেই পড়ান। প্রোফাইলের মাধ্যম দেখে বেছে নিন।",
+                },
+                {
+                  question: "লগইন ছাড়া কি শিক্ষক খোঁজা যায়?",
+                  answer: "হ্যাঁ, প্রকাশিত প্রোফাইল লগইন ছাড়াই দেখা যায়। অনুরোধ বা মেসেজ পাঠাতে অ্যাকাউন্ট লাগে। অভিভাবক চাইলে লগইন ছাড়াই 'শিক্ষক চাই' ফর্ম পূরণ করতে পারেন।",
                 },
               ]
         }

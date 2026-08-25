@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateTeacherProfile } from "@/features/profile/actions";
-import { CLASS_LEVELS, SUBJECTS, TEACHING_MODES, TIME_SLOTS, WEEK_DAYS } from "@/config/options";
+import { CLASS_LEVELS, SUBJECTS, TEACHING_MEDIUMS, TEACHING_MODES, TIME_SLOTS, WEEK_DAYS } from "@/config/options";
 import { type TeacherProfile } from "@/types/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,13 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
   const [teachingStyle, setTeachingStyle] = useState(data?.teaching_style ?? "");
   const [languages, setLanguages] = useState((data?.languages ?? []).join(", "));
   const [bio, setBio] = useState(data?.bio ?? "");
+  const [medium, setMedium] = useState(data?.medium ?? "");
+  const [studentsTaught, setStudentsTaught] = useState(
+    data?.students_taught != null ? String(data.students_taught) : "",
+  );
+  const [classesCompleted, setClassesCompleted] = useState(
+    data?.classes_completed != null ? String(data.classes_completed) : "",
+  );
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "danger"; text: string } | null>(null);
@@ -58,6 +65,9 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
       teachingStyle: teachingStyle || undefined,
       languages: languages.split(",").map((l) => l.trim()).filter(Boolean),
       bio: bio || undefined,
+      medium: medium || undefined,
+      studentsTaught: studentsTaught || undefined,
+      classesCompleted: classesCompleted || undefined,
     });
     setSaving(false);
     if (!result.ok) {
@@ -107,7 +117,7 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="পড়ানোর মাধ্যম" htmlFor="teacher-mode" required>
+        <FormField label="পড়ানোর ধরন" htmlFor="teacher-mode" required hint="অনলাইন, সরাসরি নাকি দুটোই">
           <Select id="teacher-mode" name="teachingMode" value={mode} onChange={(e) => setMode(e.target.value)} required>
             <option value="">মাধ্যম বাছুন</option>
             {TEACHING_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
@@ -115,6 +125,52 @@ export function TeacherProfileForm({ data }: { data: TeacherProfile | null }) {
         </FormField>
         <FormField label="পড়ানোর এলাকা">
           <Input placeholder="যেমন: সুনামগঞ্জ শহর" value={area} onChange={(e) => setArea(e.target.value)} />
+        </FormField>
+      </div>
+
+      <FormField
+        label="কারিকুলাম (মিডিয়াম)"
+        htmlFor="teacher-medium"
+        hint="বাংলা মাধ্যম, ইংলিশ মিডিয়াম, ও/এ লেভেল ইত্যাদি — অভিভাবক এটা দিয়েও শিক্ষক খোঁজেন।"
+      >
+        <Select id="teacher-medium" name="medium" value={medium} onChange={(e) => setMedium(e.target.value)}>
+          <option value="">বাছুন (ঐচ্ছিক)</option>
+          {TEACHING_MEDIUMS.map((m) => (
+            <option key={m.value} value={m.value}>{m.label}</option>
+          ))}
+        </Select>
+      </FormField>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <FormField
+          label="কত জন শিক্ষার্থী পড়িয়েছেন"
+          htmlFor="teacher-students"
+          hint="আপনার নিজের হিসাব — প্রোফাইলে 'শিক্ষকের ঘোষণা' হিসেবে দেখানো হবে।"
+        >
+          <Input
+            id="teacher-students"
+            type="number"
+            min={0}
+            max={9999}
+            placeholder="যেমন: 25"
+            value={studentsTaught}
+            onChange={(e) => setStudentsTaught(e.target.value)}
+          />
+        </FormField>
+        <FormField
+          label="মোট কতটি ক্লাস পড়িয়েছেন"
+          htmlFor="teacher-classes"
+          hint="আনুমানিক হলেও চলবে — খালি রাখলে প্রোফাইলে দেখানো হবে না।"
+        >
+          <Input
+            id="teacher-classes"
+            type="number"
+            min={0}
+            max={99999}
+            placeholder="যেমন: 300"
+            value={classesCompleted}
+            onChange={(e) => setClassesCompleted(e.target.value)}
+          />
         </FormField>
       </div>
 

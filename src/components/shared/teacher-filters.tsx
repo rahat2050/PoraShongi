@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
-import { CLASS_LEVELS, DISTANCE_RADIUS, DISTRICTS, SUBJECTS, TEACHING_MODES } from "@/config/options";
+import { CLASS_LEVELS, DISTANCE_RADIUS, DISTRICTS, SUBJECTS, TEACHING_MEDIUMS, TEACHING_MODES } from "@/config/options";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { buttonStyles } from "@/components/ui/button";
@@ -28,6 +28,8 @@ type CurrentFilters = {
   minRating?: string;
   verified?: string;
   trial?: string;
+  medium?: string;
+  institution?: string;
   sort?: string;
   radius?: string;
 };
@@ -50,6 +52,8 @@ export function TeacherFilters({
     current.minRating,
     current.verified,
     current.trial,
+    current.medium,
+    current.institution,
     current.radius,
   ].filter(Boolean).length;
   const [mobileOpen, setMobileOpen] = useState(activeCount > 0);
@@ -139,6 +143,28 @@ export function TeacherFilters({
             </Select>
           </FilterField>
 
+          <FilterField label="কারিকুলাম (মিডিয়াম)" htmlFor="teacher-medium">
+            <Select id="teacher-medium" name="medium" defaultValue={current.medium ?? ""}>
+              <option value="">যেকোনো মাধ্যম</option>
+              {TEACHING_MEDIUMS.map((medium) => (
+                <option key={medium.value} value={medium.value}>{medium.label}</option>
+              ))}
+            </Select>
+          </FilterField>
+
+          <FilterField
+            label="প্রতিষ্ঠান"
+            htmlFor="teacher-institution"
+            hint="নামের অংশ লিখলেই মেলে — যেমন: buet, dhaka university"
+          >
+            <Input
+              id="teacher-institution"
+              name="institution"
+              defaultValue={current.institution ?? ""}
+              placeholder="যেমন: BUET"
+            />
+          </FilterField>
+
           <FilterField label="রেটিং" htmlFor="teacher-rating">
             <Select id="teacher-rating" name="minRating" defaultValue={current.minRating ?? ""}>
               <option value="">যেকোনো রেটিং</option>
@@ -185,11 +211,13 @@ export function TeacherFilters({
 function FilterField({
   label,
   htmlFor,
+  hint,
   compact = false,
   children,
 }: {
   label: string;
   htmlFor: string;
+  hint?: string;
   compact?: boolean;
   children: React.ReactNode;
 }) {
@@ -197,6 +225,9 @@ function FilterField({
     <div className={compact ? "w-auto" : undefined}>
       <label htmlFor={htmlFor} className="mb-1 block text-xs font-medium text-slate-600 dark:text-slate-300">{label}</label>
       {children}
+      {hint ? (
+        <p id={`${htmlFor}-hint`} className="mt-1 text-xs text-slate-500 dark:text-slate-400">{hint}</p>
+      ) : null}
     </div>
   );
 }

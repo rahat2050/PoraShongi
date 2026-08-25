@@ -101,6 +101,9 @@ export async function updateTeacherProfile(input: unknown): Promise<ActionResult
       available_time: parsed.data.availableTime,
       teaching_style: parsed.data.teachingStyle,
       languages: parsed.data.languages ?? null,
+      medium: parsed.data.medium || null,
+      students_taught: parsed.data.studentsTaught ?? null,
+      classes_completed: parsed.data.classesCompleted ?? null,
     })
     .eq("id", profile.id);
 

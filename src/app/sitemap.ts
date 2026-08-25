@@ -3,11 +3,14 @@ import {
   DISTRICT_LANDINGS,
   EXAM_LANDINGS,
   FEATURED_LOCATIONS,
+  INSTITUTION_LANDINGS,
+  MEDIUM_LANDINGS,
   SUBJECT_LANDINGS,
   teacherProfilePath,
 } from "@/config/seo";
 import { getSiteUrl } from "@/config/site";
 import { listCoachingCenters } from "@/lib/data/ecosystem";
+import { searchPublicGigs } from "@/lib/data/gigs";
 import { searchPublicTuitions } from "@/lib/data/tuitions";
 import { listBlogPosts } from "@/lib/data/features";
 import { searchTeachers } from "@/lib/data/teachers";
@@ -108,6 +111,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /** যেসব জেলা/শ্রেণিতে সত্যিই প্রকাশিত শিক্ষক আছে — খালি ল্যান্ডিং ইনডেক্স করা হয় না। */
   const districtsSeen = new Set<string>();
   const classesSeen = new Set<string>();
+  const mediumsSeen = new Set<string>();
+  const institutionsSeen = new Set<string>();
 
   do {
     const result = await searchTeachers({ page, pageSize, sort: "newest" });
@@ -124,6 +129,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       );
       if (teacher.district) districtsSeen.add(teacher.district.trim().toLowerCase());
       for (const level of teacher.classes_taught ?? []) classesSeen.add(level.trim().toLowerCase());
+      if (teacher.medium) mediumsSeen.add(teacher.medium.trim().toLowerCase());
+      if (teacher.institution) institutionsSeen.add(teacher.institution.trim().toLowerCase());
     }
     page += 1;
   } while ((page - 1) * pageSize < total && page <= 100);
@@ -146,6 +153,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
   if (examEntries > 0) {
     entries.push(entry("/exams", { changeFrequency: "weekly", priority: 0.7 }));
+  }
+
+  // মাধ্যম-ভিত্তিক ল্যান্ডিং — একই thin-content নিয়ম।
+  let mediumEntries = 0;
+  for (const medium of MEDIUM_LANDINGS) {
+    if (!mediumsSeen.has(medium.medium.toLowerCase())) continue;
+    entries.push(entry(medium.path, { changeFrequency: "weekly", priority: 0.65 }));
+    mediumEntries += 1;
+  }
+  if (mediumEntries > 0) {
+    entries.push(entry("/medium", { changeFrequency: "weekly", priority: 0.7 }));
+  }
+
+  // প্রতিষ্ঠান-ভিত্তিক ল্যান্ডিং — keyword প্রোফাইলের institution-এ মিললেই ইনডেক্স।
+  let institutionEntries = 0;
+  for (const institution of INSTITUTION_LANDINGS) {
+    const needle = institution.keyword.toLowerCase();
+    const matched = [...institutionsSeen].some((value) => value.includes(needle));
+    if (!matched) continue;
+    entries.push(entry(institution.path, { changeFrequency: "weekly", priority: 0.6 }));
+    institutionEntries += 1;
+  }
+  if (institutionEntries > 0) {
+    entries.push(entry("/institutions", { changeFrequency: "weekly", priority: 0.7 }));
+  }
+
+  // প্রকাশিত প্যাকেজ
+  const gigResult = await searchPublicGigs({ page: 1, pageSize: 50, sort: "newest" });
+  const gigs = gigResult.data?.results ?? [];
+  if (gigs.length > 0) {
+    entries.push(entry("/gigs", { changeFrequency: "weekly", priority: 0.7 }));
+    for (const gig of gigs) {
+      entries.push(
+        entry(`/gigs/${gig.id}`, {
+          changeFrequency: "weekly",
+          priority: 0.55,
+          ...(gig.updated_at || gig.created_at
+            ? { lastModified: new Date(gig.updated_at || gig.created_at) }
+            : {}),
+        }),
+      );
+    }
   }
 
   return entries;
