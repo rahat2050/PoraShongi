@@ -3,14 +3,16 @@ import Link from "next/link";
 export function TeacherDirectoryNav({
   current,
 }: {
-  current?: "teachers" | "online" | "sunamganj" | "sylhet" | "subjects";
+  current?: "teachers" | "online" | "sunamganj" | "sylhet" | "subjects" | "district" | "exams" | "locations";
 }) {
   const links = [
     { href: "/teachers", label: "সব শিক্ষক", key: "teachers" },
     { href: "/teachers/sunamganj", label: "সুনামগঞ্জ", key: "sunamganj" },
     { href: "/teachers/sylhet", label: "সিলেট", key: "sylhet" },
+    { href: "/locations", label: "সব জেলা", key: "locations" },
     { href: "/teachers/online", label: "অনলাইন শিক্ষক", key: "online" },
     { href: "/subjects", label: "বিষয়", key: "subjects" },
+    { href: "/exams", label: "পরীক্ষা ও শ্রেণি", key: "exams" },
   ] as const;
 
   return (

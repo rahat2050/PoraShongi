@@ -1,5 +1,11 @@
 import type { MetadataRoute } from "next";
-import { FEATURED_LOCATIONS, SUBJECT_LANDINGS, teacherProfilePath } from "@/config/seo";
+import {
+  DISTRICT_LANDINGS,
+  EXAM_LANDINGS,
+  FEATURED_LOCATIONS,
+  SUBJECT_LANDINGS,
+  teacherProfilePath,
+} from "@/config/seo";
 import { getSiteUrl } from "@/config/site";
 import { listCoachingCenters } from "@/lib/data/ecosystem";
 import { searchPublicTuitions } from "@/lib/data/tuitions";
@@ -99,6 +105,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pageSize = 50;
   let page = 1;
   let total = 0;
+  /** যেসব জেলা/শ্রেণিতে সত্যিই প্রকাশিত শিক্ষক আছে — খালি ল্যান্ডিং ইনডেক্স করা হয় না। */
+  const districtsSeen = new Set<string>();
+  const classesSeen = new Set<string>();
 
   do {
     const result = await searchTeachers({ page, pageSize, sort: "newest" });
@@ -113,9 +122,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ...(teacher.created_at ? { lastModified: new Date(teacher.created_at) } : {}),
         }),
       );
+      if (teacher.district) districtsSeen.add(teacher.district.trim().toLowerCase());
+      for (const level of teacher.classes_taught ?? []) classesSeen.add(level.trim().toLowerCase());
     }
     page += 1;
   } while ((page - 1) * pageSize < total && page <= 100);
+
+  // ৬৪ জেলার ল্যান্ডিং — শুধু যেখানে অন্তত একজন প্রকাশিত শিক্ষক আছেন।
+  // (FEATURED_LOCATIONS আগেই নিঃশর্তে যোগ করা, তাই সেগুলো বাদ দিচ্ছি।)
+  const featuredPaths = new Set<string>(FEATURED_LOCATIONS.map((location) => location.path));
+  for (const district of DISTRICT_LANDINGS) {
+    if (featuredPaths.has(district.path)) continue;
+    if (!districtsSeen.has(district.name.toLowerCase())) continue;
+    entries.push(entry(district.path, { changeFrequency: "weekly", priority: 0.65 }));
+  }
+
+  // পরীক্ষা/শ্রেণি-ভিত্তিক ল্যান্ডিং — একই নিয়ম।
+  let examEntries = 0;
+  for (const exam of EXAM_LANDINGS) {
+    if (!classesSeen.has(exam.classLevel.toLowerCase())) continue;
+    entries.push(entry(exam.path, { changeFrequency: "weekly", priority: 0.65 }));
+    examEntries += 1;
+  }
+  if (examEntries > 0) {
+    entries.push(entry("/exams", { changeFrequency: "weekly", priority: 0.7 }));
+  }
 
   return entries;
 }

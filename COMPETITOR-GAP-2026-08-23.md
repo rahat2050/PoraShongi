@@ -14,6 +14,44 @@
 
 ---
 
+## ০. ইমপ্লিমেন্টেশন স্ট্যাটাস (হালনাগাদ: 2026-08-25)
+
+নিচের রোডম্যাপের কোন ধাপ কোডে নেমেছে, তার যাচাইকৃত অবস্থা:
+
+| ধাপ | আইটেম | অবস্থা | কোথায় |
+|---|---|---|---|
+| ১ | `/hire-tutor` পাবলিক লিড ফর্ম + `/admin/leads` | ✅ হয়েছে | `src/app/hire-tutor`, `0033_public_tutor_leads.sql` |
+| ১ | `/tuitions` আংশিক পাবলিক + JobPosting | ✅ হয়েছে | `0034_public_tuition_listing.sql` |
+| ১ | হোমে লাইভ টিউশন ফিড | ✅ হয়েছে | `components/home/live-tuition-feed.tsx` |
+| ১ | ফ্রি ডেমো ব্যাজ + ফিল্টার | ✅ হয়েছে | `teacher-card.tsx`, `teacher-filters.tsx`, `0032_trial_discovery.sql` |
+| ২ | ফুটার হটলাইন / WhatsApp / সোশ্যাল / ঠিকানা | ✅ হয়েছে | `config/site.ts` (`contactConfig`), `footer.tsx` |
+| ২ | `/app` PWA পেজ + QR + install prompt | ✅ হয়েছে | `src/app/app`, `lib/qr.ts` |
+| ২ | `/affiliate` পাবলিক পেজ | ✅ হয়েছে | `src/app/affiliate` |
+| ২ | পেমেন্ট ব্যাজ (bKash/Nagad/Rocket) | ✅ হয়েছে | `config/site.ts` (`paymentMethods`) |
+| ২ | Trust strip (সৎ কনটেন্ট) | ✅ হয়েছে | `config/site.ts` (`trustPillars`) |
+| ৩ | **৬৪ জেলার ল্যান্ডিং পেজ** | ✅ **এই ধাপে হয়েছে** | `config/districts.ts`, `/teachers/<জেলা>` |
+| ৩ | **পরীক্ষা/শ্রেণি ল্যান্ডিং** (SSC/HSC/ভর্তি…) | ✅ **এই ধাপে হয়েছে** | `config/seo.ts` (`EXAM_LANDINGS`), `/exams/[slug]` |
+| ৩ | **হোমে keyword লিংক স্ট্রিপ** (Eudika-র ২৪ লিংক) | ✅ **এই ধাপে হয়েছে** | `components/seo/trending-strip.tsx` (৩১টি ল্যান্ডিং লিংক) |
+| ৩ | thin-content গার্ড (খালি পেজ noindex) | ✅ **এই ধাপে হয়েছে** | `directory-landing-page.tsx`, `sitemap.ts` |
+| ৩ | `/locations` পূর্ণ জেলা-ডিরেক্টরি | ✅ **এই ধাপে হয়েছে** | `src/app/locations/page.tsx` |
+| ৬ | প্রতিষ্ঠান ব্যাজ (DU/BUET) | ✅ হয়েছে | `teacher-card.tsx` (`notableInstitution`) |
+| ৬ | টিউশন কার্ডে "নতুন" ব্যাজ | ✅ হয়েছে | `tuition-teaser-card.tsx` |
+| ৬ | দুই আলাদা ফানেল (অভিভাবক vs শিক্ষক) | ✅ হয়েছে | `/how-it-works` |
+| ৪ | Careers / Team পেজ | ✅ হয়েছে | `src/app/careers` |
+| ৫ | মাধ্যম-ভিত্তিক ল্যান্ডিং (English Medium, O/A Level) | ❌ বাকি | `teacher_profiles`-এ `medium` কলাম নেই — migration লাগবে |
+| ৫ | প্রতিষ্ঠান-ভিত্তিক ল্যান্ডিং (BUET/DU টিউটর) | ❌ বাকি | `institution` কলাম আছে, কিন্তু `search_teachers`-এ ফিল্টার নেই |
+| ৪ | **Tutor Gigs** (fixed-price প্যাকেজ) | ❌ বাকি | নতুন টেবিল + CRUD — সবচেয়ে বড় বাকি আইটেম |
+| ৩ | ভিডিও টেস্টিমোনিয়াল | ❌ বাকি | `reviews`-এ `video_url` কলাম লাগবে |
+| ৬ | "X জন শিক্ষার্থী পড়িয়েছেন" স্ট্যাট | ❌ বাকি | আমাদের `classes_taught` টেক্সট অ্যারে, সংখ্যা নয় |
+| ৬ | অনলাইন ইন্ডিকেটর | ⚠️ ইচ্ছাকৃতভাবে বাদ | §৯ দেখুন — ভুয়া সংখ্যা দেখাব না |
+| ৪ | Points / মার্চ শপ | ❌ বাকি (কম অগ্রাধিকার) | |
+
+**যা এই ধাপে যাচাই করা হয়েছে:** ৬৪ জেলার প্রতিটি URL 200 দেয়, সম্বন্ধ পদ সঠিক
+(ঢাকার / ফেনীর / নওগাঁর / ঠাকুরগাঁওর), অজানা স্লাগ 404, UUID এখনো শিক্ষক প্রোফাইলে যায়,
+আর যে জেলা/শ্রেণিতে প্রকাশিত শিক্ষক নেই সেই পেজ `noindex` হয় ও sitemap-এ আসে না।
+
+---
+
 ## ১. আগে দেখে নাও — PoraSathi-তে যা **ইতিমধ্যে আছে**
 
 গ্যাপ লিস্ট পড়ার আগে এটা জরুরি, কারণ অনেক প্রতিযোগী-ফিচার আমাদের আগেই আছে (কখনো ভালো অবস্থায়):

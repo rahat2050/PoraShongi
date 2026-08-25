@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, GraduationCap, ShieldCheck, Sparkles, Users } from "lucide-react";
-import { FEATURED_LOCATIONS, SUBJECT_LANDINGS, getSubjectLandingByName } from "@/config/seo";
+import {
+  FEATURED_LOCATIONS,
+  SUBJECT_LANDINGS,
+  examPathForClassLevel,
+  getSubjectLandingByName,
+} from "@/config/seo";
+import { TrendingStrip } from "@/components/seo/trending-strip";
 import { siteConfig } from "@/config/site";
 import { FaqList } from "@/components/seo/faq-list";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -126,6 +132,7 @@ export default async function Home() {
   return (
     <>
       <HeroSection teacher={heroTeacher} />
+      <TrendingStrip />
       <VisitorJourney />
       <JourneyCoverflow />
       <VisitorMobileCta />
@@ -229,7 +236,9 @@ export default async function Home() {
                 items={(stats.popular_classes ?? []).map((item) => ({
                   label: item.class_level,
                   count: item.count,
-                  href: `/teachers?class=${encodeURIComponent(item.class_level)}`,
+                  href:
+                    examPathForClassLevel(item.class_level) ??
+                    `/teachers?class=${encodeURIComponent(item.class_level)}`,
                 }))}
               />
             </div>

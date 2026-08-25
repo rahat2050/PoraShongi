@@ -40,18 +40,31 @@ import { JsonLd } from "@/components/seo/json-ld";
 import {
   getFeaturedLocationByName,
   locationPathForDistrict,
+  resolveDirectorySlug,
   subjectPathForName,
   teacherDisplayName,
   teacherLocationLabel,
   teacherProfilePath,
 } from "@/config/seo";
+import { DirectoryLandingPage, directoryLandingMetadata } from "@/features/seo/directory-landing-page";
 import { teacherProfileJsonLd } from "@/lib/seo/jsonld";
 import { buildPageMetadata, noIndexMetadata } from "@/lib/seo/metadata";
 
 const getTeacher = cache((id: string) => getPublicTeacher(id));
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
   const { id } = await params;
+
+  // `/teachers/<জেলা>` — ৬৪ জেলার SEO ল্যান্ডিং একই রুটে থাকে।
+  const landing = resolveDirectorySlug(id);
+  if (landing) return directoryLandingMetadata(landing, await searchParams);
+
   if (!isUuid(id)) notFound();
   const result = await getTeacher(id);
   const teacher = result.data;
@@ -86,8 +99,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   });
 }
 
-export default async function TeacherProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TeacherProfilePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { id } = await params;
+
+  // জেলার স্লাগ হলে ল্যান্ডিং পেজ, নাহলে শিক্ষক প্রোফাইল (UUID)।
+  const landing = resolveDirectorySlug(id);
+  if (landing) return <DirectoryLandingPage landing={landing} searchParams={await searchParams} />;
+
   if (!isUuid(id)) notFound();
 
   if (!isSupabaseConfigured()) return <SetupRequired />;

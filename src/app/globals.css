@@ -659,8 +659,22 @@ body {
   animation: marquee-scroll 36s linear infinite;
 }
 
-.motion-marquee:hover .motion-marquee-track {
+.motion-marquee:hover .motion-marquee-track,
+.motion-marquee:focus-within .motion-marquee-track {
   animation-play-state: paused;
+}
+
+/* Reduced motion: marquee থেমে যায়, কিন্তু লিংকগুলো স্ক্রল করে পড়া যায়। */
+@media (prefers-reduced-motion: reduce) {
+  .motion-marquee-track {
+    animation: none;
+  }
+
+  .motion-marquee {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 }
 
 @keyframes marquee-scroll {
